@@ -1,598 +1,608 @@
-<title>Digital Tech Notebook</title>
+<title>System Squad</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@700&display=swap">
 <style>
-/* Layout: a term map of 9 weeks, opening into one long lesson page: learn, try it, quiz, think, take-home. */
+/* Layout: a game map of four levels (learn, play, boss) plus a grand challenge and a live class leaderboard. */
 :root{
-  --bg:#F2F6F1;--surface:#FFFFFF;--surface2:#E6EFE5;--fg:#0F2A22;--muted:#4F645A;--line:#D2DFD1;
-  --accent:#0B8A4C;--accent-ink:#FFFFFF;--hi:#FFD23F;--hi-ink:#2A2200;--good:#127A3E;--good-bg:#DDF3E4;--bad:#C2381A;--bad-bg:#FCE3DC;
+  --bg:#EDF2FF;--surface:#FFFFFF;--surface2:#E1E9FF;--fg:#101B3B;--muted:#4C5A84;--line:#C9D5F5;
+  --blue:#3B6CFF;--blue-d:#2347C7;--blue-ink:#FFFFFF;--sun:#FFC21A;--sun-d:#C98F00;--sun-ink:#2B2000;
+  --good:#0E9F5A;--good-d:#0A7442;--good-bg:#D7F5E5;--bad:#D92D20;--bad-d:#A11E14;--bad-bg:#FDE3E0;--violet:#6D4AE8;
   --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--f-body:'Inter','Segoe UI',system-ui,sans-serif;--f-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0B1914;--surface:#12261E;--surface2:#1A3329;--fg:#E8F3EB;--muted:#9BB4A7;--line:#254236;
-  --accent:#3ED184;--accent-ink:#06251A;--hi:#FFD23F;--hi-ink:#2A2200;--good:#5BE08F;--good-bg:#123D26;--bad:#FF8B6B;--bad-bg:#43201A;color-scheme:dark}}
+  --bg:#0C1330;--surface:#162049;--surface2:#1F2B5E;--fg:#EEF2FF;--muted:#A5B3E3;--line:#2B3A75;
+  --blue:#6F94FF;--blue-d:#4467D6;--blue-ink:#0A1233;--sun:#FFC21A;--sun-d:#B98400;--sun-ink:#2B2000;
+  --good:#3DD68C;--good-d:#1E9A5F;--good-bg:#0F3A28;--bad:#FF7B6E;--bad-d:#C2453A;--bad-bg:#44201F;--violet:#A28BFF;color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0B1914;--surface:#12261E;--surface2:#1A3329;--fg:#E8F3EB;--muted:#9BB4A7;--line:#254236;
-  --accent:#3ED184;--accent-ink:#06251A;--hi:#FFD23F;--hi-ink:#2A2200;--good:#5BE08F;--good-bg:#123D26;--bad:#FF8B6B;--bad-bg:#43201A;color-scheme:dark}
+  --bg:#0C1330;--surface:#162049;--surface2:#1F2B5E;--fg:#EEF2FF;--muted:#A5B3E3;--line:#2B3A75;
+  --blue:#6F94FF;--blue-d:#4467D6;--blue-ink:#0A1233;--sun:#FFC21A;--sun-d:#B98400;--sun-ink:#2B2000;
+  --good:#3DD68C;--good-d:#1E9A5F;--good-bg:#0F3A28;--bad:#FF7B6E;--bad-d:#C2453A;--bad-bg:#44201F;--violet:#A28BFF;color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:16px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
-.wrap{max-width:760px;margin:0 auto}
-h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
-.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600}
-.btn.ghost{background:transparent;color:var(--fg);border:2px solid var(--line)}
-.btn.ghost:hover{border-color:var(--accent)}
-.btn[disabled]{opacity:.45;cursor:default}
-.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+body{background:var(--bg);color:var(--fg);font:17px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 80px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:820px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.1;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+a{color:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--blue);color:var(--blue-ink);border:0;border-bottom:5px solid var(--blue-d);border-radius:14px;padding:12px 22px;font-weight:700;font-size:17px;text-decoration:none;min-height:50px}
+.btn:active{transform:translateY(3px);border-bottom-width:2px}
+.btn.sun{background:var(--sun);color:var(--sun-ink);border-bottom-color:var(--sun-d)}
+.btn.ghost{background:var(--surface);color:var(--fg);border:2px solid var(--line);border-bottom-width:5px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.ic{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 
 /* top bar */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.bar .wrap{display:flex;align-items:center;gap:12px}
-.bar .name{font-family:var(--f-display);font-weight:800;font-size:18px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:none;border:0;text-align:left;padding:0}
-.xp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
-.xp .meter{width:64px;height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
-.xp .meter i{display:block;height:100%;background:var(--hi);width:0;transition:width .4s}
-.lvl{background:var(--hi);color:var(--hi-ink);border-radius:99px;padding:2px 10px;font-family:var(--f-mono);font-weight:700;font-size:12px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:2px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:10px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:20px;background:none;border:0;padding:0;text-align:left;flex:none}
+.me{display:flex;align-items:center;gap:8px;min-width:0;flex:1;justify-content:flex-end}
+.av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;color:#fff;font-size:16px}
+.xpw{display:grid;gap:2px;min-width:0;flex:0 1 150px}
+.xpw .t{display:flex;justify-content:space-between;font-size:12px;font-weight:700;gap:6px}
+.xpw .t span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meter{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--sun);border-radius:99px;transition:width .5s}
+.nav{display:flex;gap:6px}
+.nav button{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:6px 10px;font-weight:700;display:flex;align-items:center;gap:6px;font-size:14px}
+.nav button[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
 
-/* home */
-.hero{padding-block:36px 24px;display:grid;gap:14px}
-.hero h1{font-size:clamp(34px,8vw,56px);font-weight:800}
-.hero p{margin:0;max-width:52ch;color:var(--muted);font-size:17px}
-.bits{font-family:var(--f-mono);font-weight:700;font-size:clamp(18px,5vw,26px);letter-spacing:.08em;color:var(--accent)}
-.bits small{display:block;font-family:var(--f-body);font-weight:500;font-size:13px;letter-spacing:0;color:var(--muted)}
-.weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px;padding-block:8px 24px}
-.week{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;min-width:0}
-.week h3{font-size:19px}
-.week .wk{font-family:var(--f-mono);font-weight:700;font-size:13px;color:var(--accent)}
-.lessons{display:grid;gap:8px}
-.tile{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left;min-width:0;width:100%}
-.tile:hover{border-color:var(--accent)}
-.tile .p{font-family:var(--f-mono);font-weight:700;font-size:12px;background:var(--surface2);border-radius:6px;padding:2px 7px}
-.tile .tt{flex:1;min-width:0;font-weight:500;font-size:14px;line-height:1.3}
-.pips{display:flex;gap:3px}
-.pips i{width:9px;height:9px;border-radius:50%;border:2px solid var(--line);display:block}
-.pips i.on{background:var(--accent);border-color:var(--accent)}
+/* welcome */
+.welcome{display:grid;gap:18px;padding-block:36px;justify-items:start}
+.welcome h1{font-size:clamp(40px,10vw,68px);font-weight:800}
+.welcome p{margin:0;max-width:46ch;font-size:19px;color:var(--muted)}
+.field{display:grid;gap:6px;width:100%;max-width:420px}
+.field label{font-weight:700}
+input[type=text]{font:inherit;color:var(--fg);background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:12px 14px;width:100%;font-size:19px}
+.colors{display:flex;gap:10px;flex-wrap:wrap}
+.colors button{width:46px;height:46px;border-radius:50%;border:4px solid transparent;padding:0}
+.colors button[aria-pressed="true"]{border-color:var(--fg)}
 
-/* lesson */
-.lh{padding-block:28px 8px;display:grid;gap:10px}
-.lh h1{font-size:clamp(28px,6.5vw,42px);font-weight:800}
-.lh .topic{color:var(--muted);font-weight:500}
-.chips{display:flex;gap:8px;flex-wrap:wrap;padding-block:12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);z-index:4;background:var(--bg)}
-.chips a{border:1.5px solid var(--line);border-radius:99px;padding:5px 14px;font-size:14px;font-weight:600;text-decoration:none;color:var(--fg);background:var(--surface)}
-.chips a:hover{border-color:var(--accent)}
-section{padding-block:22px;scroll-margin-top:110px;display:grid;gap:14px}
-section>h2{font-size:26px;display:flex;align-items:center;gap:10px}
-section>h2::before{content:"";width:10px;height:26px;border-radius:3px;background:var(--hi)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
-.can{display:grid;gap:8px}
-.check{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
-.check .box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;color:transparent;font-weight:800;margin-top:1px}
-.check[aria-pressed="true"]{border-color:var(--accent)}
-.check[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.lead{font-size:19px;line-height:1.5;font-weight:500;margin:0}
-.note p{margin:0}
-.callout{background:var(--surface2);border-radius:12px;padding:14px 16px}
-.tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.switch{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:99px;padding:5px 14px 5px 6px;font-size:14px;font-weight:600}
-.switch i{width:34px;height:20px;border-radius:99px;background:var(--line);position:relative;display:block;transition:background .2s}
-.switch i::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:left .2s}
-.switch[aria-pressed="true"] i{background:var(--accent)}
-.switch[aria-pressed="true"] i::after{left:16px}
-.li{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
-.li:hover{border-color:var(--accent)}
-.li .body{flex:1;min-width:0}
-.li b{font-family:var(--f-display);font-size:17px;display:block}
-.li .desc{transition:filter .25s;display:block}
-.cover .li:not(.got) .desc{filter:blur(7px);user-select:none}
-.li .tick{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent;font-weight:800;font-size:14px}
-.li.got{border-color:var(--accent)}
-.li.got .tick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.lis{display:grid;gap:8px}
-.prog{font-size:14px;color:var(--muted);font-weight:500}
-.sumbox{background:var(--hi);color:var(--hi-ink);border-radius:14px;padding:16px}
-.sumbox .eyebrow{color:var(--hi-ink);opacity:.75}
-.sumbox p{margin:4px 0 0;font-weight:500}
+/* map */
+.hero{display:flex;gap:16px;align-items:center;padding-block:22px 6px}
+.hero h1{font-size:clamp(30px,7vw,46px);font-weight:800}
+.hero p{margin:4px 0 0;color:var(--muted)}
+.path{display:grid;gap:14px;padding-block:14px}
+.node{display:flex;align-items:center;gap:14px;background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:20px;padding:14px 16px;text-align:left;width:100%;min-width:0}
+.node:not([disabled]):hover{border-color:var(--blue)}
+.node[disabled]{opacity:.55;cursor:not-allowed}
+.node .num{flex:none;width:58px;height:58px;border-radius:50%;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:26px;border-bottom:4px solid var(--blue-d)}
+.node.done .num{background:var(--good);border-bottom-color:var(--good-d);color:#fff}
+.node.final .num{background:var(--violet);border-bottom-color:#4B2FB5;color:#fff}
+.node .tx{flex:1;min-width:0}
+.node h3{font-size:22px}
+.node .tx small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.stars{display:flex;gap:2px;color:var(--line)}
+.stars .on{color:var(--sun)}
+.stars .ic{width:26px;height:26px;fill:currentColor;stroke:none}
+.badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px}
+.badge .ic{width:22px;height:22px}
+.badge.off{opacity:.45;filter:grayscale(1)}
+.badge.on{border-color:var(--sun)}
+.badge.on .ic{color:var(--sun-d)}
 
-/* widgets */
-.w{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;min-width:0}
-.w h3{font-size:20px}
-.w .sub{margin:0;color:var(--muted);font-size:15px}
-.big{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,5.5vw,30px);text-align:center;padding:22px 12px;background:var(--surface2);border-radius:12px;min-height:88px;display:grid;place-items:center;overflow-wrap:anywhere}
-.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:8px}
-.opt{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;font-weight:500;display:flex;gap:10px;align-items:center}
-.opt:hover:not([disabled]){border-color:var(--accent)}
-.opt.ok{background:var(--good-bg);border-color:var(--good);color:var(--fg)}
-.opt.no{background:var(--bad-bg);border-color:var(--bad)}
-.opt .m{margin-left:auto;font-weight:800}
-.opt.ok .m{color:var(--good)}.opt.no .m{color:var(--bad)}
-.cats{display:flex;flex-wrap:wrap;gap:8px}
-.cats .opt{flex:1 1 130px;justify-content:center;text-align:center}
-.blank{display:inline-block;min-width:3.5em;border-bottom:3px solid var(--hi);text-align:center;font-weight:700;margin-inline:2px}
-.blank.f{color:var(--good);border-color:var(--good)}
-.qtext{font-size:19px;font-weight:600;line-height:1.4;margin:0}
-.fb{min-height:24px;font-weight:600}
-.fb.ok{color:var(--good)}.fb.no{color:var(--bad)}
+/* level */
+.lh{padding-block:22px 4px;display:grid;gap:8px}
+.lh h1{font-size:clamp(32px,7vw,52px);font-weight:800}
+.lh .sub{color:var(--muted)}
+.chips{display:flex;gap:8px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:15;background:var(--bg);padding-block:10px}
+.chips a{flex:1;text-align:center;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);border-radius:12px;padding:8px;font-weight:700;text-decoration:none}
+section{padding-block:18px;display:grid;gap:14px;scroll-margin-top:130px}
+section>h2{font-size:28px}
+.mission{background:var(--sun);color:var(--sun-ink);border-radius:16px;padding:14px 16px;font-weight:600}
+.mission b{font-family:var(--f-display);font-size:18px;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.flip{perspective:900px;background:none;border:0;padding:0;text-align:left;min-height:230px}
+.flip .in{display:grid;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip[aria-pressed="true"] .in{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:250px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;border:3px solid var(--line);border-bottom-width:6px;}
+.face.f{background:var(--surface);align-items:flex-start;justify-content:space-between}
+.face.f .ic{width:44px;height:44px;color:var(--blue)}
+.face.f h3{font-size:24px}
+.face.f .tap{font-size:13px;font-weight:700;color:var(--muted)}
+.face.b{background:var(--blue);color:var(--blue-ink);border-color:var(--blue-d);transform:rotateY(180deg);font-size:15.5px;line-height:1.45}
+.face.b b{font-family:var(--f-display);font-size:19px}
+.face.b .like{background:rgba(255,255,255,.18);border-radius:10px;padding:8px 10px;font-weight:600}
+.cprog{font-weight:700;color:var(--muted)}
+
+.w{background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:20px;padding:16px;display:grid;gap:14px;min-width:0}
+.w h3{font-size:24px}
+.w .hint{margin:0;color:var(--muted)}
 .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.big{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,5.5vw,34px);text-align:center;padding:26px 14px;background:var(--surface2);border-radius:16px;min-height:104px;display:grid;place-items:center;overflow-wrap:anywhere}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.opt{background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:14px;padding:12px 14px;text-align:left;font-weight:600;display:flex;gap:10px;align-items:center;min-height:56px}
+.opt:hover:not([disabled]){border-color:var(--blue)}
+.opt:active:not([disabled]){transform:translateY(3px);border-bottom-width:3px}
+.opt.ok{background:var(--good-bg);border-color:var(--good);color:var(--fg)}
+.opt.no{background:var(--bad-bg);border-color:var(--bad);animation:shake .35s}
+.opt .m{margin-left:auto;font-weight:800;font-size:20px}
+.opt.ok .m{color:var(--good)}.opt.no .m{color:var(--bad)}
+.cats{display:flex;flex-wrap:wrap;gap:10px}
+.cats .opt{flex:1 1 150px;justify-content:center;text-align:center}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.qtext{font-size:22px;font-weight:700;line-height:1.35;margin:0;font-family:var(--f-display)}
+.blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--sun);text-align:center;margin-inline:2px}
+.blank.f{color:var(--good);border-color:var(--good)}
 .dots{display:flex;gap:5px}
-.dots i{width:12px;height:12px;border-radius:50%;background:var(--surface2);display:block}
-.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}.dots i.cur{outline:2px solid var(--fg)}
-.score{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:1}
-.miss{display:grid;gap:6px;font-size:15px}
-.miss div{background:var(--bad-bg);border-radius:8px;padding:8px 12px}
-textarea,input[type=text],input[type=number]{width:100%;font:inherit;color:var(--fg);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:10px 12px}
-textarea{min-height:92px;resize:vertical}
-.q{display:grid;gap:8px}
-.q label{font-weight:600}
-.saved{font-size:13px;color:var(--muted)}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--surface2);display:block}
+.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}.dots i.cur{outline:3px solid var(--sun)}
+.combo{display:inline-flex;align-items:center;gap:6px;font-weight:800;background:var(--sun);color:var(--sun-ink);border-radius:99px;padding:3px 12px;font-size:15px;visibility:hidden}
+.combo.on{visibility:visible;animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.2)}}
+.pts{font-family:var(--f-mono);font-weight:700}
+.timer{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.timer i{display:block;height:100%;background:var(--violet);width:100%}
+.byte{display:flex;gap:10px;align-items:flex-start;min-height:64px}
+.byte svg{flex:none;width:58px;height:58px}
+.bubble{position:relative;background:var(--surface2);border-radius:14px;padding:10px 14px;font-weight:600;flex:1;min-width:0}
+.bubble::before{content:"";position:absolute;left:-8px;top:18px;border:8px solid transparent;border-left:0;border-right-color:var(--surface2)}
+.bubble.ok{background:var(--good-bg)}.bubble.ok::before{border-right-color:var(--good-bg)}
+.bubble.no{background:var(--bad-bg)}.bubble.no::before{border-right-color:var(--bad-bg)}
+.result{display:grid;gap:12px;justify-items:start}
+.score{font-family:var(--f-display);font-weight:800;font-size:64px;line-height:1}
+.miss{display:grid;gap:6px;width:100%}
+.miss div{background:var(--bad-bg);border-radius:10px;padding:8px 12px;font-size:15px}
+.xpgain{background:var(--sun);color:var(--sun-ink);font-weight:800;border-radius:99px;padding:4px 14px;display:inline-block}
 
-/* bits */
-.sw{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
-.sw button{display:grid;gap:4px;justify-items:center;background:none;border:0;padding:0;min-width:0}
-.sw .pv{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
-.sw .b{width:100%;aspect-ratio:1;max-width:56px;border-radius:10px;border:2px solid var(--line);background:var(--bg);font-family:var(--f-mono);font-weight:700;font-size:22px;display:grid;place-items:center}
-.sw .b.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
-.val{background:var(--surface2);border-radius:10px;padding:8px 12px}
-.val small{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.val span{font-family:var(--f-mono);font-weight:700;font-size:20px;overflow-wrap:anywhere}
-.target{background:var(--hi);color:var(--hi-ink);border-radius:10px;padding:10px 14px;font-weight:600}
-.table{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-family:var(--f-mono);font-size:15px;text-align:center}
-th,td{padding:6px 10px;border-bottom:1px solid var(--line)}
-th{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-tr.hl td{background:var(--hi);color:var(--hi-ink);font-weight:700}
-.steps div{font-family:var(--f-mono);background:var(--surface2);border-radius:8px;padding:8px 12px;margin-bottom:6px}
-.steps div.last{background:var(--hi);color:var(--hi-ink);font-weight:700}
-.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.ctrl input{width:130px}
-.order{display:grid;gap:8px}
-.ord{display:flex;align-items:center;gap:10px;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:8px 8px 8px 14px}
-.ord .t{flex:1;font-weight:600;min-width:0}
-.ord.ok{border-color:var(--good);background:var(--good-bg)}.ord.no{border-color:var(--bad);background:var(--bad-bg)}
-.ord .yr{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
-.mv{width:38px;height:38px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);font-weight:800}
-.tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tabs button{flex:1 1 60px;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 6px;font-weight:600;font-size:14px}
-.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.gen{display:grid;gap:8px;background:var(--surface2);border-radius:12px;padding:14px 16px}
-.gen h4{margin:0;font-family:var(--f-display);font-size:22px}
-.gbar{height:14px;border-radius:99px;background:var(--bg);overflow:hidden}
-.gbar i{display:block;height:100%;background:var(--accent);transition:width .35s}
-.locs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
-.loc{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:grid;gap:4px;font-size:14px}
-.loc b{font-family:var(--f-display);font-size:16px}
-.loc.safe{border-color:var(--good);background:var(--good-bg)}
-.loc.lost{border-color:var(--bad);background:var(--bad-bg);text-decoration:line-through}
-.cells{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
-.cell{flex:none;text-align:center;background:var(--surface2);border-radius:10px;padding:8px 10px;min-width:92px}
-.cell .c{font-family:var(--f-display);font-weight:800;font-size:26px}
-.cell .d{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
-.cell .bin{font-family:var(--f-mono);font-weight:700;font-size:14px;color:var(--accent);letter-spacing:.04em}
-.grid8{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;max-width:320px;width:100%}
-.grid8 button{aspect-ratio:1;border-radius:4px;border:1.5px solid var(--line);background:#fff;padding:0}
-.grid8 button.on{background:#111;border-color:#111}
-.pxrow{font-family:var(--f-mono);font-size:13px;color:var(--muted);line-height:1.5}
-.pxwrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
-.sl{display:grid;grid-template-columns:70px 1fr 100px;gap:8px;align-items:center;font-family:var(--f-mono);font-size:14px}
-.sl input{width:100%}
-.swatch{height:84px;border-radius:12px;border:2px solid var(--line)}
-canvas{width:100%;height:auto;border-radius:10px;background:var(--surface2);display:block}
-.nav{display:flex;justify-content:space-between;gap:10px;padding-top:12px}
-.nav .btn{flex:1;max-width:48%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.foot{color:var(--muted);font-size:13px;padding-top:24px;text-align:center}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-@media (min-width:600px){.sw{gap:10px}}
+/* stack, flow, boot, compress */
+.stack{display:grid;gap:8px}
+.layer{border-radius:14px;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;border:3px dashed var(--line);min-height:56px;color:var(--muted)}
+.layer.placed{border-style:solid;color:#fff;border-color:transparent}
+.layer.l3{background:#7A5AF8}.layer.l2{background:#3B6CFF}.layer.l1{background:#0E9F5A}.layer.l0{background:#E8590C}
+.layer.act{outline:4px solid var(--sun);transform:scale(1.02)}
+.layer small{font-weight:500;opacity:.9}
+.pool{display:flex;gap:8px;flex-wrap:wrap}
+.pool .opt{flex:1 1 200px}
+.flowtext{background:var(--surface2);border-radius:14px;padding:14px 16px;font-weight:600;min-height:76px}
+.boot{background:#0A0F24;color:#7CFFB2;border-radius:14px;padding:14px 16px;font-family:var(--f-mono);font-size:14px;min-height:150px;line-height:1.7;overflow-wrap:anywhere}
+.boot .e{color:#FF8B7E}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.apps button{background:var(--surface2);border:3px solid var(--line);border-radius:16px;padding:12px 4px;display:grid;gap:4px;justify-items:center;font-weight:700;font-size:13px}
+.apps button .ic{width:34px;height:34px}
+.apps button[disabled]{opacity:.35;cursor:not-allowed}
+.sw{display:inline-flex;gap:10px;align-items:center;font-weight:700;background:var(--surface);border:3px solid var(--line);border-radius:99px;padding:6px 16px 6px 8px}
+.sw i{width:42px;height:24px;border-radius:99px;background:var(--bad);position:relative;display:block}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s}
+.sw[aria-pressed="true"] i{background:var(--good)}.sw[aria-pressed="true"] i::after{left:21px}
+.files{display:grid;gap:8px}
+.file{display:flex;align-items:center;gap:12px;background:var(--surface2);border-radius:12px;padding:10px 14px;font-weight:600}
+.file .bar2{flex:1;height:14px;background:var(--bg);border-radius:99px;overflow:hidden}
+.file .bar2 i{display:block;height:100%;background:var(--blue);transition:width .6s}
+.file .mb{font-family:var(--f-mono);font-weight:700;min-width:68px;text-align:right}
+.limit{display:flex;justify-content:space-between;font-weight:700;background:var(--bg);border-radius:12px;padding:10px 14px;border:3px solid var(--line)}
+.limit.okk{border-color:var(--good);background:var(--good-bg)}.limit.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* leaderboard */
+.board{display:grid;gap:8px}
+.pl{display:flex;align-items:center;gap:12px;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 14px;min-width:0}
+.pl.me{border-color:var(--blue);background:var(--surface2)}
+.pl .rk{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;background:var(--surface2)}
+.pl:nth-child(1) .rk{background:var(--sun);color:var(--sun-ink)}
+.pl:nth-child(2) .rk{background:#C8D0E6;color:#1B2440}
+.pl:nth-child(3) .rk{background:#E3A26B;color:#2B1500}
+.pl .nm{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .nm small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+.pl .xp{font-family:var(--f-mono);font-weight:700}
+.rm{background:none;border:2px solid var(--line);border-radius:8px;padding:2px 8px;font-size:12px}
+.note{background:var(--surface2);border-radius:14px;padding:12px 16px;font-size:15px}
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.tally div{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 14px}
+.tally b{display:block;font-family:var(--f-display);font-size:30px}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+@media (max-width:520px){.xpw{display:none}.brand{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
 <div class="bar"><div class="wrap">
-  <button class="name" id="home" type="button">Digital Tech Notebook</button>
-  <div class="xp" aria-label="Your points"><span class="lvl" id="lvl">LV 1</span><span class="meter"><i id="xpbar"></i></span><span class="mono" id="xptxt">0 XP</span></div>
+  <button class="brand" id="brand" type="button">System Squad</button>
+  <div class="me" id="me"></div>
 </div></div>
 <main class="wrap" id="app"></main>
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <script>
-const LESSONS=[{"w":1,"p":1,"t":"Meaning and Scope of Digital Technologies","topic":"Introduction to Digital Technologies","obj":["Define digital technologies in their own words.","State at least four examples of digital technologies used in everyday life.","Explain the scope of Digital Technologies as a field of study."],"blocks":[["p","Digital technologies refer to electronic tools, systems, devices and resources that generate, store or process data digitally rather than in analogue form. Digital technologies surround us in daily life, from mobile phones and computers to automated teller machines (ATMs) and traffic lights."],["p","Examples of digital technologies include:"],["li","Computers and laptops"],["li","Smartphones and tablets"],["li","The internet"],["li","Digital cameras"],["li","Automated Teller Machines (ATMs)"],["li","Smart television sets"],["p","Digital Technologies as a school subject covers the study of computer hardware and software, the internet and networks, data handling, cybersecurity, and emerging technologies such as artificial intelligence and robotics. It combines knowledge and practical skills that prepare learners to live, work and create responsibly in a digital society."]],"sum":"The lesson introduced digital technologies as electronic tools and systems that process data digitally, highlighted common examples learners encounter daily, and outlined the broad scope of the subject.","mcq":[{"q":"Digital technologies are tools and systems that process data in _____ form.","o":["analogue","digital","manual","paper"]},{"q":"Which of the following is an example of a digital technology?","o":["Chalkboard","Smartphone","Wooden ruler","Printed newspaper"]},{"q":"The scope of Digital Technologies as a school subject includes the study of _____.","o":["computer hardware and software only","hardware, software, networks and emerging technologies","farming tools","traditional crafts"]},{"q":"An Automated Teller Machine (ATM) is best described as a _____.","o":["digital device","analogue device","manual device","mechanical toy"]},{"q":"Which statement best describes digital technologies?","o":["They are tools that only provide entertainment","They are electronic tools that generate, store or process data digitally","They are only used in offices","They cannot be used by students"]}],"th":["Explain, in your own words, what digital technologies are.","List four digital technologies you use in a typical day and state one use for each.","Describe how digital technologies have made communication easier in Nigeria."],"asg":"Write short notes on three digital technologies found in your home, stating what each one is used for.","prj":"In groups, prepare a short list (with pictures where possible) of ten digital devices found within the school compound, and state the purpose of each."},{"w":1,"p":2,"t":"Relevance of Digital Technologies in Modern Society","topic":"Introduction to Digital Technologies","obj":["Explain the importance of digital technologies in at least four sectors of society.","Discuss how digital technologies affect daily life, work and communication."],"blocks":[["p","Digital technologies play a central role in modern society and are applied across many sectors:"],["li","Education: e-learning, digital libraries and online research"],["li","Banking and finance: mobile banking, online transfers and electronic payment"],["li","Healthcare: telemedicine, digital patient records and diagnostic equipment"],["li","Agriculture: weather forecasting, market information and precision farming"],["li","Communication: instant messaging, video calls and social media"],["p","Overall, digital technologies improve efficiency, save time and connect people and organisations across the world."]],"sum":"The lesson examined how digital technologies benefit education, banking, healthcare, agriculture and communication, showing their overall importance to modern society.","mcq":[{"q":"Digital technologies support _____ in the healthcare sector.","o":["telemedicine and digital records","farming only","cooking","tailoring"]},{"q":"Mobile banking is an example of digital technology used in the _____ sector.","o":["agriculture","finance","entertainment","sports"]},{"q":"E-learning and digital libraries are examples of digital technology use in _____.","o":["education","transportation","fishing","mining"]},{"q":"Which of these best shows the relevance of digital technologies to communication?","o":["Sending letters by post only","Using smartphones for instant messaging and video calls","Using town criers","Writing on stone tablets"]},{"q":"Precision farming and weather forecasting are digital technology applications in _____.","o":["agriculture","tourism","music","sports"]}],"th":["Explain the relevance of digital technologies in any two sectors of the Nigerian economy.","In what ways have digital technologies changed the way people communicate?","Give two benefits and one challenge of using digital technologies in schools."],"asg":"Interview an adult in your household about one way digital technology has changed how they work, and write a short paragraph about it.","prj":"Research one Nigerian company or organisation that relies heavily on digital technology, and prepare a one-page write-up on how it uses digital technology."},{"w":2,"p":1,"t":"From Abacus to Early Computers","topic":"History & Evolution of Digital Technologies","obj":["Trace the historical development of computing devices from the abacus to early computers.","Identify at least four early computing devices and their inventors or era."],"blocks":[["p","The history of computing began long before modern computers. The abacus, used over 2000 years ago, was one of the earliest calculating tools. In the 17th century, Blaise Pascal invented the Pascaline, a mechanical calculator."],["p","Charles Babbage, known as the \"father of the computer,\" designed the Analytical Engine in the 19th century. In the 20th century, the first electronic computers, such as ENIAC, were built using vacuum tubes to perform calculations. These early machines were large, slow by today's standards, and were mainly used for military and scientific calculations."]],"sum":"The lesson traced the development of computing from the abacus, through the Pascaline and Babbage's Analytical Engine, to early electronic computers such as ENIAC.","mcq":[{"q":"The earliest known calculating device is the _____.","o":["laptop","abacus","smartphone","tablet"]},{"q":"Blaise Pascal invented the _____ in the 17th century.","o":["Pascaline","ENIAC","internet","microchip"]},{"q":"Charles Babbage is regarded as the _____.","o":["father of the internet","father of the computer","inventor of the smartphone","inventor of the television"]},{"q":"ENIAC was one of the earliest _____ computers.","o":["electronic","wooden","manual","mechanical-only"]},{"q":"Early computers such as ENIAC used _____ to perform calculations.","o":["vacuum tubes","microchips","solar panels","transistors only"]}],"th":["Describe the contribution of Charles Babbage to the development of computers.","Explain why the abacus is considered an early computing device.","State two differences between early computers and computers used today."],"asg":"Draw a simple timeline showing four stages in the history of computing devices, from the abacus to early electronic computers.","prj":"Research and write a short biography (half a page) of one pioneer in computing history, such as Charles Babbage or Ada Lovelace."},{"w":2,"p":2,"t":"Generations of Computers up to Artificial Intelligence","topic":"History & Evolution of Digital Technologies","obj":["List the five generations of computers with their key technologies.","Explain how computers have evolved from early generations to the age of artificial intelligence."],"blocks":[["p","Computers have developed through five broad generations:"],["li","First Generation (1940s-1950s): used vacuum tubes; machines were large and generated much heat"],["li","Second Generation (1950s-1960s): used transistors, making computers smaller and faster"],["li","Third Generation (1960s-1970s): used integrated circuits (chips), improving speed and reliability"],["li","Fourth Generation (1970s-present): uses microprocessors, leading to personal computers, laptops and smartphones"],["li","Fifth Generation: associated with artificial intelligence (AI), where computers can learn, reason and make decisions using technologies such as machine learning"]],"sum":"The lesson outlined the five generations of computers, from vacuum-tube machines to today's AI-driven fifth-generation systems.","mcq":[{"q":"First-generation computers used _____ as their main technology.","o":["vacuum tubes","transistors","microprocessors","integrated circuits"]},{"q":"Second-generation computers became smaller and faster because of the use of _____.","o":["transistors","vacuum tubes","punch cards","solar cells"]},{"q":"The fourth generation of computers is associated with the use of _____.","o":["microprocessors","vacuum tubes","punch cards","mechanical gears"]},{"q":"The fifth generation of computers is closely linked to _____.","o":["artificial intelligence","the abacus","the typewriter","the telegraph"]},{"q":"Which generation introduced integrated circuits?","o":["First","Second","Third","Fifth"]}],"th":["Explain, with examples, how computers have changed from the first generation to the fourth generation.","What role does artificial intelligence play in fifth-generation computers?","State any two everyday devices that use artificial intelligence."],"asg":"Prepare a table listing the five generations of computers, their key technology, and one example device from each generation.","prj":"Research one example of artificial intelligence used in Nigeria today (for example, in banking, agriculture or health) and write a short report on how it works."},{"w":3,"p":1,"t":"Binary, Decimal, Octal and Hexadecimal Systems","topic":"Number Systems","obj":["Define a number system and identify its base (radix).","Distinguish between binary, decimal, octal and hexadecimal number systems."],"blocks":[["p","A number system is a way of representing numbers using a set of symbols and rules. The base (or radix) of a number system tells us how many digits it uses."],["li","Decimal system (base 10): uses digits 0-9; the system we use daily"],["li","Binary system (base 2): uses only 0 and 1; the language computers understand directly"],["li","Octal system (base 8): uses digits 0-7"],["li","Hexadecimal system (base 16): uses digits 0-9 and letters A-F to represent 10-15"],["p","Computers use binary internally, while octal and hexadecimal are often used as convenient shorthand for binary in computing."]],"sum":"The lesson introduced the decimal, binary, octal and hexadecimal number systems and explained the meaning of a number system's base.","mcq":[{"q":"The base of the binary number system is _____.","o":["2","8","10","16"]},{"q":"The decimal number system uses digits from _____.","o":["0 to 1","0 to 7","0 to 9","0 to F"]},{"q":"The hexadecimal number system uses digits 0-9 and letters _____.","o":["A-F","G-L","A-Z","M-Z"]},{"q":"Computers process information internally using the _____ number system.","o":["binary","decimal","octal","hexadecimal"]},{"q":"The octal number system has a base of _____.","o":["2","8","10","16"]}],"th":["Define a number system and explain what is meant by its base.","State the digits used in the binary, octal and decimal number systems.","Explain why computers use the binary number system rather than the decimal system."],"asg":"Write out the digits used in each of the four number systems treated in class (binary, octal, decimal, hexadecimal).","prj":"Find and write down two real-life situations where numbers other than base 10 might be used, such as in computer storage sizes."},{"w":3,"p":2,"t":"Guided Practice — Converting Between Number Systems","topic":"Number Systems","obj":["Convert numbers from decimal to binary and from binary to decimal.","Convert numbers from decimal to octal or hexadecimal, with guidance."],"blocks":[["p","To convert a decimal number to binary, we repeatedly divide the number by 2 and record the remainders, reading them from bottom to top. To convert a binary number to decimal, we multiply each digit by its place value (a power of 2) and add the results. A similar division method applies when converting decimal numbers to octal (dividing by 8) or hexadecimal (dividing by 16)."],["p","Worked example: Convert 13 (decimal) to binary. 13 ÷ 2 = 6 remainder 1; 6 ÷ 2 = 3 remainder 0; 3 ÷ 2 = 1 remainder 1; 1 ÷ 2 = 0 remainder 1. Reading the remainders from bottom to top gives 1101. Therefore, 13 in decimal equals 1101 in binary."]],"sum":"The lesson practised converting numbers between decimal and binary, and introduced the method for converting decimal numbers to octal and hexadecimal.","mcq":[{"q":"To convert a decimal number to binary, we repeatedly divide the number by _____.","o":["2","8","10","16"]},{"q":"The binary number 101 is equal to _____ in decimal.","o":["3","5","7","9"]},{"q":"In converting decimal to octal, the decimal number is repeatedly divided by _____.","o":["2","8","10","16"]},{"q":"When converting binary to decimal, each binary digit is multiplied by its _____.","o":["place value (power of 2)","remainder","quotient","divisor"]},{"q":"The decimal number 8 is equal to _____ in binary.","o":["1000","1100","1010","0110"]}],"th":["Convert the decimal number 25 to binary, showing all working.","Convert the binary number 1011 to decimal, showing all working.","Explain, in steps, how to convert a decimal number to its octal equivalent."],"asg":"Convert the decimal numbers 18 and 30 to binary, showing full working for each.","prj":"Prepare a short chart showing the decimal equivalents of the binary numbers from 0000 to 1111 (0 to 15), for classroom display."},{"w":4,"p":1,"t":"Input/Output Devices and Storage Types","topic":"Computer Hardware","obj":["Identify at least five input devices and five output devices of a computer.","Distinguish between primary and secondary storage devices."],"blocks":[["p","Computer hardware refers to the physical, touchable parts of a computer system."],["li","Input devices allow users to enter data into the computer; examples include the keyboard, mouse, scanner, microphone and webcam."],["li","Output devices allow the computer to present processed information to the user; examples include the monitor, printer, speaker and projector."],["li","Storage devices keep data for later use. Primary storage (such as RAM) is temporary and loses its content when the computer is switched off, while secondary storage (such as hard disks, flash drives and memory cards) keeps data permanently until it is deleted."]],"sum":"The lesson identified common input, output and storage devices, and distinguished between primary and secondary storage.","mcq":[{"q":"Which of the following is an input device?","o":["Monitor","Keyboard","Printer","Speaker"]},{"q":"Which of the following is an output device?","o":["Mouse","Scanner","Printer","Microphone"]},{"q":"RAM is an example of _____ storage.","o":["primary","secondary","permanent","external"]},{"q":"A flash drive is an example of _____ storage.","o":["primary","secondary","temporary","internal-only"]},{"q":"The device used to convert paper documents into digital form is called a _____.","o":["scanner","speaker","monitor","printer"]}],"th":["Differentiate between input devices and output devices, giving two examples of each.","Explain the difference between primary storage and secondary storage.","State three storage devices you have used or seen, and describe one use of each."],"asg":"Make a list of five input devices and five output devices found in your school's computer laboratory or at home.","prj":"In groups, create a labelled chart or poster showing pictures of at least six computer hardware devices, grouped as input, output or storage devices."},{"w":4,"p":2,"t":"System Unit versus Peripheral Devices","topic":"Computer Hardware","obj":["Distinguish between system unit components and peripheral devices.","Identify at least four peripheral devices and state their functions."],"blocks":[["p","The system unit is the main case of a computer that houses essential internal components such as the motherboard, central processing unit (CPU), RAM and the internal storage drive."],["p","Peripheral devices are hardware components connected to the system unit from outside, used to input or output data; examples include the keyboard, mouse, monitor, printer and external hard drive. Peripherals depend on the system unit to function, while the system unit contains the components that actually process data."]],"sum":"The lesson distinguished the system unit, which houses internal processing components, from peripheral devices, which connect externally for input or output.","mcq":[{"q":"The main case that houses the CPU and motherboard is called the _____.","o":["system unit","peripheral","monitor","keyboard"]},{"q":"Which of these is a peripheral device?","o":["CPU","Motherboard","Printer","RAM chip"]},{"q":"The component often described as the \"brain\" of the computer is the _____.","o":["CPU","mouse","monitor","speaker"]},{"q":"Peripheral devices are connected to the _____.","o":["system unit","internet only","power socket only","network cable only"]},{"q":"Which of the following is found inside the system unit?","o":["Motherboard","External hard drive","Printer","Scanner"]}],"th":["Explain the difference between a system unit and a peripheral device.","List four peripheral devices and state one function of each.","Describe the role of the motherboard within the system unit."],"asg":"Draw a simple diagram of a desktop computer showing the system unit and at least three peripheral devices connected to it.","prj":"Visit the school computer laboratory, with permission, and list the peripheral devices attached to one computer system."},{"w":5,"p":1,"t":"File/Folder Structure and Naming Conventions","topic":"File Management and Digital Organisation","obj":["Explain the meaning of files and folders in a computer system.","State the rules for naming files and folders correctly."],"blocks":[["p","A file is a collection of related data stored under one name on a computer, such as a document, picture or video. A folder (or directory) is a container used to organise and group related files together, making them easier to find."],["p","Good file and folder naming conventions include:"],["li","Using short, descriptive names"],["li","Avoiding special characters such as \\ / : * ? \" < > |"],["li","Separating words with underscores or hyphens instead of spaces where required"],["li","Including dates in a consistent format when relevant, for example Report_2026_09_15"],["p","Well-organised files and folders save time and reduce the risk of losing important work."]],"sum":"The lesson explained the meaning of files and folders and set out the rules for naming them correctly.","mcq":[{"q":"A collection of related data stored under one name on a computer is called a _____.","o":["file","folder","network","browser"]},{"q":"A container used to group and organise related files is called a _____.","o":["file","folder","printer","monitor"]},{"q":"Which of the following is an example of good file-naming practice?","o":["File?1","Report_2026","My/File","File*Name"]},{"q":"File names should avoid special characters such as _____.","o":["letters","numbers","/ and *","underscores"]},{"q":"Organising files into well-named folders mainly helps to _____.","o":["make files harder to find","save time and reduce lost work","slow down the computer","delete files automatically"]}],"th":["Explain the difference between a file and a folder.","State three rules to follow when naming files or folders.","Explain why proper file organisation is important for a student."],"asg":"Write down five examples of good file names and five examples of poor file names, explaining what makes each poor example unsuitable.","prj":"Sketch a simple folder structure you would use to organise your school subjects, for example a main folder with subfolders for each subject."},{"w":5,"p":2,"t":"File Operations and File Types/Extensions","topic":"File Management and Digital Organisation","obj":["Perform basic file operations — create, rename, move, copy and delete — with guidance.","Identify common file types by their extensions."],"blocks":[["p","File operations are actions performed on files and folders to manage them effectively. To create a file or folder, we use the \"New\" option in the file explorer. To rename, we select the file, choose \"Rename\" and type the new name. To move a file, we cut it from one location and paste it in another. To copy a file, we duplicate it without removing the original. To delete a file, we select it and press the delete key, or move it to the recycle bin."],["p","A file extension is the set of letters after the dot in a file name that shows its type; for example, .docx for Word documents, .xlsx for spreadsheets, .pdf for portable documents, .jpg for images, and .mp3 for audio files."]],"sum":"The lesson practised the five basic file operations — create, rename, move, copy and delete — and introduced common file extensions.","mcq":[{"q":"To duplicate a file without removing the original, we use the _____ operation.","o":["copy","delete","rename","format"]},{"q":"The file extension .docx is commonly used for _____ files.","o":["Word document","spreadsheet","image","audio"]},{"q":"A deleted file on most computers is first sent to the _____.","o":["recycle bin","desktop","folder","printer"]},{"q":"The file extension .jpg is commonly associated with _____ files.","o":["image","spreadsheet","presentation","audio"]},{"q":"To change the name of an existing file, we use the _____ operation.","o":["rename","copy","delete","move"]}],"th":["Describe the steps involved in moving a file from one folder to another.","Explain the difference between copying a file and moving a file.","State the file extensions for a Word document, a spreadsheet and an image file."],"asg":"List five file extensions and state the type of file each one represents.","prj":"Practise, at home or in the computer laboratory, creating a folder named with your class and surname, containing three sample files with appropriate names."},{"w":6,"p":1,"t":"System Software and Application Software","topic":"Computer Software","obj":["Define computer software and distinguish it from hardware.","Differentiate between system software and application software, with examples."],"blocks":[["p","Computer software refers to the set of instructions, programs and data that tell computer hardware what to do and how to do it; unlike hardware, software cannot be physically touched."],["p","System software manages and controls computer hardware so that application software can run; examples include operating systems such as Windows, macOS and Linux. Application software is designed to help users perform specific tasks; examples include Microsoft Word for word processing, Microsoft Excel for spreadsheets, and web browsers for internet access."]],"sum":"The lesson defined computer software, distinguished it from hardware, and explained the difference between system software and application software.","mcq":[{"q":"Computer software can best be described as _____.","o":["the physical parts of a computer","a set of instructions and programs","the computer's monitor","a type of keyboard"]},{"q":"Which of the following is an example of system software?","o":["Microsoft Word","Windows operating system","A web browser","A calculator app"]},{"q":"Which of the following is an example of application software?","o":["Linux","macOS","Microsoft Excel","Windows"]},{"q":"The main function of system software is to _____.","o":["manage and control computer hardware","type letters only","play music only","print documents only"]},{"q":"Unlike hardware, software cannot be _____.","o":["installed","physically touched","updated","used"]}],"th":["Define computer software and explain how it differs from computer hardware.","Distinguish between system software and application software, giving two examples of each.","Explain why an operating system is necessary before application software can be used."],"asg":"List three examples of system software and three examples of application software found on computers or phones you have used.","prj":"Find out, by asking an adult or checking a device, the name and version of the operating system it uses, and write a short note about it."},{"w":6,"p":2,"t":"Utility Programs and Their Functions","topic":"Computer Software","obj":["Explain the meaning and purpose of utility programs.","Identify at least four utility programs and state their functions."],"blocks":[["p","Utility programs are a category of system software designed to help maintain, analyse, configure and optimise a computer system, keeping it running smoothly."],["li","Antivirus programs detect and remove harmful software."],["li","Disk cleanup tools remove unnecessary files to free up storage space."],["li","File compression tools reduce the size of files for easier storage or sharing."],["li","Backup software copies important data to another location for safekeeping."],["p","Utility programs work alongside the operating system to support the overall performance and security of the computer."]],"sum":"The lesson explained the meaning and purpose of utility programs and described examples such as antivirus, disk cleanup, compression and backup tools.","mcq":[{"q":"Utility programs are mainly used to _____.","o":["entertain users","maintain and optimise the computer system","replace the operating system","design websites only"]},{"q":"A program that detects and removes harmful software is called _____.","o":["an antivirus","a browser","a spreadsheet","a presentation tool"]},{"q":"A utility tool that frees up storage space by removing unnecessary files is called _____.","o":["disk cleanup","word processor","web browser","email client"]},{"q":"File compression tools are mainly used to _____.","o":["reduce the size of files","increase file size","delete files permanently","print files"]},{"q":"Backup software is used to _____.","o":["copy important data to another location for safekeeping","permanently delete old files","design graphics","browse the internet"]}],"th":["Explain the meaning and general purpose of utility programs.","Describe the function of an antivirus program.","State two other utility programs, apart from antivirus, and explain what each one does."],"asg":"Find out the name of any antivirus program installed on a computer you have access to, and write two sentences about what it does.","prj":"Prepare a short poster illustrating four utility programs and their functions, for classroom display."},{"w":8,"p":1,"t":"Functions of an Operating System","topic":"Operating Systems","obj":["Define an operating system.","State at least four functions of an operating system."],"blocks":[["p","An operating system (OS) is system software that manages computer hardware and software resources and provides common services for application programs to run."],["li","Managing the computer's memory and processor"],["li","Controlling input and output devices"],["li","Managing files and folders"],["li","Providing a user interface through which users interact with the computer"],["li","Managing security by controlling access to the system"],["p","Without an operating system, a computer cannot start up or run any application software."]],"sum":"The lesson defined the operating system and outlined its key functions, including memory management, device control, file management, providing a user interface and managing security.","mcq":[{"q":"An operating system is best described as software that _____.","o":["manages computer hardware and software resources","only plays videos","only prints documents","only stores photographs"]},{"q":"Which of the following is a function of an operating system?","o":["Managing memory and the processor","Cooking food","Cleaning the classroom","Teaching lessons"]},{"q":"The operating system provides a _____ through which users interact with the computer.","o":["user interface","keyboard only","printer only","speaker only"]},{"q":"Without an operating system, a computer _____.","o":["can run any software easily","cannot start up or run application software","becomes faster","becomes a calculator only"]},{"q":"Managing files and folders on a computer is a function of the _____.","o":["operating system","printer","scanner","speaker"]}],"th":["Define an operating system in your own words.","State four functions of an operating system.","Explain what would likely happen if a computer had no operating system installed."],"asg":"Write down the name of the operating system installed on any computer or phone you have used, and list two functions it performs.","prj":"Observe a computer starting up (booting) and write, in order, three things you notice happening on the screen."},{"w":8,"p":2,"t":"Types and Examples of Operating Systems","topic":"Operating Systems","obj":["Identify types of operating systems: single-user, multi-user, mobile and network.","State examples of operating systems used on computers and mobile devices."],"blocks":[["p","Operating systems can be grouped into types based on how they are used."],["li","Single-user operating system: allows only one user to work on the computer at a time, such as Windows on a personal computer"],["li","Multi-user operating system: allows several users to access the computer's resources at the same time, common on large servers"],["li","Mobile operating system: designed for smartphones and tablets, such as Android and iOS"],["li","Network operating system: manages and coordinates computers connected together in a network"],["p","Common examples of operating systems include Microsoft Windows, macOS, Linux, Android and iOS."]],"sum":"The lesson classified operating systems into single-user, multi-user, mobile and network types, with common examples of each.","mcq":[{"q":"Which of these is a mobile operating system?","o":["Android","Windows Server","Linux Server","DOS"]},{"q":"An operating system that allows only one user to work at a time is called a _____ operating system.","o":["single-user","multi-user","network","mobile"]},{"q":"Which of the following is an example of a desktop operating system?","o":["iOS","Windows","Android","Symbian"]},{"q":"An operating system that manages several computers connected in a network is called a _____ operating system.","o":["network","single-user","mobile","game"]},{"q":"iOS is the mobile operating system developed mainly for _____ devices.","o":["Apple","Samsung","Tecno","Infinix"]}],"th":["State two types of operating systems and give one example of each.","Explain the difference between a single-user and a multi-user operating system.","Name two mobile operating systems commonly found on smartphones."],"asg":"Identify the operating system used on a phone or computer in your home, and state whether it is a mobile or desktop operating system.","prj":"In a table, compare any two operating systems, such as Windows and Android, under three headings: Type, Common Devices, One Special Feature."},{"w":9,"p":1,"t":"Preventive Computer Care and Health/Safety Measures","topic":"Computer Maintenance & Safety + Data Protection & Backup Systems (Integrated)","obj":["State at least five preventive maintenance practices for computers.","Explain health and safety measures to observe when using computers."],"blocks":[["p","Preventive computer maintenance involves practices that keep a computer working well and extend its lifespan. These include:"],["li","Regularly cleaning dust from the keyboard, screen and vents"],["li","Avoiding eating or drinking near the computer"],["li","Using a stabiliser or surge protector to guard against power fluctuations"],["li","Updating software and antivirus programs regularly"],["li","Shutting down the computer properly instead of switching it off abruptly"],["p","Health and safety measures when using computers include sitting with correct posture and keeping the screen at eye level to protect the neck and eyes, taking short breaks to rest the eyes and avoid strain, arranging cables neatly to prevent tripping, and ensuring proper ventilation to prevent overheating of equipment."]],"sum":"The lesson covered preventive maintenance practices that extend a computer's lifespan and the health and safety measures computer users should observe.","mcq":[{"q":"Which of the following is a preventive maintenance practice?","o":["Eating over the keyboard","Regularly cleaning dust from the computer","Switching off the computer abruptly at all times","Ignoring software updates"]},{"q":"A device used to protect a computer from power fluctuations is called a _____.","o":["surge protector","scanner","printer","speaker"]},{"q":"To protect the eyes and neck, the computer screen should be positioned _____.","o":["far above eye level","at eye level","on the floor","behind the user"]},{"q":"Which of these is a good health and safety practice for computer users?","o":["Sitting with correct posture","Leaving cables scattered on the floor","Working for hours without breaks","Blocking the computer's ventilation"]},{"q":"Updating antivirus software regularly helps to _____.","o":["protect the computer from new threats","slow down the computer permanently","delete all files","disconnect the internet"]}],"th":["State four preventive maintenance practices that help keep a computer in good working condition.","Explain two health and safety measures a computer user should observe.","Describe what could happen to a computer if dust and dirt are allowed to build up inside it."],"asg":"List five rules for taking good care of a computer at home or in the school computer laboratory.","prj":"In groups, prepare a short safety checklist poster of at least six points for proper computer care and use, for display in the computer laboratory."},{"w":9,"p":2,"t":"Data-Backup Strategies and Disaster-Recovery/Redundancy Concepts","topic":"Computer Maintenance & Safety + Data Protection & Backup Systems (Integrated)","obj":["Explain the meaning and importance of data backup.","State at least three data-backup strategies and explain the concept of redundancy in disaster recovery."],"blocks":[["p","Data backup is the process of making an extra copy of important data and storing it separately, so that the information can be recovered if the original is lost, damaged or stolen."],["li","Local backup: data is copied onto an external device such as a flash drive or external hard disk"],["li","Cloud backup: data is stored on the internet using services such as Google Drive or OneDrive"],["li","Scheduled backup: copies are made automatically at regular intervals"],["p","Redundancy, in disaster recovery, means keeping more than one copy of important data, often in different locations, so that if one copy is lost, damaged or destroyed, another copy remains available. Regular backup and redundancy together form a strong disaster-recovery plan, helping individuals and organisations avoid permanent loss of important data."]],"sum":"The lesson explained data backup, its main strategies, and the concept of redundancy in a disaster-recovery plan.","mcq":[{"q":"Data backup is best described as _____.","o":["deleting old files","making an extra copy of data for safekeeping","formatting a storage device","switching off a computer"]},{"q":"Storing a copy of data on the internet using a service such as Google Drive is an example of _____ backup.","o":["cloud","local","manual","power"]},{"q":"Keeping more than one copy of important data in different locations is called _____.","o":["redundancy","deletion","formatting","compression"]},{"q":"Which of these is an example of local backup?","o":["Copying files to an external hard disk","Deleting unused files","Browsing the internet","Installing new software"]},{"q":"A strong disaster-recovery plan mainly depends on _____.","o":["regular backup and redundancy","using only one storage device","avoiding all backups","deleting files after use"]}],"th":["Explain the meaning and importance of data backup.","Describe two strategies for backing up important data.","Explain, with an example, what redundancy means in disaster recovery."],"asg":"List three types of data you would want to back up if you owned a computer, and suggest one suitable backup method for each.","prj":"Design a simple backup plan, in point form, for the school's student records, stating how often backups should be made and where copies should be kept."},{"w":10,"p":1,"t":"Bits, Bytes and Character Encoding (ASCII/Unicode)","topic":"Data Representation","obj":["Define the terms bit and byte and relate them to data storage.","Explain the purpose of character encoding systems such as ASCII and Unicode."],"blocks":[["p","A bit (binary digit) is the smallest unit of data in a computer, having a value of either 0 or 1. A byte is a group of eight bits and is commonly used to represent one character, such as a letter or symbol. Larger units of storage are built from bytes, such as kilobytes (KB), megabytes (MB) and gigabytes (GB)."],["p","Character encoding systems assign a unique binary code to each character so that computers can store and process text. ASCII (American Standard Code for Information Interchange) is an early encoding system that represents 128 characters, including English letters, digits and symbols, using 7 or 8 bits. Unicode is a more modern encoding system that can represent characters from many languages of the world, including African and Asian scripts, using more bits than ASCII."]],"sum":"The lesson defined bits and bytes and explained the purpose of character encoding systems such as ASCII and Unicode.","mcq":[{"q":"The smallest unit of data in a computer is called a _____.","o":["bit","byte","kilobyte","file"]},{"q":"A byte is made up of _____ bits.","o":["four","eight","sixteen","two"]},{"q":"ASCII is mainly used to represent _____ in binary form.","o":["images","characters/text","sound","video"]},{"q":"Unicode is preferred over ASCII mainly because it can represent _____.","o":["fewer characters","characters from many world languages","only numbers","only punctuation marks"]},{"q":"1024 bytes make up one _____.","o":["bit","kilobyte","terabyte","petabyte"]}],"th":["Define a bit and a byte, and explain the relationship between them.","Explain the purpose of character encoding systems in computing.","State one difference between ASCII and Unicode."],"asg":"Write down the number of bits in one byte, and state one reason why computers need character encoding systems such as ASCII.","prj":"Using an ASCII table, from the textbook or internet where available, find and write down the binary codes for the letters in your first name."},{"w":10,"p":2,"t":"Representation of Images and Sound in Digital Form","topic":"Data Representation","obj":["Explain how images are represented digitally using pixels.","Explain how sound is represented digitally through sampling."],"blocks":[["p","Digital images are made up of tiny dots called pixels, each of which stores colour information as binary data. The more pixels an image contains, the higher its resolution and the sharper the picture appears; this is often described using dimensions such as 1920 by 1080 pixels. Colour in a digital image is commonly represented using combinations of red, green and blue (RGB) values, each stored as binary numbers."],["p","Sound is represented digitally through a process called sampling, in which an analogue sound wave is measured at many points per second and each measurement is converted into a binary number. This collection of samples is then stored and can be replayed as digital audio, such as in an MP3 file."]],"sum":"The lesson explained how digital images are represented using pixels and RGB values, and how sound is represented digitally through sampling.","mcq":[{"q":"A digital image is made up of tiny dots called _____.","o":["pixels","bytes","samples","bits only"]},{"q":"Colour in digital images is commonly represented using combinations of _____.","o":["red, green and blue values","black and white only","letters and numbers","sound waves"]},{"q":"The process of measuring an analogue sound wave at many points to convert it into digital form is called _____.","o":["sampling","compression","formatting","encoding"]},{"q":"A higher number of pixels in an image generally means _____.","o":["lower resolution","higher resolution/a sharper picture","no change in quality","a smaller file size always"]},{"q":"An MP3 file is an example of digitally represented _____.","o":["sound","hardware","a folder","a network"]}],"th":["Explain how a digital image is represented using pixels.","Explain the process of sampling in the digital representation of sound.","State one real-life example each of a digital image file and a digital sound file, including their common file extensions."],"asg":"Check the properties of a picture file and an audio file on a computer or phone, and write down anything you notice about pixels, size or format.","prj":"In groups, prepare a short presentation explaining, in simple terms, how a photograph taken on a phone is stored and displayed as a digital image."}];
-const ANS=[[1,1,1,0,1],[0,1,0,1,0],[1,0,1,0,0],[0,0,0,0,2],[0,2,0,0,1],[0,1,1,0,0],[1,2,0,1,0],[0,2,0,0,0],[0,1,1,2,1],[0,0,0,0,0],[1,1,2,0,1],[1,0,0,0,0],[0,0,0,1,0],[0,0,1,0,0],[1,0,1,0,0],[1,0,0,0,0],[0,1,1,1,1],[0,0,0,1,0]];
+const MCQ=[[{"q":"Computer software can best be described as _____.","o":["the physical parts of a computer","a set of instructions and programs","the computer's monitor","a type of keyboard"]},{"q":"Which of the following is an example of system software?","o":["Microsoft Word","Windows operating system","A web browser","A calculator app"]},{"q":"Which of the following is an example of application software?","o":["Linux","macOS","Microsoft Excel","Windows"]},{"q":"The main function of system software is to _____.","o":["manage and control computer hardware","type letters only","play music only","print documents only"]},{"q":"Unlike hardware, software cannot be _____.","o":["installed","physically touched","updated","used"]}],[{"q":"Utility programs are mainly used to _____.","o":["entertain users","maintain and optimise the computer system","replace the operating system","design websites only"]},{"q":"A program that detects and removes harmful software is called _____.","o":["an antivirus","a browser","a spreadsheet","a presentation tool"]},{"q":"A utility tool that frees up storage space by removing unnecessary files is called _____.","o":["disk cleanup","word processor","web browser","email client"]},{"q":"File compression tools are mainly used to _____.","o":["reduce the size of files","increase file size","delete files permanently","print files"]},{"q":"Backup software is used to _____.","o":["copy important data to another location for safekeeping","permanently delete old files","design graphics","browse the internet"]}],[{"q":"An operating system is best described as software that _____.","o":["manages computer hardware and software resources","only plays videos","only prints documents","only stores photographs"]},{"q":"Which of the following is a function of an operating system?","o":["Managing memory and the processor","Cooking food","Cleaning the classroom","Teaching lessons"]},{"q":"The operating system provides a _____ through which users interact with the computer.","o":["user interface","keyboard only","printer only","speaker only"]},{"q":"Without an operating system, a computer _____.","o":["can run any software easily","cannot start up or run application software","becomes faster","becomes a calculator only"]},{"q":"Managing files and folders on a computer is a function of the _____.","o":["operating system","printer","scanner","speaker"]}],[{"q":"Which of these is a mobile operating system?","o":["Android","Windows Server","Linux Server","DOS"]},{"q":"An operating system that allows only one user to work at a time is called a _____ operating system.","o":["single-user","multi-user","network","mobile"]},{"q":"Which of the following is an example of a desktop operating system?","o":["iOS","Windows","Android","Symbian"]},{"q":"An operating system that manages several computers connected in a network is called a _____ operating system.","o":["network","single-user","mobile","game"]},{"q":"iOS is the mobile operating system developed mainly for _____ devices.","o":["Apple","Samsung","Tecno","Infinix"]}]];
+/* MCQ[0..3] are the four lessons: W6P1, W6P2, W8P1, W8P2 (5 questions each) */
+const ANS=[[1,1,2,0,1],[1,0,0,0,0],[0,0,0,1,0],[0,0,1,0,0]];
+const WHY=[
+ ['Software is the set of instructions and programs. You cannot touch it. The physical parts are hardware.','Windows is an operating system, and an operating system is system software. Word, a browser and a calculator app are application software.','Microsoft Excel is for spreadsheets, a job a user wants done. Linux, macOS and Windows are operating systems.','System software manages and controls the hardware so that application software can run.','You can touch hardware like a keyboard. Software is instructions, so you cannot touch it.'],
+ ['Utility programs maintain and optimise the computer so it keeps running smoothly.','An antivirus finds and removes harmful software.','Disk cleanup removes unnecessary files to free up storage space.','Compression makes files smaller so they are easier to store or share.','Backup software copies important data somewhere else, in case the original is lost.'],
+ ['The operating system manages the computer\'s hardware and software resources.','Managing memory and the processor is one of the main jobs of the operating system.','The user interface is how you talk to the computer: icons, menus and touch. The operating system provides it.','Without an operating system the computer cannot start up or run apps.','Managing files and folders is a job of the operating system.'],
+ ['Android is a mobile operating system, made for phones and tablets.','Single-user means only one person can work at a time.','Windows is a desktop operating system. iOS and Android are mobile.','A network operating system manages and coordinates computers connected in a network.','iOS is made by Apple, for iPhones and iPads.']
+];
+const LEVELS=[
+ {id:1,name:'Meet the Software',wp:'Week 6 · Period 1',topic:'System Software and Application Software',badge:'Software Spotter',
+  mission:'Find out what software really is, and sort the programs on every computer into the right team.',
+  cards:[
+   {t:'Software',ic:'code',d:'A set of instructions, programs and data that tell the hardware what to do and how to do it. You cannot touch it.',like:'Hardware is the pot and the stove. Software is the recipe that tells them what to cook.'},
+   {t:'Hardware vs software',ic:'laptop',d:'Hardware is the physical, touchable part: keyboard, screen, mouse. Software is the instructions inside. Both are needed.',like:'Your phone screen is hardware. WhatsApp is software.'},
+   {t:'System software',ic:'gear',d:'Manages and controls the computer hardware so that application software can run. Operating systems such as Windows, macOS and Linux are system software.',like:'The school manager. Nobody teaches in class, but the school cannot run without the manager.'},
+   {t:'Application software',ic:'tool',d:'Designed to help users do specific tasks. Microsoft Word for documents, Microsoft Excel for spreadsheets, a web browser for the internet.',like:'The tools in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
+ {id:2,name:'Tech Clinic',wp:'Week 6 · Period 2',topic:'Utility Programs and Their Functions',badge:'Tech Doctor',
+  mission:'Utility programs keep a computer healthy. Treat the sick computers and pick the right tool.',
+  cards:[
+   {t:'Utility programs',ic:'tool',d:'A category of system software that helps maintain, analyse, configure and optimise a computer so it keeps running smoothly. They work with the operating system.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
+   {t:'Antivirus',ic:'shield',d:'Detects and removes harmful software (viruses and malware).',like:'The security guard at the gate who checks every visitor and removes troublemakers.'},
+   {t:'Disk cleanup',ic:'broom',d:'Removes unnecessary files to free up storage space.',like:'The cleaner who sweeps rubbish out of the classroom so there is space to sit.'},
+   {t:'File compression',ic:'zip',d:'Reduces the size of files so they are easier to store or share.',like:'Packing clothes into a vacuum bag so the same things take up less room in your box.'},
+   {t:'Backup software',ic:'cloud',d:'Copies important data to another location for safekeeping.',like:'A photocopy of your result slip kept at home, in case the original is lost.'}]},
+ {id:3,name:'Run the Machine',wp:'Week 8 · Period 1',topic:'Functions of an Operating System',badge:'OS Boss',
+  mission:'You are the operating system today. Handle every request that comes in, and see what happens when the OS is missing.',
+  cards:[
+   {t:'Operating system',ic:'gear',d:'System software that manages computer hardware and software resources and provides common services so application programs can run.',like:'The principal of a school. Everyone and everything goes through the principal\'s office.'},
+   {t:'Memory and processor',ic:'chip',d:'The OS decides which program gets how much memory and when the processor works on it.',like:'The timetable officer deciding which class uses which room, and when.'},
+   {t:'Input and output devices',ic:'plug',d:'The OS controls devices like the keyboard, mouse, screen and printer.',like:'The prefect directing traffic so everyone moves in the right direction.'},
+   {t:'Files and folders',ic:'folder',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
+   {t:'User interface',ic:'screen',d:'The OS gives you a way to talk to the computer: icons, menus, windows or touch.',like:'The front desk. It is where you speak to the school.'},
+   {t:'Security',ic:'lock',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
+ {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',
+  mission:'Operating systems come in different types. Learn which one lives where, and who it is built for.',
+  cards:[
+   {t:'Single-user',ic:'user',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
+   {t:'Multi-user',ic:'users',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
+   {t:'Mobile',ic:'phone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
+   {t:'Network',ic:'network',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
+   {t:'Common examples',ic:'list',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
+];
 
-/* ---------- helpers & state ---------- */
+/* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-let S={};try{S=JSON.parse(localStorage.getItem('dt-ss1-notebook')||'{}')}catch(e){}
-['quiz','games','obj','got','think','task'].forEach(k=>S[k]=S[k]||{});
-const save=()=>{try{localStorage.setItem('dt-ss1-notebook',JSON.stringify(S))}catch(e){}};
-const blankify=(t,fill)=>esc(t).replace(/_{3,}/,`<span class="blank${fill?' f':''}">${fill?esc(fill):'&nbsp;'}</span>`);
+const IC={
+ code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9zM17 9l4 6M21 9l-4 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>',lockc:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',check:'<path d="M5 12l5 5 9-10"/>'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const COLS=['#E8590C','#0E9F5A','#3B6CFF','#7A5AF8','#D6336C','#0C8599'];
 
-function xp(){
+/* ---------- state ---------- */
+let S={};try{S=JSON.parse(localStorage.getItem('dt-squad')||'{}')}catch(e){}
+S.cards=S.cards||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.sound=S.sound!==false;S.best=S.best||0;
+const save=()=>{try{localStorage.setItem('dt-squad',JSON.stringify(S))}catch(e){}};
+function xpOf(){
   let x=0;
-  Object.values(S.quiz).forEach(v=>x+=v*10);
-  Object.values(S.games).forEach(v=>x+=v*5);
-  Object.values(S.obj).forEach(a=>x+=a.filter(Boolean).length*5);
-  Object.values(S.got).forEach(a=>x+=a.filter(Boolean).length*2);
-  Object.values(S.think).forEach(a=>x+=a.filter(t=>t&&t.trim().length>8).length*10);
-  Object.values(S.task).forEach(o=>x+=(o.a?10:0)+(o.p?10:0));
+  Object.values(S.cards).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.games).forEach(v=>x+=v);
+  Object.values(S.boss).forEach(v=>{x+=v*20;if(v===5)x+=50;if(v>=3)x+=100});
+  x+=S.final*15;if(S.final===10)x+=100;
   return x;
 }
-function paintXP(){
-  const x=xp(),lv=Math.floor(x/150)+1;
-  $('#lvl').textContent='LV '+lv;$('#xptxt').textContent=x+' XP';$('#xpbar').style.width=((x%150)/150*100)+'%';
-}
-function pips(i){
-  const g=Object.keys(S.games).some(k=>k.startsWith(i+'.'));
-  return [S.quiz[i]!==undefined,g,(S.obj[i]||[]).filter(Boolean).length===LESSONS[i].obj.length,(S.think[i]||[]).some(t=>t&&t.trim().length>8)];
+const TITLES=['Newbie','Tech Cadet','Byte Hunter','System Pro','Tech Legend'];
+const lvlOf=x=>Math.floor(x/250)+1;
+const titleOf=x=>TITLES[Math.min(TITLES.length-1,lvlOf(x)-1)];
+function badges(){
+  const b=LEVELS.map((l,i)=>({n:l.badge,ic:['code','tool','gear','phone'][i],on:(S.boss[l.id]||0)>=3}));
+  b.push({n:'Perfect Score',ic:'star',on:Object.values(S.boss).some(v=>v===5)||S.final===10});
+  b.push({n:'Combo Master',ic:'flame',on:S.best>=5});
+  b.push({n:'Grand Champion',ic:'trophy',on:S.final>=8});
+  return b;
 }
 
-/* ---------- router ---------- */
+/* ---------- sound & confetti ---------- */
+let AC=null;
+function tone(f,t,d,type='sine',v=.12){
+  if(!S.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}
+}
+const sfx={ok(){tone(660,0,.12);tone(880,.1,.18)},no(){tone(180,0,.25,'sawtooth',.07)},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.25))}};
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function burst(n=70){
+  if(RM)return;const cv=$('#fx'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cs=['#FFC21A','#3B6CFF','#0E9F5A','#E8590C','#7A5AF8','#D6336C'];
+  const ps=Array.from({length:n},()=>({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*14,vy:-Math.random()*13-3,r:4+Math.random()*5,c:cs[Math.random()*6|0],a:Math.random()*6}));
+  let f=0;(function step(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.4;p.a+=.2;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,p.r,p.r*1.6)});if(++f<80)requestAnimationFrame(step);else cx.clearRect(0,0,cv.width,cv.height)})();
+}
+
+/* ---------- Byte the mascot ---------- */
+function byteSVG(m){
+  const mouth=m==='no'?'<path d="M20 43q6-5 12 0" />':m==='ok'?'<path d="M19 40q7 8 14 0"/>':'<path d="M21 41h10"/>';
+  const eyes=m==='ok'?'<path d="M18 29q3-4 6 0M30 29q3-4 6 0"/>':'<circle cx="21" cy="29" r="3" fill="currentColor"/><circle cx="33" cy="29" r="3" fill="currentColor"/>';
+  return `<svg viewBox="0 0 54 58" aria-hidden="true"><path d="M27 4v8" stroke="var(--fg)" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="4" r="3.5" fill="var(--sun)"/><rect x="6" y="12" width="42" height="36" rx="12" fill="var(--blue)" stroke="var(--blue-d)" stroke-width="3"/><rect x="12" y="19" width="30" height="26" rx="8" fill="#fff"/><g style="color:#101B3B" stroke="#101B3B" stroke-width="2.5" fill="none" stroke-linecap="round">${eyes}${mouth}</g><rect x="1" y="26" width="5" height="10" rx="2.5" fill="var(--sun)"/><rect x="48" y="26" width="5" height="10" rx="2.5" fill="var(--sun)"/></svg>`;
+}
+const say=(el,mood,txt)=>{el.innerHTML=`${byteSVG(mood)}<div class="bubble ${mood==='idle'?'':mood}">${esc(txt)}</div>`};
+const CHEER=['Ehen! You sabi this one.','Correct! Keep going.','Nice one, champ.','Sharp! That is how it is done.','Yes! Byte is proud of you.'];
+const OOPS=['Oops. No wahala, now you know.','Not this time. Read the reason and try the next one.','Close. Learn from this one.','That one is tricky. Next one is yours.'];
+const pick=a=>a[Math.random()*a.length|0];
+
+/* ---------- XP bar & router ---------- */
+function paintMe(){
+  const x=xpOf(),lv=lvlOf(x);
+  $('#me').innerHTML=S.name?`<div class="xpw"><div class="t"><span>${esc(titleOf(x))}</span><span class="pts">LV ${lv}</span></div><div class="meter"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="pts" style="font-size:14px">${x} XP</span>
+  <div class="nav"><button id="nm" aria-pressed="${route.cur==='map'}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="ns" aria-label="Sound" aria-pressed="${S.sound}">${ic(S.sound?'sound':'mute')}</button></div>
+  <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`:'';
+  if(S.name){$('#nm').onclick=()=>location.hash='map';$('#nb').onclick=()=>location.hash='board';$('#ns').onclick=()=>{S.sound=!S.sound;save();paintMe()}}
+  syncSoon();
+}
 const app=$('#app');
 function route(){
-  const m=location.hash.match(/^#l(\d+)$/);
-  const i=m?+m[1]-1:-1;
-  if(i>=0&&i<LESSONS.length)lesson(i);else home();
-  window.scrollTo(0,0);paintXP();
+  const h=location.hash.slice(1)||'map';route.cur=h;
+  if(!S.name){welcome();paintMe();return}
+  const m=h.match(/^l([1-4])$/);
+  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='board')leaderboard();else mapView();
+  window.scrollTo(0,0);paintMe();
 }
-$('#home').onclick=()=>{location.hash='home'};
 addEventListener('hashchange',route);
+$('#brand').onclick=()=>{location.hash='map'};
 
-/* ---------- home ---------- */
-function home(){
-  document.title='Digital Tech Notebook';
-  const weeks=[...new Set(LESSONS.map(l=>l.w))];
-  const next=LESSONS.findIndex((l,i)=>pips(i).filter(Boolean).length<4);
-  app.innerHTML=`
-  <div class="hero">
-    <div class="bits">01000100 01010100<small>That is "DT" in binary. By Week 10 you will be able to read it.</small></div>
-    <h1>SSS1 Digital Technologies</h1>
-    <p>Your first-term notebook. Read the note, play the games, test yourself and earn points. Nine weeks, eighteen lessons.</p>
-    <div><button class="btn" id="go">${next<=0?'Start Lesson 1':'Continue Lesson '+(next+1)}</button></div>
-  </div>
-  <div class="weeks">${weeks.map(w=>{
-    const ls=LESSONS.map((l,i)=>[l,i]).filter(([l])=>l.w===w);
-    return `<div class="week"><div><div class="wk">WEEK ${w}</div><h3>${esc(ls[0][0].topic)}</h3></div>
-    <div class="lessons">${ls.map(([l,i])=>`<button class="tile" data-i="${i}"><span class="p">P${l.p}</span><span class="tt">${esc(l.t)}</span><span class="pips" title="Quiz, game, I can, think">${pips(i).map(o=>`<i class="${o?'on':''}"></i>`).join('')}</span></button>`).join('')}</div></div>`}).join('')}
-  </div>
-  <p class="foot">Dots on each lesson: quiz taken, game played, "I can" ticked, questions answered. Your progress is saved in this browser.</p>`;
-  $('#go').onclick=()=>{location.hash='l'+((next<0?0:next)+1)};
-  app.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{location.hash='l'+(+b.dataset.i+1)});
+/* ---------- welcome ---------- */
+function welcome(){
+  let color=COLS[2];
+  app.innerHTML=`<div class="welcome"><div class="byte" id="by" style="width:100%"></div><h1>System Squad</h1>
+  <p>Learn how computers really work. Beat the levels, win points, climb the class leaderboard.</p>
+  <div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="Example: CodeKing"></div>
+  <div class="field"><label>Pick your colour</label><div class="colors" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
+  <button class="btn sun" id="go">Start playing</button></div>`;
+  say($('#by'),'idle','Hi! I am Byte. I will help you understand software and operating systems. Pick a nickname (not your full name) and let us begin.');
+  app.querySelectorAll('#cl button').forEach(b=>b.onclick=()=>{color=b.dataset.c;app.querySelectorAll('#cl button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+  $('#go').onclick=()=>{const n=$('#nick').value.trim();if(!n){say($('#by'),'no','Type a nickname first.');return}S.name=n;S.color=color;save();sfx.win();burst();location.hash='map';route()};
 }
 
-/* ---------- lesson page ---------- */
-function lesson(i){
-  const L=LESSONS[i];
-  document.title='W'+L.w+' P'+L.p+' · '+L.t;
-  S.obj[i]=S.obj[i]||L.obj.map(()=>false);
-  S.think[i]=S.think[i]||L.th.map(()=>'');
-  S.task[i]=S.task[i]||{a:false,p:false};
-  const lis=L.blocks.filter(b=>b[0]==='li');
-  S.got[i]=S.got[i]||lis.map(()=>false);
-  let li=0;
-  const blocks=L.blocks.map((b,k)=>{
-    if(b[0]==='p'){
-      if(/^Worked example/i.test(b[1]))return `<div class="callout"><b>Worked example.</b> ${esc(b[1].replace(/^Worked example:\s*/i,''))}</div>`;
-      return `<p class="${k===0?'lead':''}">${esc(b[1])}</p>`;
-    }
-    const n=li++,t=b[1],c=t.indexOf(': ');
-    const head=c>0&&c<70?`<b>${esc(t.slice(0,c))}</b><span class="desc">${esc(t.slice(c+2))}</span>`:`<span class="desc" style="filter:none!important">${esc(t)}</span>`;
-    return `<button class="li${S.got[i][n]?' got':''}" data-n="${n}" aria-pressed="${!!S.got[i][n]}"><span class="body">${head}</span><span class="tick">✓</span></button>`;
-  });
-  // group consecutive li into .lis wrappers
-  let html='',open=false;
-  L.blocks.forEach((b,k)=>{
-    const isLi=b[0]==='li';
-    if(isLi&&!open){html+='<div class="lis">';open=true}
-    if(!isLi&&open){html+='</div>';open=false}
-    html+=blocks[k];
-  });
-  if(open)html+='</div>';
-  const W=widgetsFor(i);
-  app.innerHTML=`
-  <div class="lh">
-    <div class="eyebrow">Week ${L.w} · Period ${L.p} · ${esc(L.topic)}</div>
-    <h1>${esc(L.t)}</h1>
-  </div>
-  <nav class="chips"><a href="#sec-learn" data-s="learn">Learn</a>${W.length?'<a href="#sec-try" data-s="try">Try it</a>':''}<a href="#sec-quiz" data-s="quiz">Quiz</a><a href="#sec-think" data-s="think">Think</a><a href="#sec-home" data-s="home">Take-home</a></nav>
-  <section id="sec-can"><h2>By the end of this lesson I can</h2><div class="can">${L.obj.map((o,k)=>`<button class="check" data-k="${k}" aria-pressed="${S.obj[i][k]}"><span class="box">✓</span><span>${esc(o)}</span></button>`).join('')}</div></section>
-  <section id="sec-learn"><h2>Learn</h2>
-    ${lis.length?`<div class="tools"><span class="prog" id="prog"></span><button class="switch" id="cover" aria-pressed="false"><i></i>Hide answers</button></div>`:''}
-    <div class="note" id="note" style="display:grid;gap:12px">${html}</div>
-    <div class="sumbox"><div class="eyebrow">Remember this</div><p>${esc(L.sum)}</p></div>
-  </section>
-  ${W.length?`<section id="sec-try"><h2>Try it</h2><div id="widgets" style="display:grid;gap:14px"></div></section>`:''}
-  <section id="sec-quiz"><h2>Quiz</h2><div class="w" id="quiz"></div></section>
-  <section id="sec-think"><h2>Think it through</h2><p class="sub" style="margin:0;color:var(--muted)">Write your answer in your own words. It saves on this device as you type.</p>
-    ${L.th.map((q,k)=>`<div class="card q"><label for="th${k}">${esc(q)}</label><textarea id="th${k}" data-k="${k}" placeholder="Type your answer here">${esc(S.think[i][k]||'')}</textarea></div>`).join('')}
-  </section>
-  <section id="sec-home"><h2>Take-home</h2>
-    <button class="check" data-t="a" aria-pressed="${S.task[i].a}"><span class="box">✓</span><span><b>Assignment.</b> ${esc(L.asg)}</span></button>
-    <button class="check" data-t="p" aria-pressed="${S.task[i].p}"><span class="box">✓</span><span><b>Project.</b> ${esc(L.prj)}</span></button>
-  </section>
-  <div class="nav">${i>0?`<a class="btn ghost" href="#l${i}">← ${esc(LESSONS[i-1].t)}</a>`:'<span></span>'}${i<LESSONS.length-1?`<a class="btn" href="#l${i+2}">${esc(LESSONS[i+1].t)} →</a>`:`<a class="btn" href="#home">Back to map</a>`}</div>`;
-  $('.nav',app).querySelectorAll('a').forEach(a=>a.style.textDecoration='none');
-  // chips smooth anchor (hash is reserved for routing)
-  app.querySelectorAll('.chips a').forEach(a=>a.onclick=e=>{e.preventDefault();const t=$('#sec-'+a.dataset.s);t&&t.scrollIntoView({behavior:'smooth'})});
-  // objectives
-  app.querySelectorAll('.check[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;S.obj[i][k]=!S.obj[i][k];b.setAttribute('aria-pressed',S.obj[i][k]);save();paintXP()});
-  app.querySelectorAll('.check[data-t]').forEach(b=>b.onclick=()=>{const k=b.dataset.t;S.task[i][k]=!S.task[i][k];b.setAttribute('aria-pressed',S.task[i][k]);save();paintXP()});
-  // note cards
-  const prog=()=>{const p=$('#prog');if(p)p.textContent=`Points understood: ${S.got[i].filter(Boolean).length} of ${lis.length}`};prog();
-  app.querySelectorAll('.li').forEach(b=>b.onclick=()=>{const n=+b.dataset.n;S.got[i][n]=!S.got[i][n];b.classList.toggle('got',S.got[i][n]);b.setAttribute('aria-pressed',S.got[i][n]);prog();save();paintXP()});
-  const cv=$('#cover');if(cv)cv.onclick=()=>{const on=cv.getAttribute('aria-pressed')!=='true';cv.setAttribute('aria-pressed',on);$('#note').classList.toggle('cover',on)};
-  // think
-  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{S.think[i][+t.dataset.k]=t.value;save();paintXP()});
-  // widgets
-  const wb=$('#widgets');if(wb)W.forEach((fn,gi)=>{const d=document.createElement('div');wb.appendChild(d);fn(d,i,gi)});
-  quiz($('#quiz'),i);
+/* ---------- map ---------- */
+function done(l){return (S.boss[l]||0)>=3}
+function stars(n){return `<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`}
+const starsFor=l=>{const b=S.boss[l]||0;return b>=5?3:b>=4?2:b>=3?1:0};
+function mapView(){
+  const x=xpOf();
+  app.innerHTML=`<div class="hero"><div><h1>Welcome, ${esc(S.name)}</h1><p>${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP. Finish each level to unlock the next one.</p></div></div>
+  <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);return `<button class="node ${done(l.id)?'done':''}" data-l="${l.id}" ${locked?'disabled':''}><span class="num">${locked?ic('lock'):l.id}</span><span class="tx"><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></span>${stars(starsFor(l.id))}</button>`}).join('')}
+  <button class="node final" id="fin" ${LEVELS.every(l=>done(l.id))?'':'disabled'}><span class="num">${LEVELS.every(l=>done(l.id))?ic('trophy'):ic('lock')}</span><span class="tx"><h3>Grand Challenge</h3><small>10 mixed questions against the clock. Unlocks when you pass all four levels. Best: ${S.final}/10</small></span></button></div>
+  <h2 style="font-size:24px;padding-top:8px">Your badges</h2><div class="badges">${badges().map(b=>`<span class="badge ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
+  app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>location.hash='l'+b.dataset.l);
+  $('#fin').onclick=()=>location.hash='final';
 }
 
-/* ---------- quiz ---------- */
-function quiz(el,li){
-  const L=LESSONS[li];let qs,i,score,hist;
-  function start(){qs=L.mcq.map((m,k)=>({q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[li][k]})))}));i=0;score=0;hist=[];draw()}
-  function dots(){return `<div class="dots">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`}
+/* ---------- level ---------- */
+function level(n){
+  const L=LEVELS[n-1];document.title=L.name+' · System Squad';
+  S.cards[n]=S.cards[n]||L.cards.map(()=>false);
+  const W=widgetsFor(n);
+  app.innerHTML=`<div class="lh"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1>${esc(L.name)}</h1></div>
+  <nav class="chips"><a href="#" data-s="learn">1 Learn</a><a href="#" data-s="play">2 Play</a><a href="#" data-s="boss">3 Boss</a></nav>
+  <div class="mission"><b>Your mission</b>${esc(L.mission)}</div>
+  <section id="s-learn"><h2>1 · Learn</h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to flip."><div class="in"><div class="face f">${ic(c.ic)}<h3>${esc(c.t)}</h3><span class="tap">Tap to flip. +5 XP</span></div><div class="face b"><b>${esc(c.t)}</b><span>${esc(c.d)}</span><span class="like">Think of it like this: ${esc(c.like)}</span></div></div></button>`).join('')}</div></section>
+  <section id="s-play"><h2>2 · Play</h2><div id="ws" style="display:grid;gap:16px"></div></section>
+  <section id="s-boss"><h2>3 · Boss Quiz</h2><div class="w" id="bossbox"></div></section>
+  <div class="row" style="padding-top:10px">${n>1?`<a class="btn ghost" href="#l${n-1}">Back</a>`:'<span></span>'}<a class="btn" href="#map">Back to map</a></div>`;
+  app.querySelectorAll('.chips a').forEach(a=>a.onclick=e=>{e.preventDefault();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
+  const cp=()=>{$('#cp').textContent=`Cards flipped: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
+  app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);if(!open&&!S.cards[n][i]){S.cards[n][i]=true;sfx.ok();save();cp();paintMe()}});
+  const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';ws.appendChild(d);fn(d,n,gi)});
+  boss($('#bossbox'),n);
+}
+
+/* ---------- MCQ runner (boss + final) ---------- */
+function mcqRun(el,qs,opt){
+  let i=0,score=0,hist=[],timer=null,left=0;
+  const dots=()=>`<div class="dots">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`;
   function draw(){
-    if(i>=qs.length)return finish();
+    clearInterval(timer);
+    if(i>=qs.length)return opt.done(score,qs.length,el);
     const q=qs[i];
-    el.innerHTML=`<div class="row"><span class="eyebrow">Question ${i+1} of ${qs.length}</span>${dots()}</div>
-    <p class="qtext" id="qt">${blankify(q.q)}</p>
+    el.innerHTML=`<div class="row"><span class="eyebrow">Question ${i+1} of ${qs.length}</span>${dots()}</div>${opt.time?'<div class="timer" aria-hidden="true"><i id="tm"></i></div>':''}
+    <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;</span>')}</p>
     <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
-    <div class="fb" id="fb" role="status"></div><div id="nx"></div>`;
-    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
-      const o=q.opts[+b.dataset.k];
+    <div class="byte" id="by"></div><div id="nx"></div>`;
+    say($('#by',el),'idle',opt.time?'Be quick, but think!':'Take your time. Think about what you learned.');
+    const lock=pickedOk=>{
+      clearInterval(timer);
       el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(q.opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});
-      if(!o.ok){b.classList.add('no');b.querySelector('.m').textContent='✗'}
-      const right=q.opts.find(x=>x.ok).t;
-      $('#qt',el).innerHTML=blankify(q.q,right);
-      hist[i]=o.ok;if(o.ok)score++;
-      const fb=$('#fb',el);fb.className='fb '+(o.ok?'ok':'no');fb.textContent=o.ok?'Correct! +10 XP':'Not quite. The answer is "'+right+'".';
-      $('#nx',el).innerHTML=`<button class="btn" id="n">${i===qs.length-1?'See my score':'Next question'}</button>`;
-      $('#n',el).focus();$('#n',el).onclick=()=>{i++;draw()};
-    });
+      const right=q.opts.find(x=>x.ok).t;$('#qt',el).innerHTML=esc(q.q).replace(/_{3,}/,`<span class="blank f">${esc(right)}</span>`);
+      hist[i]=pickedOk;if(pickedOk){score++;sfx.ok()}else sfx.no();
+      say($('#by',el),pickedOk?'ok':'no',(pickedOk?pick(CHEER):pick(OOPS))+' '+q.why);
+      $('#nx',el).innerHTML=`<button class="btn" id="n">${i===qs.length-1?'See my result':'Next question'}</button>`;
+      const n=$('#n',el);n.onclick=()=>{i++;draw()};n.focus({preventScroll:true});
+    };
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok)b.classList.add('no'),b.querySelector('.m').textContent='✗';lock(o.ok)});
+    if(opt.time){left=opt.time;const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
   }
-  function finish(){
-    const best=Math.max(S.quiz[li]||0,score);S.quiz[li]=best;save();paintXP();
-    const msg=score===5?'Perfect. You own this topic.':score>=4?'Strong work.':score>=3?'Good start. Re-read the note and try again.':'Go back to the note, then try again. You will get it.';
-    el.innerHTML=`<div class="eyebrow">Your score</div><div class="score">${score}<span style="font-size:28px;color:var(--muted)"> / ${qs.length}</span></div><p style="margin:0;font-weight:600">${msg}</p><p class="saved" style="margin:0">Best score: ${best} / ${qs.length}</p>${dots()}<div><button class="btn" id="re">Try again</button></div>`;
-    $('#re',el).onclick=start;
+  draw();
+}
+function mkQ(l,k){const m=MCQ[l].mcq?MCQ[l].mcq[k]:MCQ[l][k];return {q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[l][k]}))),why:WHY[l][k]}}
+
+function boss(el,n){
+  const l=n-1;
+  function start(){
+    el.className='w';
+    const qs=shuffle([0,1,2,3,4]).map(k=>mkQ(l,k));
+    el.innerHTML=`<div id="bq"></div>`;
+    mcqRun($('#bq',el),qs,{done:(score,total,box)=>{
+      const prev=S.boss[n]||0,first=!done(n);
+      const before=xpOf();S.boss[n]=Math.max(prev,score);save();paintMe();
+      const gain=xpOf()-before;
+      if(score>=3&&first){sfx.win();burst(110)}else if(score===5){sfx.win();burst(80)}
+      const ok=score>=3;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Boss result</div><div class="score">${score}<span style="font-size:30px;color:var(--muted)"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}
+      ${gain>0?`<span class="xpgain">+${gain} XP</span>`:''}
+      <div class="byte" id="by2" style="width:100%"></div>
+      <div class="row"><button class="btn ${ok?'ghost':''}" id="re">Try again</button>${ok&&n<4?`<a class="btn sun" href="#l${n+1}">Next level</a>`:''}${ok&&n===4?`<a class="btn sun" href="#final">Grand Challenge</a>`:''}</div></div>`;
+      say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! Nobody beats that. Go and tell your friends.':ok?'Boss defeated! Level cleared. Next level is now open. Try again for more stars if you like.':'The boss survived this time. Flip the cards again, play the games, and come back. You can do it.');
+      $('#re',box).onclick=start;
+    }});
   }
   start();
 }
 
 /* ---------- sort game engine ---------- */
 function sortGame(def){
-  return (el,li,gi)=>{
-    let deck,i,ok,miss;
-    const key=li+'.'+gi;
-    function start(){deck=shuffle(def.items).slice(0,def.n||8);i=0;ok=0;miss=[];draw()}
+  return (el,n,gi)=>{
+    let deck,i,pts,ok,combo,miss,best;const key=n+'.'+gi;
+    function start(){deck=shuffle(def.items).slice(0,def.n||8);i=0;pts=0;ok=0;combo=0;miss=[];best=0;draw()}
     function draw(){
       if(i>=deck.length)return finish();
       const it=deck[i];
-      el.innerHTML=`<div class="w" style="border:0;padding:0"><div class="row"><span class="eyebrow">${i+1} of ${deck.length}</span><span class="eyebrow">${ok} right</span></div>
+      el.innerHTML=`<h3>${esc(def.title)}</h3><p class="hint">${esc(def.intro)}</p>
+      <div class="row"><span class="eyebrow">${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${ic('flame')} Combo x${combo}</span><span class="pts">${pts} pts</span></div>
       <div class="big">${esc(it.t)}</div>
-      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" data-k="${k}">${esc(c)}</button>`).join('')}</div>
-      <div class="fb" id="fb" role="status"></div><div id="nx"></div></div>`;
+      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
+      <div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle',def.prompt||'Which one is it? Tap your answer.');
       el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
         const k=+b.dataset.k,right=k===it.c;
         el.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===it.c)x.classList.add('ok')});
-        if(!right){b.classList.add('no');miss.push(it)}else ok++;
-        const fb=$('#fb',el);fb.className='fb '+(right?'ok':'no');
-        fb.textContent=right?'Yes! '+(it.why||''):'It belongs with "'+def.cats[it.c]+'". '+(it.why||'');
+        if(right){combo++;best=Math.max(best,combo);ok++;pts+=10+Math.min(combo-1,5)*2;sfx.ok();if(combo&&combo%5===0)burst(40)}else{b.classList.add('no');combo=0;miss.push(it);sfx.no()}
+        say($('#by',el),right?'ok':'no',(right?pick(CHEER):pick(OOPS))+' '+def.cats[it.c].n+': '+def.cats[it.c].info);
         $('#nx',el).innerHTML=`<button class="btn" id="n">${i===deck.length-1?'Finish':'Next'}</button>`;
-        $('#n',el).focus();$('#n',el).onclick=()=>{i++;draw()};
+        const nb=$('#n',el);nb.onclick=()=>{i++;draw()};nb.focus({preventScroll:true});
       });
     }
     function finish(){
-      S.games[key]=Math.max(S.games[key]||0,ok);save();paintXP();
-      el.innerHTML=`<div class="w" style="border:0;padding:0"><div class="eyebrow">Result</div><div class="score">${ok}<span style="font-size:28px;color:var(--muted)"> / ${deck.length}</span></div>
-      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} → <b>${esc(def.cats[m.c])}</b></div>`).join('')}</div>`:'<p style="margin:0;font-weight:600">No mistakes. Brilliant.</p>'}
-      <div><button class="btn" id="re">Play again</button></div></div>`;
+      const prev=S.games[key]||0;const gain=Math.max(0,pts-prev);
+      S.games[key]=Math.max(prev,pts);S.best=Math.max(S.best,best);save();paintMe();
+      if(ok===deck.length){sfx.win();burst(80)}
+      el.innerHTML=`<h3>${esc(def.title)}</h3><div class="result"><div class="eyebrow">Result</div><div class="score">${ok}<span style="font-size:30px;color:var(--muted)"> / ${deck.length}</span></div><span class="pts">${pts} points · best combo x${best}</span>${gain>0?`<span class="xpgain">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}
+      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} belongs with <b>${esc(def.cats[m.c].n)}</b></div>`).join('')}</div>`:''}
+      <button class="btn" id="re">Play again</button></div>`;
       $('#re',el).onclick=start;
     }
-    el.className='w';
-    el.innerHTML=`<h3>${esc(def.title)}</h3><p class="sub">${esc(def.intro)}</p><div id="g"></div>`;
-    el=$('#g',el);start();
+    start();
   };
 }
 
-/* ---------- widgets ---------- */
-function bitsWidget(withChar){
-  return (el,li)=>{
-    const pv=[128,64,32,16,8,4,2,1];let b=[0,0,0,0,0,0,0,0],target=null;
-    el.className='w';
-    el.innerHTML=`<h3>${withChar?'Build a byte':'Flip the switches'}</h3><p class="sub">${withChar?'A byte has 8 bits. Tap a bit to flip it and watch the number and the letter change.':'Each switch is a bit. A bit that is ON adds its place value. Tap to flip.'}</p>
-    <div class="sw">${pv.map((v,k)=>`<button data-k="${k}" aria-label="bit worth ${v}"><span class="pv">${v}</span><span class="b">0</span></button>`).join('')}</div>
-    <div class="vals"><div class="val"><small>Binary</small><span id="vb"></span></div><div class="val"><small>Decimal</small><span id="vd"></span></div><div class="val"><small>Octal</small><span id="vo"></span></div><div class="val"><small>Hex</small><span id="vh"></span></div>${withChar?'<div class="val"><small>ASCII letter</small><span id="vc"></span></div>':''}</div>
-    <div id="tg"></div>
-    <div class="ctrl"><button class="btn" id="ch">Challenge me</button><button class="btn ghost" id="rs">Clear</button></div>`;
-    const val=()=>b.reduce((a,x,k)=>a+x*pv[k],0);
-    function paint(){
-      el.querySelectorAll('.sw .b').forEach((x,k)=>{x.textContent=b[k];x.classList.toggle('on',!!b[k])});
-      const n=val();
-      $('#vb',el).textContent=b.join('');$('#vd',el).textContent=n;$('#vo',el).textContent=n.toString(8);$('#vh',el).textContent=n.toString(16).toUpperCase();
-      if(withChar)$('#vc',el).textContent=n>=33&&n<=126?String.fromCharCode(n):(n===32?'space':'-');
-      const tg=$('#tg',el);
-      if(target!==null){tg.innerHTML=n===target?`<div class="target">You made ${target}. Correct!</div>`:`<div class="target">Make the number ${target}${withChar?' ('+(target>=33&&target<=126?'letter '+String.fromCharCode(target):'')+')':''}</div>`}
-      else tg.innerHTML='';
-    }
-    el.querySelectorAll('.sw button').forEach(x=>x.onclick=()=>{const k=+x.dataset.k;b[k]=1-b[k];paint();
-      if(target!==null&&val()===target){S.games[li+'.bits']=Math.max(S.games[li+'.bits']||0,4);save();paintXP()}});
-    $('#ch',el).onclick=()=>{b=[0,0,0,0,0,0,0,0];target=withChar?65+Math.floor(Math.random()*26):1+Math.floor(Math.random()*255);paint()};
-    $('#rs',el).onclick=()=>{b=[0,0,0,0,0,0,0,0];target=null;paint()};
-    paint();
-  };
-}
-function divWidget(el){
-  el.className='w';
-  el.innerHTML=`<h3>Division method, step by step</h3><p class="sub">Divide again and again. Write each remainder. Read the remainders from the bottom up.</p>
-  <div class="ctrl"><label for="dn">Decimal number</label><input id="dn" type="number" min="1" max="4095" value="13"><div class="tabs" id="bs" style="flex:1;min-width:190px">${[2,8,16].map(x=>`<button data-b="${x}" aria-pressed="${x===2}">Base ${x}</button>`).join('')}</div></div>
-  <div class="steps" id="st" aria-live="polite"></div>
-  <div class="ctrl"><button class="btn" id="nx">Next step</button><button class="btn ghost" id="all">Show all</button></div>`;
-  let base=2,shown=1,steps=[];
-  const D='0123456789ABCDEF';
-  function calc(){
-    let n=Math.max(1,Math.min(4095,Math.floor(+$('#dn',el).value)||1));steps=[];let c=n;
-    while(c>0){const q=Math.floor(c/base),r=c%base;steps.push({c,q,r});c=q}
-    return n;
+/* ---------- special widgets ---------- */
+function stackGame(el,n,gi){
+  const layers=[['Hardware','The touchable parts: screen, keyboard, processor','l0'],['Operating system','System software that runs the hardware','l1'],['Application software','Word, Excel, browsers','l2'],['You, the user','Tapping, typing and clicking','l3']];
+  let placed=0,mistakes=0;
+  function draw(finished){
+    const pool=layers.map((l,i)=>[l,i]).filter(([,i])=>i>=placed);
+    el.innerHTML=`<h3>Build the computer stack</h3><p class="hint">A computer works in layers. Tap the layers one at a time, starting from the very bottom.</p>
+    <div class="stack">${layers.slice().reverse().map((l,ri)=>{const i=3-ri;return `<div class="layer ${i<placed?'placed '+l[2]:''}"><span>${i<placed?l[0]:'Empty slot'}</span><small>${i<placed?l[1]:'Layer '+(i+1)+' from the bottom'}</small></div>`}).join('')}</div>
+    ${finished?'':`<div class="pool">${shuffle(pool).map(([l,i])=>`<button class="opt" data-i="${i}">${l[0]}</button>`).join('')}</div>`}
+    <div class="byte" id="by"></div>`;
+    say($('#by',el),finished?'ok':'idle',finished?'Perfect stack! You talk to apps, apps talk to the operating system, and the operating system controls the hardware.':'Think: what must exist first before anything else can run?');
+    el.querySelectorAll('.pool .opt').forEach(b=>b.onclick=()=>{
+      if(+b.dataset.i===placed){placed++;sfx.ok();if(placed===4){const pts=Math.max(10,40-mistakes*10);const prev=S.games[n+'.'+gi]||0;S.games[n+'.'+gi]=Math.max(prev,pts);save();paintMe();burst(60);sfx.win();draw(true);return}draw(false)}
+      else{mistakes++;b.classList.add('no');sfx.no();say($('#by',el),'no','Not yet. Which layer sits underneath everything else?')}
+    });
   }
-  function paint(){
-    const n=calc();const sh=steps.slice(0,shown);
-    let h=sh.map(s=>`<div>${s.c} ÷ ${base} = ${s.q} remainder <b>${D[s.r]}</b></div>`).join('');
-    if(shown>=steps.length){const r=steps.map(s=>D[s.r]).reverse().join('');h+=`<div class="last">Read the remainders from the bottom up: ${r}<br>So ${n} (base 10) = ${r} (base ${base})</div>`}
-    $('#st',el).innerHTML=h;
-    $('#nx',el).disabled=shown>=steps.length;
-  }
-  $('#dn',el).oninput=()=>{shown=1;paint()};
-  el.querySelectorAll('#bs button').forEach(b=>b.onclick=()=>{base=+b.dataset.b;el.querySelectorAll('#bs button').forEach(x=>x.setAttribute('aria-pressed',x===b));shown=1;paint()});
-  $('#nx',el).onclick=()=>{shown++;paint()};$('#all',el).onclick=()=>{shown=99;paint()};
-  paint();
+  draw(false);
 }
-function baseWidget(el,li){
-  el.className='w';let n=0;
-  el.innerHTML=`<h3>Count in four number systems</h3><p class="sub">Press +1 and watch the same number written four ways. Notice when binary "rolls over".</p>
-  <div class="vals"><div class="val"><small>Decimal (10)</small><span id="a"></span></div><div class="val"><small>Binary (2)</small><span id="b"></span></div><div class="val"><small>Octal (8)</small><span id="c"></span></div><div class="val"><small>Hex (16)</small><span id="d"></span></div></div>
-  <div class="ctrl"><button class="btn" id="p">+1</button><button class="btn ghost" id="r">Reset</button></div>
-  <div class="table"><table><thead><tr><th>Decimal</th><th>Binary</th><th>Octal</th><th>Hex</th></tr></thead><tbody id="tb"></tbody></table></div>`;
-  function paint(){
-    $('#a',el).textContent=n;$('#b',el).textContent=n.toString(2);$('#c',el).textContent=n.toString(8);$('#d',el).textContent=n.toString(16).toUpperCase();
-    $('#tb',el).innerHTML=Array.from({length:17},(_,k)=>`<tr class="${k===n?'hl':''}"><td>${k}</td><td>${k.toString(2)}</td><td>${k.toString(8)}</td><td>${k.toString(16).toUpperCase()}</td></tr>`).join('');
+function flowGame(el,n,gi){
+  const steps=[[3,'You tap the Word icon.'],[2,'Word (application software) asks the operating system for a place to run.'],[1,'The operating system gives Word some memory and tells the processor to start it.'],[0,'The hardware does the work. The screen lights up with a blank page.'],[1,'The operating system sends the picture to the screen. You see Word, ready to type. Without the OS in the middle, none of this would happen.']];
+  let k=0;
+  function draw(){
+    const act=steps[k][0];
+    el.innerHTML=`<h3>Follow a tap</h3><p class="hint">What happens inside the computer when you open Word? Step through it.</p>
+    <div class="stack">${[3,2,1,0].map(i=>{const L=[['Hardware','l0'],['Operating system','l1'],['Application software','l2'],['You','l3']][i];return `<div class="layer placed ${L[1]} ${i===act?'act':''}"><span>${L[0]}</span></div>`}).join('')}</div>
+    <div class="flowtext" aria-live="polite">Step ${k+1} of ${steps.length}. ${steps[k][1]}</div>
+    <div class="row"><button class="btn ghost" id="pv" ${k?'':'disabled'}>Back</button><button class="btn" id="nx">${k<steps.length-1?'Next step':'Start again'}</button></div>`;
+    $('#pv',el).onclick=()=>{k--;draw()};
+    $('#nx',el).onclick=()=>{if(k<steps.length-1){k++;sfx.ok();if(k===steps.length-1){const prev=S.games[n+'.'+gi]||0;if(!prev){S.games[n+'.'+gi]=15;save();paintMe()}}}else k=0;draw()};
   }
-  $('#p',el).onclick=()=>{n=n>=16?0:n+1;paint();S.games[li+'.base']=1;save();paintXP()};$('#r',el).onclick=()=>{n=0;paint()};paint();
+  draw();
 }
-function orderWidget(el,li){
-  const truth=[['Abacus','over 2000 years ago'],['Pascaline','17th century'],['Analytical Engine','19th century'],['ENIAC','20th century']];
-  let list=shuffle(truth),res=null;
-  el.className='w';
-  function paint(){
-    el.innerHTML=`<h3>Put the machines in time order</h3><p class="sub">Oldest at the top. Use the arrows, then press Check.</p>
-    <div class="order">${list.map((x,k)=>`<div class="ord ${res?(res[k]?'ok':'no'):''}"><span class="t">${x[0]}${res&&res.every(Boolean)?` <span class="yr">${x[1]}</span>`:''}</span><button class="mv" data-d="-1" data-k="${k}" aria-label="Move up">↑</button><button class="mv" data-d="1" data-k="${k}" aria-label="Move down">↓</button></div>`).join('')}</div>
-    <div class="fb ${res&&res.every(Boolean)?'ok':'no'}">${res?(res.every(Boolean)?'Perfect order! From counting beads to electronic machines.':'Some are out of place. Try again.'):''}</div>
-    <div class="ctrl"><button class="btn" id="ck">Check order</button></div>`;
-    el.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{const k=+b.dataset.k,d=+b.dataset.d,j=k+d;if(j<0||j>3)return;[list[k],list[j]]=[list[j],list[k]];res=null;paint()});
-    $('#ck',el).onclick=()=>{res=list.map((x,k)=>x[0]===truth[k][0]);if(res.every(Boolean)){S.games[li+'.order']=4;save();paintXP()}paint()};
+function compressGame(el,n,gi){
+  const F=[['Class photos',18],['Project video',30],['Notes (Word)',4]];let comp=false;const sel=[true,true,true];
+  function draw(){
+    const size=f=>comp?f*0.45:f;
+    const tot=F.reduce((a,f,i)=>a+(sel[i]?size(f[1]):0),0);const ok=tot<=25&&sel.some(Boolean);
+    el.innerHTML=`<h3>Squeeze the files</h3><p class="hint">You must email your project, but the email limit is 25 MB. Tick the files, then press Compress.</p>
+    <div class="files">${F.map((f,i)=>`<label class="file"><input type="checkbox" data-i="${i}" ${sel[i]?'checked':''} style="width:22px;height:22px"><span style="flex:0 0 120px">${f[0]}</span><span class="bar2"><i style="width:${size(f[1])/30*100}%"></i></span><span class="mb">${size(f[1]).toFixed(1)} MB</span></label>`).join('')}</div>
+    <div class="limit ${comp?(ok?'okk':'bad'):''}"><span>Total: ${tot.toFixed(1)} MB</span><span>Limit: 25 MB</span></div>
+    <div class="row"><button class="btn" id="cz">${comp?'Un-compress':'Compress'}</button></div>
+    <div class="byte" id="by"></div>`;
+    say($('#by',el),comp?(ok?'ok':'no'):'idle',comp?(ok?'It fits! File compression reduces size so files are easier to store or share. (Real results vary by file type.)':'Still too big. Un-tick a file, or ask yourself what else could be removed.'):'Right now the total is too big. Which utility program helps?');
+    el.querySelectorAll('input').forEach(c=>c.onchange=()=>{sel[+c.dataset.i]=c.checked;draw()});
+    $('#cz',el).onclick=()=>{comp=!comp;draw();const t=F.reduce((a,f,i)=>a+(sel[i]?f[1]*.45:0),0);if(comp&&t<=25&&sel.every(Boolean)){const prev=S.games[n+'.'+gi]||0;if(!prev){S.games[n+'.'+gi]=20;save();paintMe();burst(50);sfx.win()}}};
   }
-  paint();
+  draw();
 }
-function genWidget(el,li){
-  const G=[['1st','1940s–1950s','Vacuum tubes','Large machines that gave off a lot of heat.',100],['2nd','1950s–1960s','Transistors','Smaller and faster than vacuum tube machines.',70],['3rd','1960s–1970s','Integrated circuits (chips)','Better speed and reliability.',45],['4th','1970s–present','Microprocessors','Personal computers, laptops and smartphones.',20],['5th','Today and beyond','Artificial intelligence','Computers that learn, reason and make decisions using machine learning.',8]];
-  let k=0;el.className='w';
-  el.innerHTML=`<h3>Five generations</h3><p class="sub">Tap a generation. The bar shows how big the machines were, compared with the first.</p><div class="tabs" id="tb">${G.map((g,j)=>`<button data-k="${j}" aria-pressed="${j===0}">${g[0]}</button>`).join('')}</div><div class="gen" id="gn"></div>`;
-  function paint(){const g=G[k];$('#gn',el).innerHTML=`<div class="eyebrow">${g[1]}</div><h4>${g[2]}</h4><div>${g[3]}</div><div class="gbar" aria-hidden="true"><i style="width:${g[4]}%"></i></div>`;el.querySelectorAll('#tb button').forEach((b,j)=>b.setAttribute('aria-pressed',j===k))}
-  el.querySelectorAll('#tb button').forEach(b=>b.onclick=()=>{k=+b.dataset.k;paint()});paint();
-}
-function backupWidget(el,li){
-  const locs=[['laptop','Laptop','Your original, in your school bag',true,'bag'],['flash','Flash drive','Kept in the same bag','', 'bag'],['disk','External hard disk','Kept at home','', 'home'],['cloud','Cloud storage','Google Drive, on the internet','', 'cloud']];
-  const have={laptop:true,flash:false,disk:false,cloud:false};let lost=[];let done=false;
-  const dis=[['Bag stolen',['bag']],['House fire',['home']],['Cloud account closed',['cloud']],['Bag stolen and house fire',['bag','home']]];
-  el.className='w';
-  function paint(){
-    el.innerHTML=`<h3>Is your project safe?</h3><p class="sub">You wrote your project on your laptop. Choose where you keep extra copies, then see what survives a disaster.</p>
-    <div class="locs">${locs.map(l=>{const on=have[l[0]],lo=lost.includes(l[4]);return `<button class="loc ${on?(done?(lo?'lost':'safe'):''):''}" ${l[3]?'disabled':''} data-id="${l[0]}" style="text-align:left;${on?'':'opacity:.55'}" aria-pressed="${on}"><b>${l[1]}</b><span>${l[2]}</span><span class="mono" style="font-weight:700">${on?(done?(lo?'LOST':'SAFE'):'COPY SAVED'):'no copy'}</span></button>`}).join('')}</div>
-    <div class="eyebrow">Now a disaster strikes</div>
-    <div class="cats">${dis.map((d,k)=>`<button class="opt" data-d="${k}">${d[0]}</button>`).join('')}</div>
-    <div id="vd" role="status"></div>`;
-    el.querySelectorAll('.loc').forEach(b=>b.onclick=()=>{if(b.disabled)return;have[b.dataset.id]=!have[b.dataset.id];done=false;lost=[];paint()});
-    el.querySelectorAll('.cats .opt').forEach(b=>b.onclick=()=>{lost=dis[+b.dataset.d][1];done=true;paint();
-      const alive=locs.filter(l=>have[l[0]]&&!lost.includes(l[4]));
-      $('#vd',el).innerHTML=alive.length?`<div class="fb ok">Recovered! ${alive.length} copy survived. That is redundancy: more than one copy, in different places.</div>`:`<div class="fb no">Everything is gone. All your copies were in the same place. Try saving a copy somewhere else.</div>`;
-      if(alive.length&&locs.filter(l=>have[l[0]]).length>1){S.games[li+'.bk']=4;save();paintXP()}});
+function bootGame(el,n,gi){
+  let os=true,state='off',timers=[];
+  const logs=[['BIOS check ... OK',0],['Loading operating system ...',500],['Memory ready ... OK',1000],['Keyboard and mouse found ... OK',1500],['Screen ready ... OK',2000],['Welcome! Your desktop is ready.',2500]];
+  function draw(lines){
+    el.innerHTML=`<h3>Switch on, with and without an OS</h3><p class="hint">Turn the operating system off, press power, and see what happens to the apps.</p>
+    <div class="row"><button class="sw" id="os" aria-pressed="${os}"><i></i>Operating system installed</button><button class="btn" id="pw">Press power</button></div>
+    <div class="boot" id="bt" aria-live="polite">${lines||'Computer is off.'}</div>
+    <div class="apps">${[['doc','Word'],['globe','Browser'],['calc','Calculator'],['camera','Camera']].map(a=>`<button data-a="${a[1]}" ${state==='on'?'':'disabled'}>${ic(a[0])}${a[1]}</button>`).join('')}</div>
+    <div class="byte" id="by"></div>`;
+    say($('#by',el),state==='err'?'no':state==='on'?'ok':'idle',state==='err'?'Without an operating system, the computer cannot start up or run any application. The hardware is fine, but nothing manages it.':state==='on'?'The operating system started everything: memory, keyboard, screen and apps.':'Try it both ways.');
+    $('#os',el).onclick=()=>{os=!os;state='off';timers.forEach(clearTimeout);draw()};
+    $('#pw',el).onclick=run;
+    el.querySelectorAll('.apps button').forEach(b=>b.onclick=()=>{say($('#by',el),'ok',b.dataset.a+' is open. The OS gave it memory and let it use the screen.')});
   }
-  paint();
-}
-function textBinWidget(el,li){
-  el.className='w';
-  el.innerHTML=`<h3>Type a word. See the bytes.</h3><p class="sub">Each character is stored as one byte (8 bits) of ASCII. Try a capital letter, then a small letter. Then try the Yoruba letter ọ.</p>
-  <label for="tx" class="eyebrow">Your text</label><input id="tx" type="text" maxlength="12" value="Naija"><div class="cells" id="cl"></div><div class="fb" id="sm"></div>`;
-  function paint(){
-    const t=$('#tx',el).value;let bits=0,uni=false;
-    $('#cl',el).innerHTML=[...t].map(ch=>{const c=ch.codePointAt(0);if(c<128){bits+=8;return `<div class="cell"><div class="c">${esc(ch===' '?'␣':ch)}</div><div class="d">ASCII ${c}</div><div class="bin">${c.toString(2).padStart(8,'0')}</div></div>`}uni=true;bits+=16;return `<div class="cell"><div class="c">${esc(ch)}</div><div class="d">U+${c.toString(16).toUpperCase().padStart(4,'0')}</div><div class="bin">Unicode</div></div>`}).join('');
-    const n=[...t].length;
-    $('#sm',el).textContent=n?`${n} character${n>1?'s':''} = about ${bits/8} byte${bits/8>1?'s':''} = ${bits} bits.${uni?' ASCII cannot hold this letter, so Unicode is used. It needs more bits.':''}`:'';
-    if(n)S.games[li+'.tx']=1;
+  function run(){
+    timers.forEach(clearTimeout);state='boot';
+    if(!os){draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');state='err';draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');mark();return}
+    let acc=[];draw('Power on ...');
+    logs.forEach(([t,d],k)=>timers.push(setTimeout(()=>{acc.push(t);$('#bt',el)&&($('#bt',el).innerHTML='Power on ...<br>'+acc.join('<br>'));if(k===logs.length-1){state='on';draw('Power on ...<br>'+acc.join('<br>'));mark()}},d+200)));
   }
-  $('#tx',el).oninput=()=>{paint();save();paintXP()};paint();
-}
-function pixelWidget(el,li){
-  const smile=[0,0,1,1,1,1,0,0, 0,1,0,0,0,0,1,0, 1,0,1,0,0,1,0,1, 1,0,0,0,0,0,0,1, 1,0,1,0,0,1,0,1, 1,0,0,1,1,0,0,1, 0,1,0,0,0,0,1,0, 0,0,1,1,1,1,0,0];
-  let px=smile.slice();el.className='w';
-  el.innerHTML=`<h3>Draw with pixels</h3><p class="sub">This picture is 8 by 8 pixels. In black and white, each pixel is one bit: black is 1, white is 0. Tap squares to draw.</p>
-  <div class="pxwrap"><div class="grid8" id="g">${px.map((_,k)=>`<button data-k="${k}" aria-label="pixel ${k+1}"></button>`).join('')}</div><div class="pxrow" id="rw"></div></div>
-  <div class="fb" id="sm"></div><div class="ctrl"><button class="btn ghost" id="cl">Clear</button><button class="btn ghost" id="iv">Invert</button><button class="btn ghost" id="sm2">Smiley</button></div>`;
-  function paint(){
-    el.querySelectorAll('#g button').forEach((b,k)=>b.classList.toggle('on',!!px[k]));
-    let r='';for(let y=0;y<8;y++)r+=px.slice(y*8,y*8+8).join('')+'<br>';
-    $('#rw',el).innerHTML='Stored as 8 bytes:<br>'+r;
-    $('#sm',el).textContent='8 × 8 = 64 pixels = 64 bits = 8 bytes. More pixels means a sharper picture and a bigger file.';
-  }
-  el.querySelectorAll('#g button').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;px[k]=1-px[k];paint();S.games[li+'.px']=1;save();paintXP()});
-  $('#cl',el).onclick=()=>{px=px.map(()=>0);paint()};$('#iv',el).onclick=()=>{px=px.map(x=>1-x);paint()};$('#sm2',el).onclick=()=>{px=smile.slice();paint()};paint();
-}
-function rgbWidget(el){
-  el.className='w';
-  el.innerHTML=`<h3>Mix a colour</h3><p class="sub">Every pixel stores three numbers: red, green and blue, each from 0 to 255. That is one byte each.</p>
-  <div class="swatch" id="sw"></div>
-  ${['Red','Green','Blue'].map((c,k)=>`<div class="sl"><label for="c${k}">${c}</label><input id="c${k}" type="range" min="0" max="255" value="${[11,138,76][k]}"><span id="o${k}"></span></div>`).join('')}
-  <div class="vals"><div class="val"><small>Hex colour</small><span id="hx"></span></div></div>`;
-  function paint(){
-    const v=[0,1,2].map(k=>+$('#c'+k,el).value);
-    $('#sw',el).style.background=`rgb(${v})`;
-    v.forEach((x,k)=>$('#o'+k,el).textContent=x+' '+x.toString(2).padStart(8,'0'));
-    $('#hx',el).textContent='#'+v.map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();
-  }
-  [0,1,2].forEach(k=>$('#c'+k,el).oninput=paint);paint();
-}
-function sampleWidget(el,li){
-  el.className='w';
-  el.innerHTML=`<h3>Sampling sound</h3><p class="sub">The smooth line is a real sound wave (analogue). The dots are measurements taken by the computer. More samples per second copy the wave more accurately.</p>
-  <canvas id="cv" width="640" height="220" aria-label="A sound wave with sample points"></canvas>
-  <div class="sl" style="grid-template-columns:90px 1fr 70px"><label for="sr">Samples</label><input id="sr" type="range" min="4" max="48" value="8"><span id="so"></span></div><div class="fb" id="q"></div>`;
-  const cv=$('#cv',el),cx=cv.getContext('2d');
-  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
-  function paint(){
-    const n=+$('#sr',el).value,W=cv.width,H=cv.height,mid=H/2,A=80;
-    $('#so',el).textContent=n;cx.clearRect(0,0,W,H);
-    const f=x=>mid-A*(Math.sin(x/W*Math.PI*4)*0.7+Math.sin(x/W*Math.PI*10)*0.3);
-    cx.lineWidth=2;cx.strokeStyle=css('--muted');cx.beginPath();for(let x=0;x<=W;x++){x?cx.lineTo(x,f(x)):cx.moveTo(x,f(x))}cx.stroke();
-    cx.strokeStyle=css('--accent');cx.lineWidth=3;cx.beginPath();
-    for(let k=0;k<=n;k++){const x=k/n*W,y=f(x);k?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke();
-    cx.fillStyle=css('--fg');for(let k=0;k<=n;k++){const x=k/n*W;cx.beginPath();cx.arc(x,f(x),5,0,7);cx.fill()}
-    $('#q',el).textContent=n<14?'Too few samples. The copy (green line) looks rough and loses detail.':n<30?'Better. The copy follows the wave more closely.':'Very close to the original. The file gets bigger, though.';
-    S.games[li+'.sm']=1;
-  }
-  $('#sr',el).oninput=()=>{paint();save();paintXP()};
-  paint();
+  function mark(){S.bootSeen=S.bootSeen||{};S.bootSeen[os?'on':'off']=true;if(S.bootSeen.on&&S.bootSeen.off&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();paintMe();burst(50);sfx.win()}}
+  draw();
 }
 
-/* ---------- per-lesson widget map ---------- */
-const G=(title,intro,cats,items,n)=>sortGame({title,intro,cats,items,n});
+/* ---------- sort data ---------- */
+const C=(n,info)=>({n,info});
 const I=(arr,c)=>arr.map(t=>({t,c}));
-const SORTS={
- 0:G('Digital or analogue?','Decide which kind of technology each item is.',['Digital','Analogue'],[...I(['Smartphone','ATM','Digital camera','Smart television','Laptop'],0),...I(['Wall clock with hands','Chalkboard','Vinyl record','Wooden ruler','Printed newspaper'],1)]),
- 1:G('Which sector?','Where does each use of digital technology belong?',['Education','Banking','Healthcare','Agriculture','Communication'],[...I(['E-learning app','Digital library'],0),...I(['Mobile banking transfer','Online payment'],1),...I(['Telemedicine consultation','Digital patient records'],2),...I(['Weather forecast for planting','Market prices sent to farmers'],3),...I(['WhatsApp video call','Instant messaging'],4)],10),
- 2:G('Which machine?','Match each clue to the right early computing device.',['Abacus','Pascaline','Analytical Engine','ENIAC'],[...I(['Used over 2000 years ago'],0),...I(['Invented by Blaise Pascal','A 17th-century mechanical calculator'],1),...I(['Designed by Charles Babbage','Babbage is called the father of the computer because of it'],2),...I(['Early electronic computer','Used vacuum tubes to calculate'],3)],8),
- 3:G('Which generation?','Match each clue to a generation of computers.',['1st','2nd','3rd','4th','5th'],[...I(['Vacuum tubes','Large and gave off much heat'],0),...I(['Transistors','Smaller and faster than before'],1),...I(['Integrated circuits (chips)','Improved speed and reliability'],2),...I(['Microprocessors','Smartphones and laptops'],3),...I(['Artificial intelligence','Machine learning'],4)],10),
- 6:G('Input, output or storage?','Sort each device.',['Input','Output','Storage'],[...I(['Keyboard','Mouse','Scanner','Microphone','Webcam'],0),...I(['Monitor','Printer','Speaker','Projector'],1),...I(['Hard disk','Flash drive','Memory card','RAM'],2)],10),
- 7:G('Inside or outside?','Is it inside the system unit, or a peripheral outside?',['Inside the system unit','Peripheral'],[...I(['Motherboard','CPU','RAM','Internal storage drive'],0),...I(['Keyboard','Mouse','Monitor','Printer','External hard drive'],1)],9),
- 8:G('Good file name or bad?','Avoid special characters and keep names short and clear.',['Good name','Bad name'],[...I(['Report_2026','Maths_Notes_Term1','Photo_2026_09_15','Biology-Assignment'],0),...I(['My/File','File*Name','Project?Final','Class:List','Quiz<1>'],1)]),
- 9:G('Match the extension','Which type of file does each name belong to?',['Word document','Spreadsheet','PDF','Image','Audio'],[...I(['report.docx','letter.docx'],0),...I(['budget.xlsx','results.xlsx'],1),...I(['notes.pdf'],2),...I(['photo.jpg','selfie.jpg'],3),...I(['song.mp3'],4)],8),
- 10:G('System or application?','System software runs the computer. Application software does a task for you.',['System software','Application software'],[...I(['Windows','macOS','Linux'],0),...I(['Microsoft Word','Microsoft Excel','Web browser','Calculator app'],1)],7),
- 11:G('Pick the right utility','Which utility program fixes each problem?',['Antivirus','Disk cleanup','File compression','Backup software'],[...I(['Detect harmful software','A virus has infected your flash drive'],0),...I(['Free up space by removing unnecessary files','Your storage is full of junk files'],1),...I(['Shrink a big folder before emailing it','Make a file smaller so it is easier to share'],2),...I(['Copy exam results to another place for safety','Protect your work in case the laptop is lost'],3)]),
- 12:G('Operating system or app?','What does the operating system do, and what is left to applications?',['Operating system','Application'],[...I(['Share memory between programs','Check the login password','Control the printer','Manage files and folders','Show the desktop and icons'],0),...I(['Write a letter','Edit a photo','Browse a website'],1)]),
- 13:G('Which type of OS?','Match each description to a type of operating system.',['Single-user','Multi-user','Mobile','Network'],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on smartphones and tablets'],2),...I(['Coordinates computers in a school network','Manages computers connected together'],3)],9),
- 14:G('Good habit or bad habit?','Which habits protect you and your computer?',['Good habit','Bad habit'],[...I(['Cleaning dust from the vents','Using a surge protector','Screen at eye level','Updating antivirus','Sitting with good posture'],0),...I(['Eating over the keyboard','Pulling the plug to switch off','Working for hours without a break','Cables scattered on the floor','Blocking the ventilation'],1)],10)
-};
-function widgetsFor(i){
-  const w=[];
-  if(SORTS[i])w.push(SORTS[i]);
-  if(i===2)w.unshift(orderWidget);
-  if(i===3)w.unshift(genWidget);
-  if(i===4)w.unshift(baseWidget);
-  if(i===5)w.push(bitsWidget(false),divWidget);
-  if(i===15)w.push(backupWidget);
-  if(i===16)w.push(textBinWidget,bitsWidget(true));
-  if(i===17)w.push(pixelWidget,rgbWidget,sampleWidget);
-  return w;
+const G=(title,intro,cats,items,n,prompt)=>sortGame({title,intro,cats,items,n,prompt});
+function widgetsFor(n){
+  const W={
+  1:[stackGame,flowGame,G('Hardware, system or application?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
+  2:[G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Your computer shows strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so you copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
+  3:[G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
+  4:[G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
+  };
+  return W[n];
 }
-route();
+
+/* ---------- grand challenge ---------- */
+function finalRound(){
+  document.title='Grand Challenge · System Squad';
+  app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1>Grand Challenge</h1></div><div class="mission"><b>10 questions. 25 seconds each.</b>Mixed questions from all four levels. Get 8 or more for the Grand Champion badge.</div><div class="w" id="fb" style="margin-top:14px"></div><div class="row" style="padding-top:12px"><a class="btn ghost" href="#map">Back to map</a></div>`;
+  const el=$('#fb');
+  function start(){
+    const all=[];for(let l=0;l<4;l++)for(let k=0;k<5;k++)all.push([l,k]);
+    const qs=shuffle(all).slice(0,10).map(([l,k])=>mkQ(l,k));
+    el.innerHTML='<div id="fq"></div>';
+    mcqRun($('#fq'),qs,{time:25,done:(score,total,box)=>{
+      const before=xpOf();S.final=Math.max(S.final,score);save();paintMe();const gain=xpOf()-before;
+      if(score>=8){sfx.win();burst(120)}
+      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="score">${score}<span style="font-size:30px;color:var(--muted)"> / ${total}</span></div>${gain>0?`<span class="xpgain">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row"><button class="btn" id="re">Play again</button><a class="btn sun" href="#board">See the leaderboard</a></div></div>`;
+      say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check where you are on the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
+      $('#re',box).onclick=start;
+    }});
+  }
+  start();
+}
+
+/* ---------- leaderboard (shared db) ---------- */
+let DB=null,USER=null,UID=null,lastSent='',syncT=null,live=null,players=[],dbState='loading',IS_OWNER=false;
+async function initDB(){
+  try{
+    const c=window.claude;if(!c||!c.use){dbState='off';return}
+    USER=await c.use('user');DB=await c.use('db');
+    if(!USER||!DB){dbState='off';return}
+    UID=await USER.id();IS_OWNER=await USER.isOwner();
+    if(!UID){dbState='off';return}
+    dbState='on';
+    live=DB.collection('players').orderBy('xp','desc').limit(60).onSnapshot(s=>{players=s.docs.map(d=>({id:d.id,...d.data()}));if(route.cur==='board')leaderboard(true)},()=>{dbState='err';if(route.cur==='board')leaderboard(true)});
+    syncSoon();
+  }catch(e){dbState='off'}
+  if(route.cur==='board')leaderboard(true);
+}
+function syncSoon(){
+  if(dbState!=='on'||!S.name)return;
+  clearTimeout(syncT);syncT=setTimeout(async()=>{
+    const x=xpOf();const doc={name:S.name,color:S.color,xp:x,lv:lvlOf(x),badges:badges().filter(b=>b.on).length,stars:LEVELS.reduce((a,l)=>a+starsFor(l.id),0),t:Date.now()};
+    const sig=[doc.name,doc.color,doc.xp,doc.badges].join('|');if(sig===lastSent)return;
+    try{await DB.doc('players/'+UID).set(doc);lastSent=sig}catch(e){if(e&&e.code==='invalid_argument')dbState='readonly'}
+  },1500);
+}
+function leaderboard(soft){
+  document.title='Leaderboard · System Squad';
+  const mine=players.find(p=>p.id===UID);
+  const list=dbState==='on'||dbState==='readonly'?players:[{id:'me',name:S.name,color:S.color,xp:xpOf(),lv:lvlOf(xpOf()),badges:badges().filter(b=>b.on).length}];
+  const total=list.reduce((a,p)=>a+(p.xp||0),0);
+  const msg={off:'The class leaderboard is not connected. Your points are still saved on this tablet. Ask your teacher to share this page with "Contributor" access.',readonly:'You can see the leaderboard, but your score cannot be saved. Ask your teacher for "Contributor" access.',err:'The leaderboard could not load. Your points are still saved on this tablet.',loading:'Loading the leaderboard ...',on:''}[dbState];
+  app.innerHTML=`<div class="lh"><div class="eyebrow">Live for the whole class</div><h1>Leaderboard</h1></div>
+  <div class="tally"><div><b>${list.length}</b>players</div><div><b>${total}</b>class XP together</div><div><b>${xpOf()}</b>your XP</div></div>
+  ${msg?`<div class="note">${esc(msg)}</div>`:''}
+  <div class="board" style="padding-top:14px">${list.length?[...list].sort((a,b)=>(b.xp||0)-(a.xp||0)).map((p,i)=>`<div class="pl ${p.id===UID||p.id==='me'?'me':''}"><span class="rk">${i+1}</span><span class="av" style="background:${esc(p.color||'#3B6CFF')}">${esc((p.name||'?')[0].toUpperCase())}</span><span class="nm">${esc(p.name||'Player')}${p.id===UID||p.id==='me'?' (you)':''}<small>Level ${p.lv||1} · ${p.badges||0} badges</small></span><span class="xp">${p.xp||0} XP</span>${IS_OWNER&&p.id!==UID&&p.id!=='me'?`<button class="rm" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">Remove</button>`:''}</div>`).join(''):'<div class="note">No players yet. Earn some XP and you will appear here.</div>'}</div>`;
+  app.querySelectorAll('.rm').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await DB.doc('players/'+b.dataset.id).delete()}catch(e){b.disabled=false}});
+  if(!soft)window.scrollTo(0,0);
+}
+route();initDB();
 </script>
