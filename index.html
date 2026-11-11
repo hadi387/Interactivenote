@@ -308,10 +308,11 @@ body.lite *{filter:none!important}
 .tick[aria-pressed="true"] .bx2{background:var(--lime);border-color:var(--lime)}
 textarea{width:100%;min-height:96px;font:600 19px/1.4 var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);padding:12px 14px;resize:vertical}
 .brief .skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:2px solid var(--line);color:var(--muted);font-family:var(--f-display);text-transform:uppercase;font-size:13px;padding:6px 14px}
-@media (max-width:560px){.xpbox{display:none}.logo{display:none}#nfs{display:none}.nv button{padding:6px 9px}.hud{justify-content:space-between}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
+@media (max-width:700px){.xpbox{display:none}.logo{display:none}#nfs{display:none}.nv button{padding:6px 9px}.hud{justify-content:space-between}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
 </style>
 
+<script>(function(){try{var d=document.createElement('div');d.style.cssText='display:flex;flex-direction:column;gap:1px';var x=document.createElement('div'),y=document.createElement('div');x.style.height='1px';y.style.height='1px';d.appendChild(x);d.appendChild(y);document.body.appendChild(d);var ok=d.scrollHeight===3;document.body.removeChild(d);if(!ok)document.documentElement.className+=' no-flexgap'}catch(e){}})();</script>
 <script>window.addEventListener('error',function(e){var d=document.getElementById('errb');if(!d){d=document.createElement('div');d.id='errb';document.body.appendChild(d)}d.textContent='Problem: '+(e.message||'unknown')+(e.lineno?' (line '+e.lineno+')':'')+'. Please screenshot this for your teacher.'});</script>
 <canvas id="rain" aria-hidden="true"></canvas>
 <div class="bar"><div class="wrap">
