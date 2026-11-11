@@ -14,7 +14,7 @@
 }
 *{box-sizing:border-box}
 html{background:var(--void)}
-body{margin:0;background:radial-gradient(120% 70% at 50% -10%,#2A1B7A 0%,var(--void) 60%) fixed;color:var(--text);font:600 18px/1.4 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;overflow-x:hidden}
+body{margin:0;background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--world,#2A1B7A) 50%,#0B0720) 0%,var(--void) 60%) fixed;color:var(--text);font:600 18px/1.4 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--void)}
 #rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5}
 .wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
@@ -147,10 +147,11 @@ section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);lett
 .face.f .tap{font-size:14px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
 .face.b{background:linear-gradient(160deg,#1E5BFF,#6A2BE0);transform:rotateY(180deg);font-size:17.5px;line-height:1.3;overflow:hidden}
 .face.b h4{font-size:20px;color:var(--gold)}
-.face.b .ph{margin:-18px -18px 0 -22px;height:128px;background:#0B0720;display:grid;place-items:center}
-.face.b .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.face.b .ph{margin:-18px -18px 0 -22px;height:128px;flex:none;background:#0B0720;display:grid;place-items:center;position:relative;overflow:hidden}
+.face.b .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 .face.b .ph .ic{width:56px;height:56px;color:var(--cyan)}
-.face.b .like{background:rgba(11,7,32,.45);padding:8px 12px;font-weight:700}
+.face.b .like{background:rgba(11,7,32,.45);padding:8px 12px;font-weight:700;display:flex;gap:10px;align-items:center}
+.lk{width:86px;height:86px;object-fit:cover;flex:none;clip-path:var(--cut-s)}
 .face.b .like em{font-style:normal;color:var(--gold);font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;display:block}
 
 .w{--acc:var(--cyan);position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:20px 22px 22px 26px;display:grid;gap:14px;min-width:0}
@@ -266,6 +267,25 @@ section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);lett
 .rm{background:none;border:2px solid var(--line);padding:2px 8px;font-size:12px;text-transform:uppercase}
 .note{background:#0B0720;border-left:5px solid var(--gold);padding:12px 16px;font-size:17px}
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:85}
+.target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
+.target.pic{padding:10px}
+.ask{font-family:var(--f-display);font-size:clamp(20px,4.6vw,28px);text-transform:none;background:var(--gold);color:var(--ink);padding:12px 18px;clip-path:var(--cut-s);animation:slam .45s both}
+.shot{position:relative;line-height:0;max-width:640px;width:100%;margin:0 auto;border:3px solid var(--line);cursor:crosshair;overflow:hidden;touch-action:manipulation}
+.shot img{width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
+.rip{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid var(--red);border-radius:50%;pointer-events:none;animation:floatUp .7s forwards}
+.tgt{position:absolute;border:4px solid var(--lime);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(60,255,143,.8);pointer-events:none;animation:pulse .8s 3}
+.tgt.hint{border-color:var(--gold);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(255,199,0,.8)}
+.brief{position:fixed;inset:0;z-index:95;background:radial-gradient(90% 60% at 50% 100%,color-mix(in srgb,var(--world,#2A1B7A) 70%,#000) 0%,rgba(7,4,20,.97) 70%);display:grid;align-items:end;padding:20px max(16px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px));animation:flash 0s;cursor:pointer}
+.brief .bx{max-width:860px;margin:0 auto;width:100%;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;animation:up .5s both}
+.bgboss{position:absolute;inset:0 0 40% 0;display:grid;place-items:center;opacity:.28;pointer-events:none}
+.bgboss svg{width:min(60vw,420px);height:auto;animation:bob 3s ease-in-out infinite}
+.brief .bz svg{width:clamp(90px,22vw,170px);height:auto;animation:bob 2s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(25,211,255,.6))}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.brief .bt{background:#0B0720;border-left:6px solid var(--cyan);padding:16px 20px;clip-path:var(--cut);min-height:150px;display:grid;gap:8px;align-content:start}
+.brief .who{font-family:var(--f-display);font-size:14px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
+.brief p{margin:0;font-size:clamp(20px,4.4vw,28px);line-height:1.3}
+.brief .go{justify-self:end;font-family:var(--f-display);color:var(--gold);font-size:14px;letter-spacing:.14em;text-transform:uppercase;animation:pulse 1s infinite}
+.brief .skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:2px solid var(--line);color:var(--muted);font-family:var(--f-display);text-transform:uppercase;font-size:13px;padding:6px 14px}
 @media (max-width:560px){.xpbox{display:none}.logo{font-size:16px}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
 </style>
@@ -310,20 +330,47 @@ const LEVELS=[
    {t:'Operating system',ic:'gear',img:'windows-desktop',d:'System software that manages computer hardware and software resources and provides common services so application programs can run.',like:'The principal of a school. Everyone and everything goes through the principal\'s office.'},
    {t:'Memory and processor',ic:'chip',img:'task-manager',d:'The OS decides which program gets how much memory and when the processor works on it.',like:'The timetable officer deciding which class uses which room, and when.'},
    {t:'Input and output devices',ic:'plug',img:'printer',d:'The OS controls devices like the keyboard, mouse, screen and printer.',like:'The prefect directing traffic so everyone moves in the right direction.'},
-   {t:'Files and folders',ic:'folder',img:'file-explorer',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
+   {t:'Files and folders',ic:'folder',img:'file-explorer',li:'filing-cabinet',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
    {t:'User interface',ic:'screen',img:'windows-desktop',d:'The OS gives you a way to talk to the computer: icons, menus, windows or touch.',like:'The front desk. It is where you speak to the school.'},
-   {t:'Security',ic:'lock',img:'login-screen',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
+   {t:'Security',ic:'lock',img:'login-screen',li:'school-gate',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
  {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',boss:['The Crash','#8A5CFF'],
   mission:'Operating systems come in different types. Learn which one lives where, and who it is built for.',
   cards:[
-   {t:'Single-user',ic:'user',img:'laptop-windows',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
-   {t:'Multi-user',ic:'users',img:'server-room',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
-   {t:'Mobile',ic:'phone',img:'android-phone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
-   {t:'Network',ic:'network',img:'school-network-lab',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
-   {t:'Common examples',ic:'list',img:'iphone',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
+   {t:'Single-user',ic:'user',img:'windows-desktop',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
+   {t:'Multi-user',ic:'users',img:'server-room',li:'danfo-bus',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
+   {t:'Mobile',ic:'phone',img:'iphone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
+   {t:'Network',ic:'network',img:'school-network-lab',li:'traffic-warden',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
+   {t:'Common examples',ic:'list',img:'',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
 ];
 
+const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+let TTS=null;
+async function speak(t){
+  if(!TTS||!S.voice)return;
+  try{if(MG)MG.gain.value=.3;await TTS.speak(t,{voice:'buttery'})}catch(e){}finally{if(MG)MG.gain.value=1}
+}
 function imgFail(i){if(!i.dataset.t){i.dataset.t=1;i.src=i.getAttribute("src").replace(".jpg",".png")}else i.remove()}
+const STORY={
+ 1:['Emergency! The Glitch has scrambled the school computer lab.','Nobody knows which programs run the machine, and which ones help people get work done.','Only a real tech expert can sort them out. That is you. Let us go!'],
+ 2:['The computers in the lab are getting sick. Viruses, junk files, files too big to send.','Virus Lord is spreading chaos across the whole network.','Welcome to the Tech Clinic. Learn the tools, treat the patients, and shut him down.'],
+ 3:['Kernel Panic has switched off the operating system. Without it, nothing starts. No apps. No screen. Nothing.','To bring the machine back to life you must know exactly what an operating system does.','Think like the principal of the school. Everything goes through you.'],
+ 4:['The Crash is attacking every kind of device in the city: phones, laptops, servers, whole networks.','To stop it, you must know which type of operating system runs where.','Look at the real devices. Then take him down.']
+};
+const EPI={1:'The Glitch is gone. The lab is safe.',2:'Virus Lord has been deleted. The clinic is open for business.',3:'Kernel Panic is beaten. The operating system is back online.',4:'The Crash is stopped. Every device is safe.'};
+function briefing(n){
+  return new Promise(res=>{
+    const lines=STORY[n];let li=0,ch=0,timer=null,typing=false;
+    const o=document.createElement('div');o.className='brief';
+    o.innerHTML=`<button class="skip" id="sk">Skip</button><div class="bgboss" aria-hidden="true">${bossSVG(LEVELS[n-1].boss[1],'idle')}</div><div class="bx"><div class="bz">${byteSVG('idle')}</div><div class="bt"><div class="who">Byte · Mission briefing</div><p id="bl" aria-live="polite"></p><div class="go">Tap to continue</div></div></div>`;
+    document.body.appendChild(o);const p=$('#bl',o);
+    const finish=()=>{clearInterval(timer);if(TTS)try{TTS.stop()}catch(e){}o.remove();res()};
+    function startLine(){ch=0;typing=true;p.textContent='';speak(lines[li]);clearInterval(timer);
+      timer=setInterval(()=>{ch++;p.textContent=lines[li].slice(0,ch);if(ch%3===0&&S.sfx)tone(900+Math.random()*200,now(),.03,'square',.03);if(ch>=lines[li].length){clearInterval(timer);typing=false}},26)}
+    o.onclick=e=>{if(e.target.id==='sk')return finish();if(typing){clearInterval(timer);p.textContent=lines[li];typing=false;return}li++;if(li>=lines.length)finish();else{sfx.tap();startLine()}};
+    startLine();
+  });
+}
 /* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -331,7 +378,7 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const IC={
- code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',music:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>'
+ code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',music:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',voice:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'
 };
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
 const COLS=['#FF2E88','#19D3FF','#3CFF8F','#FFC700','#8A5CFF','#FF7A1A'];
@@ -383,7 +430,7 @@ const sfx={
   no(){if(!S.sfx||!actx())return;const t=now();tone(220,t,.2,'sawtooth',.09);tone(150,t+.12,.3,'sawtooth',.09)},
   tap(){if(!S.sfx||!actx())return;tone(520,now(),.06,'square',.05)},
   flip(){if(!S.sfx||!actx())return;const t=now();tone(330,t,.08);tone(660,t+.07,.12)},
-  hit(){if(!S.sfx||!actx())return;const t=now();noise(t,.18,.25,300);tone(110,t,.2,'sawtooth',.12)},
+  hit(){buzz(60);if(!S.sfx||!actx())return;const t=now();noise(t,.18,.25,300);tone(110,t,.2,'sawtooth',.12)},
   win(){if(!S.sfx||!actx())return;const t=now();[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.3,'square',.08))},
   lose(){if(!S.sfx||!actx())return;const t=now();[392,330,262,196].forEach((f,i)=>tone(f,t+i*.18,.35,'sawtooth',.08))},
   whoosh(){if(!S.sfx||!actx())return;noise(now(),.35,.12,1500)},
@@ -438,7 +485,7 @@ function floatTxt(txt,el,color){
   document.body.appendChild(d);setTimeout(()=>d.remove(),950);
 }
 function flashFx(color){const d=document.createElement('div');d.className='flashfx';d.style.background=color;document.body.appendChild(d);setTimeout(()=>d.remove(),450)}
-function shakeScreen(){document.body.classList.add('shk');setTimeout(()=>document.body.classList.remove('shk'),380)}
+function shakeScreen(){buzz(80);document.body.classList.add('shk');setTimeout(()=>document.body.classList.remove('shk'),380)}
 function overlay(kind,a,b,c,ms=2200){
   return new Promise(res=>{
     const o=document.createElement('div');o.className='ov '+(kind||'');o.innerHTML=`<div class="p1"></div><div class="p2"></div><div class="tx"><div class="a">${esc(a)}</div><div class="b">${esc(b)}</div>${c?`<div class="c">${esc(c)}</div>`:''}</div>`;
@@ -476,10 +523,12 @@ function paintHud(){
   const x=xpOf(),lv=lvlOf(x);
   if(S.name){
     $('#hud').innerHTML=`<div class="xpbox"><div class="t"><span>${esc(titleOf(x))}</span><span>LV ${lv}</span></div><div class="xpbar"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="score" style="font-size:18px">${x} XP</span>
-    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button></div>
+    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button>${TTS?`<button id="nvo" class="${S.voice?'':'off'}" aria-label="Byte voice" aria-pressed="${!!S.voice}">${ic('voice')}</button>`:''}${document.documentElement.requestFullscreen?`<button id="nfs" aria-label="Full screen">${ic('full')}</button>`:''}</div>
     <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`;
     $('#nm').onclick=()=>location.hash='map';$('#nb').onclick=()=>location.hash='board';
     $('#nmu').onclick=()=>{S.music=!S.music;save();musicSync();paintHud()};$('#nsx').onclick=()=>{S.sfx=!S.sfx;save();sfx.tap();paintHud()};
+    const vo=$('#nvo');if(vo)vo.onclick=()=>{S.voice=!S.voice;save();paintHud();if(S.voice)speak('Hi! I am Byte. I will read the mission briefings to you.')};
+    const fs=$('#nfs');if(fs)fs.onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
   }else $('#hud').innerHTML='';
   if(lastLv!==null&&lv>lastLv){sfx.up();burst(120);overlay('win','LEVEL UP',`LV ${lv}`,`You are now a ${titleOf(x)}`,2000)}
   lastLv=lv;syncSoon();
@@ -522,7 +571,7 @@ const done=l=>(S.boss[l]||0)>=3;
 const starsFor=l=>{const b=S.boss[l]||0;return b>=5?3:b>=4?2:b>=3?1:0};
 const stars=n=>`<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`;
 function mapView(){
-  musicSet('menu');MU.mode='menu';document.title='System Squad';
+  musicSet('menu');MU.mode='menu';document.title='System Squad';setWorld();
   const x=xpOf();const allDone=LEVELS.every(l=>done(l.id));
   const cur=LEVELS.findIndex(l=>!done(l.id));
   app.innerHTML=`<div class="hero rv"><div class="eyebrow">${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP</div><h1><span class="skew">Choose your mission, ${esc(S.name)}</span></h1><p>Clear a level to unlock the next one.</p></div>
@@ -541,13 +590,16 @@ async function level(n){
   app.innerHTML='';window.scrollTo(0,0);
   musicSet('menu');MU.mode='menu';
   paintHud();
-  await overlay('',`Level ${n}`,L.name,L.mission,2400);
+  setWorld(L.boss[1]);
+  await overlay('',`Level ${n}`,L.name,'',1500);
+  if(location.hash!=='#l'+n)return;
+  await briefing(n);
   if(location.hash!=='#l'+n)return;
   const W=widgetsFor(n);
   app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
   <nav class="stage"><a href="#" data-s="learn"><span>1 Learn</span></a><a href="#" data-s="play"><span>2 Play</span></a><a href="#" data-s="boss"><span>3 Boss</span></a></nav>
   <div class="panel quest rv"><b>Your mission</b><span>${esc(L.mission)}</span></div>
-  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph"><img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like"><em>Think of it like</em>${esc(c.like)}</span></div></div></button>`).join('')}</div></section>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">`:''}${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
   <section id="s-play"><h2 data-rv><span class="skew">Stage 2</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
   <section id="s-boss"><h2 data-rv><span class="skew">Stage 3</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
   <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
@@ -618,7 +670,7 @@ function boss(el,n){
       $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';intro()};
       if(ok){sfx.win();burst(130)}else sfx.lose();
       paintHud();
-      await overlay(ok?'win':'lose',ok?'Victory':'Defeated',ok?'Boss down':'Try again',ok?`${L.boss[0]} is gone`:'',1800);
+      await overlay(ok?'win':'lose',ok?'Victory':'Defeated',ok?'Boss down':'Try again',ok?EPI[n]:'',2400);
       musicSet('menu');
     }});
   }
@@ -635,7 +687,7 @@ function sortGame(def){
       const it=deck[i];
       el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
       <div class="hud2"><span class="eyebrow">Target ${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${combo>=2?ic('flame')+' Combo x'+combo:''}</span><div class="meter" aria-hidden="true"><i style="width:${Math.min(combo,5)*20}%"></i></div><span class="score">${pts}</span></div>
-      <div class="target" aria-live="polite">${esc(it.t)}</div>
+      <div class="target ${it.img?'pic':''}" aria-live="polite">${it.img?`<img src="img/${it.img}.jpg" alt="Picture to identify">`:esc(it.t)}</div>
       <div class="cats">${def.cats.map((c,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
       <div class="byte" id="by"></div><div id="nx"></div>`;
       say($('#by',el),'idle',def.prompt||'Pick the right team. Fast answers in a row build your combo.');
@@ -729,16 +781,77 @@ function bootGame(el,n,gi){
   draw();
 }
 
+function hotGame(def){
+  return (el,n,gi)=>{
+    let q,i,pts,ok;const key=n+'.'+gi;
+    function start(){q=shuffle(def.targets).slice(0,def.n||5);i=0;pts=0;ok=0;draw()}
+    function draw(){
+      if(i>=q.length)return finish();
+      const t=q[i];let tries=0,solved=false;
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Mission ${i+1} of ${q.length}</span><span class="score">${pts}</span></div>
+      <div class="ask">${esc(t.prompt)}</div><div class="shot" id="sh"><img src="img/${t.img}.jpg" alt="Screenshot. Tap the right spot." draggable="false" onload="this.parentNode.style.maxWidth=Math.min(640,500*this.naturalWidth/this.naturalHeight)+'px'"></div><div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle','Tap the exact spot on the picture.');
+      const sh=$('#sh',el),im=$('img',sh);
+      const mark=(cls)=>t.rects.forEach(r=>{const d=document.createElement('div');d.className='tgt '+cls;d.style.cssText=`left:${r[0]}%;top:${r[1]}%;width:${r[2]-r[0]}%;height:${r[3]-r[1]}%`;sh.appendChild(d)});
+      const end=(good)=>{solved=true;
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===q.length-1?'Finish':'Next'}</span></button>`;const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true})};
+      sh.onclick=e=>{
+        if(solved)return;const r=im.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+        const hit=t.rects.some(a=>x>=a[0]&&x<=a[2]&&y>=a[1]&&y<=a[3]);
+        if(hit){const g=tries===0?15:tries===1?8:3;pts+=g;ok++;mark('');sfx.ok();floatTxt('+'+g,sh,'#FFC700');say($('#by',el),'ok',pick(CHEER)+' '+t.why);end(true)}
+        else{tries++;sfx.no();shakeScreen();const d=document.createElement('div');d.className='rip';d.style.left=x+'%';d.style.top=y+'%';sh.appendChild(d);setTimeout(()=>d.remove(),750);
+          if(tries>=2){mark('hint');say($('#by',el),'no','That glowing spot is the answer. '+t.why);end(false)}else say($('#by',el),'no','Not there. Look again. '+(t.hint||''))}
+      };
+    }
+    function finish(){
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);save();
+      if(ok===q.length){sfx.win();burst(90)}else if(ok>=q.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${q.length}</span></div><span class="score">${pts} points</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}<button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
+    }
+    start();
+  };
+}
+const P=(label,img,c)=>({t:label,img,c});
+const HS=[
+ // [img, prompt, rects (percent x0,y0,x1,y1), why]
+];
 /* ---------- sort data ---------- */
 const C=(n,info)=>({n,info});
 const I=(arr,c)=>arr.map(t=>({t,c}));
 const G=(title,intro,cats,items,n,prompt)=>sortGame({title,intro,cats,items,n,prompt});
 function widgetsFor(n){
   return {
-  1:[stackGame,flowGame,G('Hardware, system or app?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
-  2:[G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
-  3:[G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
-  4:[G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
+  1:[stackGame,flowGame,G('Photo ID','Look at the picture. Which team does it belong to?',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[P('Keyboard','keyboard',0),P('Laptop and printer','printer',0),P('Windows desktop','windows-desktop',1),P('Word','word-screen',2),P('Excel','excel-screen',2),P('Web browser','browser-screen',2)],6,'What is in the picture?'),hotGame({title:'App detective',intro:'Explore real screens. Tap the right spot.',n:5,targets:[
+  {img:'word-screen',prompt:'In Word, tap the white page where you type.',rects:[[4,32,94,96]],why:'Word is application software for writing documents.'},
+  {img:'word-screen',prompt:'In Word, tap the ribbon with the tools.',rects:[[0,12,100,29]],why:'The ribbon holds the tools that Word gives you.'},
+  {img:'excel-screen',prompt:'In Excel, tap the selected cell A1.',rects:[[6,47,17.6,53]],why:'Excel is application software for spreadsheets. Data sits in cells.'},
+  {img:'excel-screen',prompt:'In Excel, tap the row of column letters (A, B, C ...).',rects:[[6,42.7,95,46.7]],why:'Columns have letters and rows have numbers.'},
+  {img:'browser-screen',prompt:'In the browser, tap the address bar.',rects:[[3.7,6.8,57,11.5]],why:'A web browser is application software for the internet. You type web addresses in the address bar.'},
+  {img:'browser-screen',prompt:'In the browser, tap the search box on the Google page.',rects:[[27,52.5,73,59.5]],why:'The search box is where you type what you want to find.'},
+  {img:'windows-desktop',prompt:'On this Windows screen, tap the Word icon. It is an application.',rects:[[14.2,46.5,18.3,54]],why:'Word is an application. The desktop around it is drawn by the operating system, which is system software.'}]}),G('Hardware, system or app?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
+  2:[G('Spot the tool','Look at the screen. Which utility program is it?',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[P('Antivirus screen','antivirus-scan',0),P('Disk cleanup window','disk-cleanup',1),P('Zip files','zip-files',2),P('USB to Google Drive backup','cloud-backup',3)],4,'Which utility program is this?'),hotGame({title:'Utility inspector',intro:'Explore the screens of real utility programs.',n:5,targets:[
+  {img:'antivirus-scan',prompt:'Tap the button that starts a scan.',rects:[[73.8,62,91,68]],why:'An antivirus scans the computer for harmful software.'},
+  {img:'antivirus-scan',prompt:'Tap the message that says the PC is protected.',rects:[[1,1.7,58,7.3]],why:'The status tells you the antivirus is working.'},
+  {img:'disk-cleanup',prompt:'Tap the bar that shows the cleanup progress.',rects:[[22,59,61,64]],why:'Disk cleanup removes unnecessary files to free up space.'},
+  {img:'disk-cleanup',prompt:'Tap the button that would stop the cleaning.',rects:[[63,58,76,65]],why:'Cancel stops the cleanup.'},
+  {img:'zip-files',prompt:'Tap any compressed (zip) file.',rects:[[3,24,24,56],[36,24,56,56],[70,24,90,56],[3,62,24,93],[36,62,56,93],[70,62,90,93]],why:'Zip files are compressed, so they take up less space.'}]}),G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
+  3:[G('Which job is on screen?','Look at the picture. Which operating system job is it showing?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[P('Task Manager','task-manager',0),P('Printer connected to a laptop','printer',1),P('File Explorer','file-explorer',2),P('Windows desktop','windows-desktop',3),P('Login screen','login-screen',4)],5,'Which operating system job is this?'),hotGame({title:'OS explorer',intro:'Real screens, real jobs. Tap the right spot.',n:6,targets:[
+  {img:'windows-desktop',prompt:'Tap the Start button.',rects:[[2,92,7,97.5]],why:'The OS gives you the Start button to open apps. That is the user interface.'},
+  {img:'windows-desktop',prompt:'Tap the Recycle Bin.',rects:[[3,24,8,32]],why:'The OS manages files. Deleted files go to the Recycle Bin first.'},
+  {img:'windows-desktop',prompt:'Tap the clock on the taskbar.',rects:[[86.5,93.4,92.5,96.6]],why:'The taskbar is part of the OS interface.'},
+  {img:'task-manager',prompt:'Tap the processor (CPU) usage.',rects:[[1,11,34,20.5]],why:'The OS shares the processor between programs.'},
+  {img:'task-manager',prompt:'Tap the graph that shows memory (RAM) in use.',rects:[[40,17.8,96,59.6]],why:'The OS decides which program gets memory.'},
+  {img:'task-manager',prompt:'Tap how much memory is in use right now.',rects:[[40,74,60,80]],why:'The OS keeps track of memory use all the time.'},
+  {img:'file-explorer',prompt:'Tap the Downloads folder.',rects:[[46.5,25.8,68.4,36]],why:'The OS stores and organises files and folders.'},
+  {img:'file-explorer',prompt:'Tap the search box.',rects:[[62.4,10.6,98.3,17.7]],why:'The OS helps you find files by name.'},
+  {img:'login-screen',prompt:'Tap the box where you type your password.',rects:[[19.2,46.2,80.8,53.8]],why:'Security: the OS controls who can use the system.'},
+  {img:'login-screen',prompt:'Tap the button that logs you in.',rects:[[19.2,58.1,80.8,66]],why:'Only people with the right password get in.'}]}),G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
+  4:[G('Photo ID','Look at the picture. Which type of operating system fits?',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[P('Windows PC','windows-desktop',0),P('Server room','server-room',1),P('iPhone','iphone',2),P('School computer lab','school-network-lab',3)],4,'Which type of OS is this?'),hotGame({title:'Phone tour',intro:'An iPhone runs iOS, a mobile operating system. Explore its screen.',n:3,targets:[
+  {img:'iphone',prompt:'Tap the Phone app in the dock at the bottom.',rects:[[12.7,86.7,27,94.6]],why:'The mobile OS shows your apps and lets you open them by touch.'},
+  {img:'iphone',prompt:'Tap the Settings app.',rects:[[73.7,58.7,87.9,65.5]],why:'Settings lets you control the phone. The OS manages it.'},
+  {img:'iphone',prompt:'Tap the Camera app.',rects:[[73.7,23.7,87.9,30]],why:'The mobile OS controls the camera device for apps.'}]}),G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
   }[n];
 }
 
@@ -805,4 +918,5 @@ function leaderboard(soft){
   if(!soft)window.scrollTo(0,0);
 }
 route();initDB();
+(async()=>{try{TTS=await window.claude.use("tts");paintHud()}catch(e){}})();
 </script>
