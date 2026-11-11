@@ -285,6 +285,24 @@ section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);lett
 .brief .who{font-family:var(--f-display);font-size:14px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
 .brief p{margin:0;font-size:clamp(20px,4.4vw,28px);line-height:1.3}
 .brief .go{justify-self:end;font-family:var(--f-display);color:var(--gold);font-size:14px;letter-spacing:.14em;text-transform:uppercase;animation:pulse 1s infinite}
+.can{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:20px}
+.sl{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:start}
+.sl.one{grid-template-columns:1fr}
+@media (max-width:700px){.sl{grid-template-columns:1fr}}
+.pts2{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px;font-size:clamp(19px,3.8vw,23px);line-height:1.35}
+.pts2 li{padding-left:18px;position:relative;opacity:0;animation:slideL .5s cubic-bezier(.2,.8,.2,1) forwards}
+.pts2 li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.pts2 b{color:var(--gold)}
+.slp{margin:0;position:relative;background:#0B0720;clip-path:var(--cut-s);animation:drop .5s .2s both}
+.slp img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000}
+.slp .lk2{position:absolute;right:8px;bottom:44px;width:34%;max-height:none;border:3px solid var(--gold);object-fit:cover;aspect-ratio:1;background:#000}
+.slp figcaption{padding:8px 14px;font-size:16px;color:var(--muted)}
+.qc{display:grid;gap:10px;background:#0B0720;padding:14px 16px;border-left:6px solid var(--gold)}
+.tick{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:var(--panel);border:0;border-left:6px solid var(--line);clip-path:var(--cut-s);padding:14px 16px;font-size:19px;font-weight:600}
+.tick .bx2{flex:none;width:28px;height:28px;border:3px solid var(--line);background:#0B0720;display:grid;place-items:center;transform:rotate(45deg) scale(.8)}
+.tick[aria-pressed="true"]{border-left-color:var(--lime)}
+.tick[aria-pressed="true"] .bx2{background:var(--lime);border-color:var(--lime)}
+textarea{width:100%;min-height:96px;font:600 19px/1.4 var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);padding:12px 14px;resize:vertical}
 .brief .skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:2px solid var(--line);color:var(--muted);font-family:var(--f-display);text-transform:uppercase;font-size:13px;padding:6px 14px}
 @media (max-width:560px){.xpbox{display:none}.logo{font-size:16px}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
@@ -300,6 +318,7 @@ section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);lett
 
 <script>
 const MCQ=[[{"q":"Computer software can best be described as _____.","o":["the physical parts of a computer","a set of instructions and programs","the computer's monitor","a type of keyboard"]},{"q":"Which of the following is an example of system software?","o":["Microsoft Word","Windows operating system","A web browser","A calculator app"]},{"q":"Which of the following is an example of application software?","o":["Linux","macOS","Microsoft Excel","Windows"]},{"q":"The main function of system software is to _____.","o":["manage and control computer hardware","type letters only","play music only","print documents only"]},{"q":"Unlike hardware, software cannot be _____.","o":["installed","physically touched","updated","used"]}],[{"q":"Utility programs are mainly used to _____.","o":["entertain users","maintain and optimise the computer system","replace the operating system","design websites only"]},{"q":"A program that detects and removes harmful software is called _____.","o":["an antivirus","a browser","a spreadsheet","a presentation tool"]},{"q":"A utility tool that frees up storage space by removing unnecessary files is called _____.","o":["disk cleanup","word processor","web browser","email client"]},{"q":"File compression tools are mainly used to _____.","o":["reduce the size of files","increase file size","delete files permanently","print files"]},{"q":"Backup software is used to _____.","o":["copy important data to another location for safekeeping","permanently delete old files","design graphics","browse the internet"]}],[{"q":"An operating system is best described as software that _____.","o":["manages computer hardware and software resources","only plays videos","only prints documents","only stores photographs"]},{"q":"Which of the following is a function of an operating system?","o":["Managing memory and the processor","Cooking food","Cleaning the classroom","Teaching lessons"]},{"q":"The operating system provides a _____ through which users interact with the computer.","o":["user interface","keyboard only","printer only","speaker only"]},{"q":"Without an operating system, a computer _____.","o":["can run any software easily","cannot start up or run application software","becomes faster","becomes a calculator only"]},{"q":"Managing files and folders on a computer is a function of the _____.","o":["operating system","printer","scanner","speaker"]}],[{"q":"Which of these is a mobile operating system?","o":["Android","Windows Server","Linux Server","DOS"]},{"q":"An operating system that allows only one user to work at a time is called a _____ operating system.","o":["single-user","multi-user","network","mobile"]},{"q":"Which of the following is an example of a desktop operating system?","o":["iOS","Windows","Android","Symbian"]},{"q":"An operating system that manages several computers connected in a network is called a _____ operating system.","o":["network","single-user","mobile","game"]},{"q":"iOS is the mobile operating system developed mainly for _____ devices.","o":["Apple","Samsung","Tecno","Infinix"]}]];
+const HW=[{"obj":["Define computer software and distinguish it from hardware.","Differentiate between system software and application software, with examples."],"th":["Define computer software and explain how it differs from computer hardware.","Distinguish between system software and application software, giving two examples of each.","Explain why an operating system is necessary before application software can be used."],"asg":"List three examples of system software and three examples of application software found on computers or phones you have used.","prj":"Find out, by asking an adult or checking a device, the name and version of the operating system it uses, and write a short note about it."},{"obj":["Explain the meaning and purpose of utility programs.","Identify at least four utility programs and state their functions."],"th":["Explain the meaning and general purpose of utility programs.","Describe the function of an antivirus program.","State two other utility programs, apart from antivirus, and explain what each one does."],"asg":"Find out the name of any antivirus program installed on a computer you have access to, and write two sentences about what it does.","prj":"Prepare a short poster illustrating four utility programs and their functions, for classroom display."},{"obj":["Define an operating system.","State at least four functions of an operating system."],"th":["Define an operating system in your own words.","State four functions of an operating system.","Explain what would likely happen if a computer had no operating system installed."],"asg":"Write down the name of the operating system installed on any computer or phone you have used, and list two functions it performs.","prj":"Observe a computer starting up (booting) and write, in order, three things you notice happening on the screen."},{"obj":["Identify types of operating systems: single-user, multi-user, mobile and network.","State examples of operating systems used on computers and mobile devices."],"th":["State two types of operating systems and give one example of each.","Explain the difference between a single-user and a multi-user operating system.","Name two mobile operating systems commonly found on smartphones."],"asg":"Identify the operating system used on a phone or computer in your home, and state whether it is a mobile or desktop operating system.","prj":"In a table, compare any two operating systems, such as Windows and Android, under three headings: Type, Common Devices, One Special Feature."}];
 const ANS=[[1,1,2,0,1],[1,0,0,0,0],[0,0,0,1,0],[0,0,1,0,0]];
 const WHY=[
  ['Software is the set of instructions and programs. You cannot touch it. The physical parts are hardware.','Windows is an operating system, and an operating system is system software. Word, a browser and a calculator app are application software.','Microsoft Excel is for spreadsheets, a job a user wants done. Linux, macOS and Windows are operating systems.','System software manages and controls the hardware so that application software can run.','You can touch hardware like a keyboard. Software is instructions, so you cannot touch it.'],
@@ -307,42 +326,82 @@ const WHY=[
  ['The operating system manages the computer\'s hardware and software resources.','Managing memory and the processor is one of the main jobs of the operating system.','The user interface is how you talk to the computer: icons, menus and touch. The operating system provides it.','Without an operating system the computer cannot start up or run apps.','Managing files and folders is a job of the operating system.'],
  ['Android is a mobile operating system, made for phones and tablets.','Single-user means only one person can work at a time.','Windows is a desktop operating system. iOS and Android are mobile.','A network operating system manages and coordinates computers connected in a network.','iOS is made by Apple, for iPhones and iPads.']
 ];
-/* img: optional photo at img/<name>.jpg (or .png). Cards fall back to an icon when the photo is missing. */
+/* img: photo at img/<name>.jpg. li: a Nigerian-life photo for the "think of it like" box. */
 const LEVELS=[
  {id:1,name:'Meet the Software',wp:'Week 6 · Period 1',topic:'System Software and Application Software',badge:'Software Spotter',boss:['The Glitch','#FF2E88'],
-  mission:'Find out what software really is, then sort every program on a computer into the right team.',
+  mission:'Find out what software is, then put every program in the right team.',
   cards:[
-   {t:'Software',ic:'code',img:'word-screen',d:'A set of instructions, programs and data that tell the hardware what to do and how to do it. You cannot touch it.',like:'Hardware is the pot and the stove. Software is the recipe that tells them what to cook.'},
-   {t:'Hardware vs software',ic:'laptop',img:'keyboard',d:'Hardware is the physical, touchable part: keyboard, screen, mouse. Software is the instructions inside. Both are needed.',like:'Your phone screen is hardware. WhatsApp is software.'},
-   {t:'System software',ic:'gear',img:'windows-desktop',d:'Manages and controls the computer hardware so that application software can run. Operating systems such as Windows, macOS and Linux are system software.',like:'The school manager. Nobody teaches in class, but the school cannot run without the manager.'},
-   {t:'Application software',ic:'tool',img:'browser-screen',d:'Designed to help users do specific tasks. Microsoft Word for documents, Microsoft Excel for spreadsheets, a web browser for the internet.',like:'The tools in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
+   {t:'Software',ic:'code',img:'word-screen',d:'Software is a set of instructions that tells the computer what to do. You cannot touch it.',like:'A recipe. The recipe tells you what to cook, but it is not the pot or the stove.'},
+   {t:'Hardware vs software',ic:'laptop',img:'keyboard',d:'Hardware is the parts you can touch, like the keyboard and the screen. Software is the instructions inside. A computer needs both.',like:'Your phone screen is hardware. WhatsApp is software.'},
+   {t:'System software',ic:'gear',img:'windows-desktop',d:'System software controls the hardware so that other programs can run. Windows, macOS and Linux are examples.',like:'The school manager. The manager does not teach, but the school cannot run without the manager.'},
+   {t:'Application software',ic:'tool',img:'browser-screen',d:'Application software (apps) helps you do a job, like typing a letter or making a table. Word, Excel and web browsers are examples.',like:'The things in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
  {id:2,name:'Tech Clinic',wp:'Week 6 · Period 2',topic:'Utility Programs and Their Functions',badge:'Tech Doctor',boss:['Virus Lord','#FF4757'],
-  mission:'Utility programs keep a computer healthy. Treat the sick computers and choose the right tool.',
+  mission:'Utility programs keep a computer healthy. Treat the sick computers with the right tool.',
   cards:[
-   {t:'Utility programs',ic:'tool',img:'task-manager',d:'A category of system software that helps maintain, analyse, configure and optimise a computer so it keeps running smoothly. They work with the operating system.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
-   {t:'Antivirus',ic:'shield',img:'antivirus-scan',d:'Detects and removes harmful software (viruses and malware).',like:'The security guard at the gate who checks every visitor and removes troublemakers.'},
-   {t:'Disk cleanup',ic:'broom',img:'disk-cleanup',d:'Removes unnecessary files to free up storage space.',like:'The cleaner who sweeps rubbish out of the classroom so there is space to sit.'},
-   {t:'File compression',ic:'zip',img:'zip-files',d:'Reduces the size of files so they are easier to store or share.',like:'Packing clothes into a vacuum bag so the same things take up less room in your box.'},
-   {t:'Backup software',ic:'cloud',img:'cloud-backup',d:'Copies important data to another location for safekeeping.',like:'A photocopy of your result slip kept at home, in case the original is lost.'}]},
+   {t:'Utility programs',ic:'tool',img:'task-manager',d:'Utility programs are small helper programs. They keep the computer clean, safe and working well.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
+   {t:'Antivirus',ic:'shield',img:'antivirus-scan',d:'An antivirus finds harmful programs (viruses) and removes them.',like:'The security guard at the gate. He checks every visitor and sends troublemakers away.'},
+   {t:'Disk cleanup',ic:'broom',img:'disk-cleanup',d:'Disk cleanup deletes files you do not need, so you get more free space.',like:'The cleaner who sweeps the rubbish out of the classroom, so there is space to sit.'},
+   {t:'File compression',ic:'zip',img:'zip-files',d:'Compression makes a file smaller. Small files are easier to store and to send.',like:'Putting clothes in a vacuum bag. The same clothes take up less room in your box.'},
+   {t:'Backup software',ic:'cloud',img:'cloud-backup',d:'Backup software makes an extra copy of your important files and keeps it in another place.',like:'A photocopy of your result slip kept at home, in case the real one is lost.'}]},
  {id:3,name:'Run the Machine',wp:'Week 8 · Period 1',topic:'Functions of an Operating System',badge:'OS Boss',boss:['Kernel Panic','#FFC700'],
-  mission:'You are the operating system today. Handle every request, then see what happens when the OS is missing.',
+  mission:'You are the operating system today. Handle every job, and see what happens when the OS is missing.',
   cards:[
-   {t:'Operating system',ic:'gear',img:'windows-desktop',d:'System software that manages computer hardware and software resources and provides common services so application programs can run.',like:'The principal of a school. Everyone and everything goes through the principal\'s office.'},
-   {t:'Memory and processor',ic:'chip',img:'task-manager',d:'The OS decides which program gets how much memory and when the processor works on it.',like:'The timetable officer deciding which class uses which room, and when.'},
-   {t:'Input and output devices',ic:'plug',img:'printer',d:'The OS controls devices like the keyboard, mouse, screen and printer.',like:'The prefect directing traffic so everyone moves in the right direction.'},
-   {t:'Files and folders',ic:'folder',img:'file-explorer',li:'filing-cabinet',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
-   {t:'User interface',ic:'screen',img:'windows-desktop',d:'The OS gives you a way to talk to the computer: icons, menus, windows or touch.',like:'The front desk. It is where you speak to the school.'},
-   {t:'Security',ic:'lock',img:'login-screen',li:'school-gate',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
+   {t:'Operating system',ic:'gear',img:'windows-desktop',d:'The operating system (OS) is the main program of a computer. It manages the hardware and the apps so that everything works together.',like:"The school principal. Everything goes through the principal's office."},
+   {t:'Memory and processor',ic:'chip',img:'task-manager',d:'The OS decides which program gets memory, and when the processor works on it. This stops programs from fighting each other.',like:'The timetable officer who decides which class uses which room, and when.'},
+   {t:'Input and output devices',ic:'plug',img:'printer',d:'The OS controls the keyboard, mouse, screen and printer. When you press Print, the OS talks to the printer.',like:'The prefect who directs traffic so everyone moves the right way.'},
+   {t:'Files and folders',ic:'folder',img:'file-explorer',li:'filing-cabinet',d:'The OS saves your files, gives them names, finds them and keeps them in folders.',like:'The school registry and its filing cabinets.'},
+   {t:'User interface',ic:'screen',img:'windows-desktop',d:'The user interface is how you talk to the computer: icons, menus, windows and touch. The OS gives it to you.',like:'The front desk. It is where you speak to the school.'},
+   {t:'Security',ic:'lock',img:'login-screen',li:'school-gate',d:'The OS protects the computer. It uses passwords to decide who can come in.',like:'The gateman who asks, "Who are you?" before he opens the gate.'}]},
  {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',boss:['The Crash','#8A5CFF'],
-  mission:'Operating systems come in different types. Learn which one lives where, and who it is built for.',
+  mission:'There are different types of operating systems. Find out which one is used where.',
   cards:[
-   {t:'Single-user',ic:'user',img:'windows-desktop',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
-   {t:'Multi-user',ic:'users',img:'server-room',li:'danfo-bus',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
-   {t:'Mobile',ic:'phone',img:'iphone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
-   {t:'Network',ic:'network',img:'school-network-lab',li:'traffic-warden',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
-   {t:'Common examples',ic:'list',img:'',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
+   {t:'Single-user',ic:'user',img:'windows-desktop',d:'Only one person can use it at a time. Example: Windows on your own laptop.',like:'A private car. One driver at a time.'},
+   {t:'Multi-user',ic:'users',img:'server-room',li:'danfo-bus',d:'Many people use the same computer at the same time. This is common on big servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
+   {t:'Mobile',ic:'phone',img:'android-phone',d:'Made for phones and tablets. Android and iOS are mobile operating systems. Apple makes iOS.',like:'The brain of your phone. It is built for touch screens.'},
+   {t:'Network',ic:'network',img:'school-network-lab',li:'traffic-warden',d:'Manages computers that are joined together in a network, for example the computers in a school lab.',like:'The traffic warden at a busy junction. He keeps every vehicle moving.'},
+   {t:'Common examples',ic:'list',img:'iphone',d:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.',like:'Computers: Windows, macOS, Linux. Phones and tablets: Android, iOS.'}]}
 ];
-
+/* Teaching slides. **word** = key word. Each slide ends with a quick check (first option is the right one; options are shuffled when shown). */
+const TEACH={
+1:[
+ {h:'What is software?',lines:['Software is a set of **instructions**.','The instructions tell the computer what to do.','Think of a recipe. The recipe is not the food and not the pot. It only tells you what to do.','You **cannot touch** software.'],img:'word-screen',cap:'You can see Word on the screen, but you cannot touch it. It is software.',q:'Which one can you NOT touch?',o:['A program (software)','A keyboard','A mouse','A monitor']},
+ {h:'Hardware and software',lines:['**Hardware** is the parts you can touch: keyboard, mouse, screen, printer.','**Software** is the instructions inside.','A computer needs both. A phone with no apps cannot do much. Apps with no phone cannot run.'],img:'keyboard',cap:'A keyboard is hardware.',q:'Which one is hardware?',o:['A mouse','Microsoft Word','Windows','Google Chrome']},
+ {h:'Two kinds of software',lines:['There are two main kinds of software.','**System software** runs the computer.','**Application software** helps YOU do a job.'],img:'',cap:'',q:'Typing a letter is a job. Which software helps you do it?',o:['Application software','System software','Hardware','Electricity']},
+ {h:'System software',lines:['System software **controls the hardware**.','It makes sure other programs can run.','The most important one is the **operating system** (OS).','Examples: **Windows**, **macOS**, **Linux**.'],img:'windows-desktop',cap:'Windows is system software. It draws the desktop and runs the computer.',q:'Which one is system software?',o:['Windows','Microsoft Excel','Google Chrome','A calculator app']},
+ {h:'Application software',lines:['Application software is also called an **app**.','**Word** helps you write documents.','**Excel** helps you work with numbers and tables.','A **web browser** helps you visit websites.'],img:'excel-screen',cap:'Excel is an app for tables and numbers.',q:'You want to make a table of marks. Which app is best?',o:['Microsoft Excel','Linux','A mouse','Windows']},
+ {h:'How they work together',lines:['You tap the Word icon.','Word asks the **operating system** for help.','The operating system uses the **hardware** to open Word.','No system software means **no apps**.'],img:'',cap:'',q:'What must be on the computer before an app can run?',o:['System software','A printer','A mouse pad','Nothing']}
+],
+2:[
+ {h:'What is a utility program?',lines:['A utility program is a small **helper** program.','It keeps the computer **clean, safe and working well**.','It is a kind of system software.','It works together with the operating system.'],img:'task-manager',cap:'Task Manager is a utility. It shows what the computer is doing.',q:'Utility programs help to...',o:['keep the computer healthy','play games only','replace the keyboard','draw pictures']},
+ {h:'Antivirus',lines:['A **virus** is a harmful program. It can damage or steal your files.','An **antivirus** finds viruses and removes them.','Keep it updated, so it can catch new viruses.'],img:'antivirus-scan',cap:'An antivirus scans the computer. "Scan now" starts a check.',q:'What does an antivirus do?',o:['Finds and removes harmful software','Makes files smaller','Copies files to a flash drive','Cleans the screen']},
+ {h:'Disk cleanup',lines:['Over time the computer fills with **junk**: old temporary files and things you do not need.','**Disk cleanup** deletes them and gives you free space.','More free space helps the computer work better.'],img:'disk-cleanup',cap:'Disk cleanup is cleaning unnecessary files.',q:'Your storage is full of junk files. What do you use?',o:['Disk cleanup','Antivirus','A printer','A mouse']},
+ {h:'File compression',lines:['**Compression** makes a file smaller.','A smaller file is easier to **store** and to **send** by email or WhatsApp.','A compressed file is called a **zip file**. To use it, you unzip it.'],img:'zip-files',cap:'Zip files look like a folder with a zipper.',q:'What is a zip file?',o:['A file that was made smaller','A virus','A printer','A keyboard']},
+ {h:'Backup software',lines:['A **backup** is an extra copy of your important files, kept in **another place**.','If the first copy is lost, you still have the second one.','You can back up to a flash drive, an external disk, or the **cloud** (like Google Drive).'],img:'cloud-backup',cap:'Backing up a flash drive to Google Drive.',q:'Why do we make a backup?',o:['To recover our files if the original is lost','To make the computer slower','To delete files','To print']},
+ {h:'Pick the right tool',lines:['Virus or strange pop-ups? Use **antivirus**.','Storage is full of junk? Use **disk cleanup**.','File is too big to send? Use **compression**.','Afraid of losing your files? Make a **backup**.'],img:'',cap:'',q:'A folder is too big to email. Which utility helps?',o:['File compression','Antivirus','Disk cleanup','Backup software']}
+],
+3:[
+ {h:'What is an operating system?',lines:['The **operating system (OS)** is the main system software.','It **manages** all the hardware and all the apps.','It is like the school principal. Everything goes through the principal.','Examples: Windows, macOS, Linux, Android, iOS.'],img:'windows-desktop',cap:'This is Windows, an operating system.',q:'The operating system...',o:['manages the hardware and the apps','is a type of printer','is only for games','is a type of keyboard']},
+ {h:'Job 1: Memory and processor',lines:['The **processor** (CPU) does the work.','**Memory** (RAM) is the space where programs stay while they run.','Many programs run at the same time. The OS decides **who gets memory and processor time**, and when.'],img:'task-manager',cap:'Task Manager shows memory and processor use. The OS is managing them.',q:'Who shares memory and processor time between programs?',o:['The operating system','The mouse','The printer','The speaker']},
+ {h:'Job 2: Input and output devices',lines:['**Input** devices send things in: keyboard, mouse.','**Output** devices show things out: screen, printer.','The OS **controls** them. When you press Print, the OS talks to the printer.'],img:'printer',cap:'A printer is connected to a laptop. The OS makes them work together.',q:'You press Print. Who talks to the printer?',o:['The operating system','The keyboard','The monitor','Nobody']},
+ {h:'Job 3: Files and folders',lines:['The OS **saves** your files and gives them **names**.','It keeps them in **folders**, so you can find them.','It can copy, move, rename and delete files.','Like a school registry with filing cabinets.'],img:'file-explorer',li:'filing-cabinet',cap:'File Explorer shows folders. The OS organises them.',q:'Who saves and finds your files?',o:['The operating system','The speaker','The webcam','The scanner']},
+ {h:'Job 4: User interface',lines:['The **user interface** is how you talk to the computer.','Icons, menus, windows, the Start button and touch are all part of it.','The OS gives it to you. Without it, you would have to type secret commands.'],img:'windows-desktop',cap:'Icons and the Start button are the user interface.',q:'Icons and menus on the screen are called the...',o:['user interface','printer','battery','keyboard']},
+ {h:'Job 5: Security',lines:['The OS **protects** the computer.','It asks for a **password**, so strangers cannot come in.','It decides who can open which files.','Like the gateman at the school gate.'],img:'login-screen',li:'school-gate',cap:'A login screen is the OS doing its security job.',q:'A password screen is the OS doing which job?',o:['Security','Printing','Cleaning','Drawing']},
+ {h:'No OS, no computer',lines:['Without an operating system, a computer **cannot start**.','It also **cannot run apps**.','The hardware is there, but nothing manages it.','So the operating system is the most important software.'],img:'',cap:'',q:'A computer with no operating system...',o:['cannot start or run apps','runs faster','only works as a calculator','can run any app easily']}
+],
+4:[
+ {h:'Types of operating systems',lines:['We group operating systems by **how they are used**.','There are four main types.','**Single-user**, **multi-user**, **mobile** and **network**.'],img:'',cap:'',q:'We group operating systems by...',o:['how they are used','their colour','the school they are in','the shape of the computer']},
+ {h:'Single-user OS',lines:['Only **one person** can use it at a time.','Like a private car. One driver at a time.','Example: **Windows** on your own laptop or PC.'],img:'windows-desktop',cap:'Windows on a personal computer.',q:'Windows on your own laptop is usually...',o:['single-user','multi-user','network','mobile']},
+ {h:'Multi-user OS',lines:['**Many people** use the same computer **at the same time**.','Like a danfo bus. Many passengers ride the same bus.','This is common on big **servers**.'],img:'server-room',li:'danfo-bus',cap:'A room full of servers. Many people use them at once.',q:'Many people use one big server at the same time. It is...',o:['multi-user','single-user','mobile','switched off']},
+ {h:'Mobile OS',lines:['Made for **phones and tablets**.','Made for touch screens and small batteries.','**Android** is made by Google. Tecno, Infinix and Samsung phones use it.','**iOS** is made by **Apple**. iPhones and iPads use it.'],img:'android-phone',cap:'An Android phone home screen.',q:'iOS is made by...',o:['Apple','Tecno','Infinix','Samsung']},
+ {h:'Network OS',lines:['It manages computers that are **joined together** in a network.','Like the computers in a school lab.','It shares files and printers and decides who can log in.','Like a traffic warden at a busy junction.'],img:'school-network-lab',li:'traffic-warden',cap:'A school computer lab. Network software joins them.',q:'An OS that manages computers joined together is...',o:['a network OS','a single-user OS','a mobile OS','a game OS']},
+ {h:'Famous examples',lines:['**Computers:** Windows, macOS, Linux.','**Phones and tablets:** Android, iOS.','Same job (manage the machine), made for different devices.'],img:'iphone',cap:'An iPhone home screen. It runs iOS.',q:'Which one is a mobile operating system?',o:['Android','Windows','Linux','macOS']}
+]};
+const RECAP={
+1:['Software is a set of instructions. You cannot touch it.','Hardware is the parts you can touch.','System software runs the computer. Example: Windows.','Application software helps you do a job. Example: Word.'],
+2:['Utility programs keep the computer clean, safe and working well.','Antivirus removes harmful software.','Disk cleanup frees space. Compression makes files smaller.','Backup makes an extra copy in another place.'],
+3:['The OS manages the hardware and the apps.','Its jobs: memory and processor, devices, files and folders, user interface, security.','Without an OS, a computer cannot start or run apps.'],
+4:['Single-user: one person at a time.','Multi-user: many people at the same time.','Mobile: phones and tablets (Android, iOS).','Network: manages connected computers.']
+};
 const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 let TTS=null;
@@ -352,10 +411,10 @@ async function speak(t){
 }
 function imgFail(i){if(!i.dataset.t){i.dataset.t=1;i.src=i.getAttribute("src").replace(".jpg",".png")}else i.remove()}
 const STORY={
- 1:['Emergency! The Glitch has scrambled the school computer lab.','Nobody knows which programs run the machine, and which ones help people get work done.','Only a real tech expert can sort them out. That is you. Let us go!'],
- 2:['The computers in the lab are getting sick. Viruses, junk files, files too big to send.','Virus Lord is spreading chaos across the whole network.','Welcome to the Tech Clinic. Learn the tools, treat the patients, and shut him down.'],
- 3:['Kernel Panic has switched off the operating system. Without it, nothing starts. No apps. No screen. Nothing.','To bring the machine back to life you must know exactly what an operating system does.','Think like the principal of the school. Everything goes through you.'],
- 4:['The Crash is attacking every kind of device in the city: phones, laptops, servers, whole networks.','To stop it, you must know which type of operating system runs where.','Look at the real devices. Then take him down.']
+ 1:['Emergency! The Glitch has messed up the school computer lab.','Nobody knows which programs run the computer and which ones help people do work.','You can help. Let us learn first, then play!'],
+ 2:['The computers in the lab are sick. Some have viruses. Some are full of junk files.','Virus Lord is making it worse every day.','Learn the right tools, then treat the computers and beat him.'],
+ 3:['Kernel Panic has switched off the operating system. Now nothing will start.','You must learn what the operating system does to bring the computer back to life.','Think of a school principal. Everything goes through the principal.'],
+ 4:['The Crash is attacking phones, laptops and servers all over the city.','To stop him, you must know which type of operating system is used where.','Look at the real devices, learn, then beat him.']
 };
 const EPI={1:'The Glitch is gone. The lab is safe.',2:'Virus Lord has been deleted. The clinic is open for business.',3:'Kernel Panic is beaten. The operating system is back online.',4:'The Crash is stopped. Every device is safe.'};
 function briefing(n){
@@ -386,12 +445,15 @@ const CATC=['#19D3FF','#FF2E88','#FFC700','#3CFF8F','#8A5CFF'];
 
 /* ---------- state ---------- */
 let S={};try{S=JSON.parse(localStorage.getItem('dt-squad')||'{}')}catch(e){}
-S.cards=S.cards||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.best=S.best||0;
+S.cards=S.cards||{};S.teach=S.teach||{};S.think=S.think||{};S.task=S.task||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.best=S.best||0;
 if(S.music===undefined)S.music=true;if(S.sfx===undefined)S.sfx=S.sound!==false;
 const save=()=>{try{localStorage.setItem('dt-squad',JSON.stringify(S))}catch(e){}};
 function xpOf(){
   let x=0;
   Object.values(S.cards).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.teach).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.think).forEach(a=>x+=a.filter(t=>t&&t.trim().length>8).length*10);
+  Object.values(S.task).forEach(o=>x+=(o.a?10:0)+(o.p?10:0));
   Object.values(S.games).forEach(v=>x+=v);
   Object.values(S.boss).forEach(v=>{x+=v*20;if(v===5)x+=50;if(v>=3)x+=100});
   x+=S.final*15;if(S.final===10)x+=100;
@@ -596,17 +658,28 @@ async function level(n){
   await briefing(n);
   if(location.hash!=='#l'+n)return;
   const W=widgetsFor(n);
+  S.teach[n]=S.teach[n]||TEACH[n].map(()=>false);
+  S.think[n]=S.think[n]||HW[n-1].th.map(()=>'');
+  S.task[n]=S.task[n]||{a:false,p:false};
   app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
-  <nav class="stage"><a href="#" data-s="learn"><span>1 Learn</span></a><a href="#" data-s="play"><span>2 Play</span></a><a href="#" data-s="boss"><span>3 Boss</span></a></nav>
-  <div class="panel quest rv"><b>Your mission</b><span>${esc(L.mission)}</span></div>
-  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">`:''}${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
-  <section id="s-play"><h2 data-rv><span class="skew">Stage 2</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
-  <section id="s-boss"><h2 data-rv><span class="skew">Stage 3</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
+  <nav class="stage"><a href="#" data-s="learn"><span>Learn</span></a><a href="#" data-s="cards"><span>Cards</span></a><a href="#" data-s="play"><span>Play</span></a><a href="#" data-s="boss"><span>Boss</span></a><a href="#" data-s="home"><span>Home</span></a></nav>
+  <div class="panel quest rv"><b>By the end you can</b><ul class="can">${HW[n-1].obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN WITH BYTE</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
+  <section id="s-cards"><h2 data-rv><span class="skew">Stage 2</span><small>REVIEW CARDS</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">`:''}${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
+  <section id="s-play"><h2 data-rv><span class="skew">Stage 3</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
+  <section id="s-boss"><h2 data-rv><span class="skew">Stage 4</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
+  <section id="s-home"><h2 data-rv><span class="skew">Stage 5</span><small>CLASS WORK AND HOMEWORK</small></h2>
+    ${HW[n-1].th.map((q,k)=>`<div class="w" style="--acc:var(--gold)"><label for="th${k}" class="qtext">${esc(q)}</label><textarea id="th${k}" data-k="${k}" placeholder="Write your answer in your own words. +10 XP">${esc(S.think[n][k]||'')}</textarea></div>`).join('')}
+    <button class="tick" data-t="a" aria-pressed="${S.task[n].a}"><span class="bx2"></span><span><b>Assignment.</b> ${esc(HW[n-1].asg)}</span></button>
+    <button class="tick" data-t="p" aria-pressed="${S.task[n].p}"><span class="bx2"></span><span><b>Project.</b> ${esc(HW[n-1].prj)}</span></button></section>
   <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
   app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
   const cp=()=>{$('#cp').textContent=`Cards revealed: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
   app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);sfx.flip();
     if(!open&&!S.cards[n][i]){S.cards[n][i]=true;save();cp();floatTxt('+5 XP',b,'#FFC700');burst(25,b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+60);paintHud()}});
+  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{S.think[n][+t.dataset.k]=t.value;save();clearTimeout(t._t);t._t=setTimeout(paintHud,800)});
+  app.querySelectorAll('.tick').forEach(b=>b.onclick=()=>{const k=b.dataset.t;S.task[n][k]=!S.task[n][k];b.setAttribute('aria-pressed',S.task[n][k]);sfx.ok();save();paintHud()});
+  teachPlayer($('#teach'),n);
   const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';d.dataset.rv='';d.style.setProperty('--acc',CATC[gi%5]);ws.appendChild(d);fn(d,n,gi)});
   boss($('#bossbox'),n);
   revealOnScroll(app);
@@ -781,6 +854,41 @@ function bootGame(el,n,gi){
   draw();
 }
 
+function teachPlayer(el,n){
+  const T=TEACH[n];let i=0,tries=0,answered=false;
+  const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  function draw(){
+    if(i>=T.length)return recap();
+    const t=T[i];tries=0;answered=false;
+    const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
+    el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
+    <div class="sl ${t.img?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul></div>
+    ${t.img?`<figure class="slp"><img src="img/${t.img}.jpg" alt="">${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
+    <div class="byte" id="by"></div>
+    <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
+    say($('#by',el),'idle','Read the points, then answer the quick check.');
+    el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
+      if(answered)return;const o=opts[+b.dataset.k];
+      if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
+        if(!S.teach[n][i]&&tries===0){S.teach[n][i]=true;save();floatTxt('+5 XP',b,'#FFC700');paintHud()}
+        say($('#by',el),'ok',pick(CHEER));$('#nx',el).disabled=false;$('#nx',el).focus({preventScroll:true})}
+      else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Read the points again and try another answer.');
+        if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');$('#nx',el).disabled=false}}
+    });
+    $('#pv',el).onclick=()=>{sfx.tap();i--;draw();el.scrollIntoView({block:'nearest'})};
+    $('#nx',el).onclick=()=>{sfx.tap();i++;draw();el.scrollIntoView({block:'nearest'})};
+  }
+  function recap(){
+    const got=S.teach[n].filter(Boolean).length;
+    sfx.win();burst(50);
+    el.innerHTML=`<div class="eyebrow">Lesson complete</div><h3><span class="skew">What you learned</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
+    <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Flip the cards</span></button></div>`;
+    say($('#by',el),'ok',`You got ${got} of ${T.length} quick checks right on the first try. Now flip the review cards, then play the games.`);
+    $('#again',el).onclick=()=>{i=0;draw()};$('#go2',el).onclick=()=>{sfx.tap();$('#s-cards').scrollIntoView({behavior:RM?'auto':'smooth'})};
+  }
+  draw();
+}
 function hotGame(def){
   return (el,n,gi)=>{
     let q,i,pts,ok;const key=n+'.'+gi;
@@ -848,7 +956,11 @@ function widgetsFor(n){
   {img:'file-explorer',prompt:'Tap the search box.',rects:[[62.4,10.6,98.3,17.7]],why:'The OS helps you find files by name.'},
   {img:'login-screen',prompt:'Tap the box where you type your password.',rects:[[19.2,46.2,80.8,53.8]],why:'Security: the OS controls who can use the system.'},
   {img:'login-screen',prompt:'Tap the button that logs you in.',rects:[[19.2,58.1,80.8,66]],why:'Only people with the right password get in.'}]}),G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
-  4:[G('Photo ID','Look at the picture. Which type of operating system fits?',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[P('Windows PC','windows-desktop',0),P('Server room','server-room',1),P('iPhone','iphone',2),P('School computer lab','school-network-lab',3)],4,'Which type of OS is this?'),hotGame({title:'Phone tour',intro:'An iPhone runs iOS, a mobile operating system. Explore its screen.',n:3,targets:[
+  4:[G('Photo ID','Look at the picture. Which type of operating system fits?',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[P('Windows PC','windows-desktop',0),P('Server room','server-room',1),P('iPhone','iphone',2),P('Android phone','android-phone',2),P('School computer lab','school-network-lab',3)],5,'Which type of OS is this?'),hotGame({title:'Phone tour',intro:'Phones run a mobile operating system. Android phones and iPhones both have one. Explore them.',n:5,targets:[
+  {img:'android-phone',prompt:'On the Android phone, tap the Chrome browser at the bottom.',rects:[[54,80,70,92]],why:'Chrome is an app. The mobile OS shows apps as icons and opens them when you touch.'},
+  {img:'android-phone',prompt:'Tap the YouTube app.',rects:[[54,47,70,59]],why:'The mobile OS lets you open apps by touch.'},
+  {img:'android-phone',prompt:'Tap the Play Store, where you download apps.',rects:[[77,61,93,73]],why:'The OS lets you install new apps from the store.'},
+  {img:'android-phone',prompt:'Tap the Home button at the bottom of the screen.',rects:[[46,94,54,99.5]],why:'The home button always takes you back to the main screen. The OS gives you this button.'},
   {img:'iphone',prompt:'Tap the Phone app in the dock at the bottom.',rects:[[12.7,86.7,27,94.6]],why:'The mobile OS shows your apps and lets you open them by touch.'},
   {img:'iphone',prompt:'Tap the Settings app.',rects:[[73.7,58.7,87.9,65.5]],why:'Settings lets you control the phone. The OS manages it.'},
   {img:'iphone',prompt:'Tap the Camera app.',rects:[[73.7,23.7,87.9,30]],why:'The mobile OS controls the camera device for apps.'}]}),G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
