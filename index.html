@@ -585,22 +585,22 @@ function paintHud(){
   const x=xpOf(),lv=lvlOf(x);
   if(S.name){
     $('#hud').innerHTML=`<div class="xpbox"><div class="t"><span>${esc(titleOf(x))}</span><span>LV ${lv}</span></div><div class="xpbar"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="score" style="font-size:18px">${x} XP</span>
-    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button>${TTS?`<button id="nvo" class="${S.voice?'':'off'}" aria-label="Byte voice" aria-pressed="${!!S.voice}">${ic('voice')}</button>`:''}${document.documentElement.requestFullscreen?`<button id="nfs" aria-label="Full screen">${ic('full')}</button>`:''}</div>
+    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button>${TTS?`<button id="nvo" class="${S.voice?'':'off'}" aria-label="Byte voice" aria-pressed="${!!S.voice}">${ic('voice')}</button>`:''}${document.documentElement.requestFullscreen?`<button id="nfs" aria-label="Full screen">${ic('full')}</button>`:''}</div>
     <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`;
-    $('#nm').onclick=()=>location.hash='map';$('#nb').onclick=()=>location.hash='board';
+    $('#nm').onclick=()=>location.hash='map';
     $('#nmu').onclick=()=>{S.music=!S.music;save();musicSync();paintHud()};$('#nsx').onclick=()=>{S.sfx=!S.sfx;save();sfx.tap();paintHud()};
     const vo=$('#nvo');if(vo)vo.onclick=()=>{S.voice=!S.voice;save();paintHud();if(S.voice)speak('Hi! I am Byte. I will read the mission briefings to you.')};
     const fs=$('#nfs');if(fs)fs.onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
   }else $('#hud').innerHTML='';
   if(lastLv!==null&&lv>lastLv){sfx.up();burst(120);overlay('win','LEVEL UP',`LV ${lv}`,`You are now a ${titleOf(x)}`,2000)}
-  lastLv=lv;syncSoon();
+  lastLv=lv;
 }
 const app=$('#app');
 function route(){
   const h=location.hash.slice(1)||'map';route.cur=h;
   if(!S.name||!route.started){start();return}
   const m=h.match(/^l([1-4])$/);
-  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='board')leaderboard();else mapView();
+  if(m)level(+m[1]);else if(h==='final')finalRound();else mapView();
   window.scrollTo(0,0);paintHud();
 }
 addEventListener('hashchange',()=>{if(route.started)route()});
@@ -612,7 +612,7 @@ function start(){
   let color=S.color||COLS[1];
   const title='SYSTEM SQUAD'.split(' ');
   app.innerHTML=`<div class="start"><h1 aria-label="System Squad">${title.map((w,wi)=>`<div>${[...w].map((ch,i)=>`<span style="animation-delay:${(wi*6+i)*70}ms">${ch}</span>`).join('')}</div>`).join('')}</h1>
-  <p class="tag">Beat the levels. Defeat the bosses. Climb the class leaderboard. Learn how computers really work.</p>
+  <p class="tag">Beat the levels. Defeat the bosses. Collect XP and badges. Learn how computers really work.</p>
   ${S.name?`<div class="press">Welcome back, ${esc(S.name)}</div><button class="btn" id="go"><span>Press start</span></button>`:`<div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="EXAMPLE: CODEKING"></div>
   <div class="field"><label>Pick your colour</label><div class="hexes" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
   <button class="btn" id="go"><span>Press start</span></button>`}
@@ -981,7 +981,7 @@ async function finalRound(){
     el.innerHTML='<div id="fq" style="display:grid;gap:14px"></div>';
     mcqRun($('#fq'),qs,{time:25,done:async(score,total,box)=>{
       const before=xpOf();S.final=Math.max(S.final,score);save();const gain=xpOf()-before;MU.mode='menu';
-      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Play again</span></button><a class="btn" href="#board"><span>Leaderboard</span></a></div></div>`;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Play again</span></button><a class="btn" href="#map"><span>Back to map</span></a></div></div>`;
       say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
       $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';go()};
       if(score>=8){sfx.win();burst(150)}else sfx.ok();paintHud();
@@ -990,45 +990,5 @@ async function finalRound(){
   go();
 }
 
-/* ---------- leaderboard (shared db) ---------- */
-let DB=null,USER=null,UID=null,lastSent='',syncT=null,players=[],dbState='loading',IS_OWNER=false;
-async function initDB(){
-  try{
-    const c=window.claude;if(!c||!c.use){dbState='off';return}
-    USER=await c.use('user');DB=await c.use('db');
-    if(!USER||!DB){dbState='off';return}
-    UID=await USER.id();IS_OWNER=await USER.isOwner();
-    if(!UID){dbState='off';return}
-    dbState='on';
-    DB.collection('players').orderBy('xp','desc').limit(60).onSnapshot(s=>{players=s.docs.map(d=>({id:d.id,...d.data()}));if(route.cur==='board')leaderboard(true)},()=>{dbState='err';if(route.cur==='board')leaderboard(true)});
-    syncSoon();
-  }catch(e){dbState='off'}
-  if(route.cur==='board')leaderboard(true);
-}
-function syncSoon(){
-  if(dbState!=='on'||!S.name||!route.started)return;
-  clearTimeout(syncT);syncT=setTimeout(async()=>{
-    const x=xpOf();const doc={name:S.name,color:S.color,xp:x,lv:lvlOf(x),badges:badges().filter(b=>b.on).length,stars:LEVELS.reduce((a,l)=>a+starsFor(l.id),0),t:Date.now()};
-    const sig=[doc.name,doc.color,doc.xp,doc.badges].join('|');if(sig===lastSent)return;
-    try{await DB.doc('players/'+UID).set(doc);lastSent=sig}catch(e){if(e&&e.code==='invalid_argument')dbState='readonly'}
-  },1500);
-}
-let boardDrawn=false;
-function leaderboard(soft){
-  document.title='Leaderboard · System Squad';musicSet('menu');
-  const x=xpOf();
-  const list=dbState==='on'||dbState==='readonly'?players:[{id:'me',name:S.name,color:S.color,xp:x,lv:lvlOf(x),badges:badges().filter(b=>b.on).length}];
-  const total=list.reduce((a,p)=>a+(p.xp||0),0);
-  const msg={off:'The class leaderboard is not connected. Your points are still saved on this tablet. Ask your teacher to share this page with "Contributor" access.',readonly:'You can see the leaderboard, but your score cannot be saved. Ask your teacher for "Contributor" access.',err:'The leaderboard could not load. Your points are still saved on this tablet.',loading:'Loading the leaderboard ...',on:''}[dbState];
-  const sorted=[...list].sort((a,b)=>(b.xp||0)-(a.xp||0));
-  app.innerHTML=`<div class="lh"><div class="eyebrow">Live for the whole class</div><h1><span class="skew">Leaderboard</span></h1></div>
-  <div class="tally"><div><b>${list.length}</b>players</div><div><b>${total}</b>class XP</div><div><b>${x}</b>your XP</div></div>
-  ${msg?`<div class="note" style="margin-top:12px">${esc(msg)}</div>`:''}
-  <div class="board">${sorted.length?sorted.map((p,i)=>{const me=p.id===UID||p.id==='me';return `<div class="pl r${i+1} ${me?'me':''}" style="--i:${boardDrawn&&soft?0:i}"><span class="rk">${i+1}</span><span class="av" style="background:${esc(p.color||'#19D3FF')};width:38px;height:38px">${esc((p.name||'?')[0].toUpperCase())}</span><span class="nm">${esc(p.name||'Player')}${me?' (you)':''}<small>Level ${p.lv||1} · ${p.badges||0} badges</small></span><span class="xp">${p.xp||0} XP</span>${IS_OWNER&&!me?`<button class="rm" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">Remove</button>`:''}</div>`}).join(''):'<div class="note">No players yet. Earn some XP and you will appear here.</div>'}</div>`;
-  boardDrawn=true;
-  app.querySelectorAll('.rm').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await DB.doc('players/'+b.dataset.id).delete()}catch(e){b.disabled=false}});
-  if(!soft)window.scrollTo(0,0);
-}
-route();initDB();
-(async()=>{try{TTS=await window.claude.use("tts");paintHud()}catch(e){}})();
+route();
 </script>

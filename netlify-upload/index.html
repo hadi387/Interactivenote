@@ -1,0 +1,994 @@
+<title>System Squad</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rajdhani:wght@500;600;700&display=swap">
+<style>
+/* Concept: arcade HUD. Dark neon world, chamfered panels and skewed buttons, binary rain behind, music and motion on every action. Deliberately one dark look. */
+:root{
+  --void:#0B0720;--panel:#16103F;--panel2:#221858;--line:#3D2F98;--text:#F4F0FF;--muted:#B5AAEA;
+  --cyan:#19D3FF;--mag:#FF2E88;--gold:#FFC700;--lime:#3CFF8F;--red:#FF4757;--violet:#8A5CFF;--ink:#1B1200;
+  --f-display:'Russo One','Arial Black',Impact,sans-serif;--f-body:'Rajdhani','Segoe UI',system-ui,sans-serif;
+  --cut:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  --cut-s:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--void)}
+body{margin:0;background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--world,#2A1B7A) 50%,#0B0720) 0%,var(--void) 60%) fixed;color:var(--text);font:600 18px/1.4 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--void)}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5}
+.wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:400;line-height:1.05;margin:0;text-transform:uppercase;letter-spacing:.02em}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+a{color:inherit}
+.skew{display:inline-block;transform:skewX(-8deg)}
+.eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--cyan)}
+.ic{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* buttons: skewed slabs */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--gold);color:var(--ink);font-family:var(--f-display);text-transform:uppercase;font-size:18px;letter-spacing:.04em;padding:14px 28px;min-height:54px;text-decoration:none;transform:skewX(-10deg);box-shadow:5px 5px 0 #8E6A00;transition:transform .08s,box-shadow .08s}
+.btn>*{transform:skewX(10deg)}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:skewX(-10deg) translate(4px,4px);box-shadow:1px 1px 0 #8E6A00}
+.btn.cy{background:var(--cyan);box-shadow:5px 5px 0 #0A6F8C}
+.btn.mg{background:var(--mag);color:#fff;box-shadow:5px 5px 0 #8F1450}
+.btn.gh{background:transparent;color:var(--text);box-shadow:none;border:2px solid var(--line)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* chamfered panels */
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:18px 20px 18px 24px;min-width:0}
+.panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc,var(--cyan))}
+.panel.sm{clip-path:var(--cut-s);padding:12px 16px 12px 20px}
+
+/* HUD */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(180deg,rgba(11,7,32,.96),rgba(11,7,32,.85));border-bottom:3px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--f-display);text-transform:uppercase;font-size:20px;letter-spacing:.03em;background:none;border:0;padding:0;color:var(--text);flex:none}
+.logo b{color:var(--gold);font-weight:400}
+.hud{display:flex;align-items:center;gap:10px;flex:1;min-width:0;justify-content:flex-end}
+.chip{display:flex;align-items:center;gap:8px;min-width:0}
+.av{flex:none;width:38px;height:38px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-family:var(--f-display);color:#fff;font-size:17px}
+.xpbox{display:grid;gap:3px;min-width:0;flex:0 1 170px}
+.xpbox .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.xpbox .t span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xpbar{height:12px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FF9D00);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.nv{display:flex;gap:6px}
+.nv button{background:var(--panel);border:2px solid var(--line);transform:skewX(-10deg);padding:6px 10px;display:flex;align-items:center;gap:6px;font-family:var(--f-display);text-transform:uppercase;font-size:13px}
+.nv button>*{transform:skewX(10deg)}
+.nv button[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:#001A22}
+.nv button.off{opacity:.5}
+
+/* reveal motion */
+@keyframes up{from{opacity:0;transform:translateY(28px) skewY(2deg)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) skewX(-8deg);filter:blur(10px)}60%{opacity:1;transform:scale(.94) skewX(-8deg);filter:none}100%{opacity:1;transform:scale(1) skewX(-8deg)}}
+@keyframes shake{10%,50%,90%{transform:translateX(-8px)}30%,70%{transform:translateX(8px)}}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(255,199,0,.0),0 0 28px 4px rgba(255,199,0,.6)}}
+@keyframes floatUp{to{opacity:0;transform:translateY(-70px) scale(1.4)}}
+@keyframes sweep{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(220%) skewX(-20deg)}}
+@keyframes dash{to{background-position:0 -40px}}
+@keyframes flash{from{opacity:.75}to{opacity:0}}
+@keyframes drop{0%{opacity:0;transform:translateY(-60px) rotate(-4deg) scale(.9)}70%{transform:translateY(6px) rotate(1deg)}100%{opacity:1;transform:none}}
+.rv{animation:up .6s cubic-bezier(.2,.8,.2,1) both}
+.pre{opacity:0;transform:translateY(28px)}
+.shake{animation:shake .4s}
+body.shk .wrap{animation:shake .35s}
+
+/* welcome */
+.start{min-height:calc(100dvh - 90px);display:grid;align-content:center;gap:22px;padding-block:30px;justify-items:start}
+.start h1{font-size:clamp(54px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 var(--mag),10px 10px 0 var(--violet)}
+.start h1 span{display:inline-block;opacity:0;animation:slam .55s cubic-bezier(.2,.8,.2,1) forwards}
+.start .tag{max-width:46ch;font-size:21px;color:var(--muted)}
+.press{font-family:var(--f-display);font-size:22px;letter-spacing:.2em;color:var(--gold);animation:pulse 1.1s infinite;text-transform:uppercase}
+.field{display:grid;gap:8px;width:100%;max-width:430px}
+.field label{font-family:var(--f-display);text-transform:uppercase;font-size:14px;letter-spacing:.1em;color:var(--cyan)}
+input[type=text]{font:700 24px var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);clip-path:var(--cut-s);padding:12px 16px;width:100%;text-transform:uppercase;letter-spacing:.05em}
+.hexes{display:flex;gap:10px;flex-wrap:wrap}
+.hexes button{width:54px;height:54px;border:0;padding:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);position:relative}
+.hexes button[aria-pressed="true"]::after{content:"";position:absolute;inset:14px;background:#fff;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+
+/* map */
+.hero{padding-block:26px 8px;display:grid;gap:6px}
+.hero h1{font-size:clamp(30px,7vw,50px)}
+.hero p{margin:0;color:var(--muted);font-size:20px}
+.path{display:grid;gap:0;padding-block:16px;position:relative}
+.step{position:relative;display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:center}
+.step+.step{margin-top:26px}
+.step+.step::before{content:"";position:absolute;left:37px;top:-26px;height:26px;width:4px;background:repeating-linear-gradient(180deg,var(--line) 0 8px,transparent 8px 14px);background-size:4px 40px;animation:dash 1.2s linear infinite}
+.step.go+.step::before{background:repeating-linear-gradient(180deg,var(--gold) 0 8px,transparent 8px 14px)}
+.hex{width:76px;height:84px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:34px;color:#fff;position:relative}
+.step.cur .hex{background:var(--gold);color:var(--ink);animation:pulse 1.2s infinite}
+.step.go .hex{background:var(--lime);color:#00331A}
+.step.fin .hex{background:var(--violet)}
+.node{display:block;width:100%;text-align:left;border:0;background:none;padding:0;min-width:0;color:inherit}
+.node .panel{--acc:var(--line);transition:transform .12s}
+.step.cur .panel{--acc:var(--gold)}.step.go .panel{--acc:var(--lime)}.step.fin .panel{--acc:var(--violet)}
+.node:not([disabled]):hover .panel{transform:translateX(8px)}
+.node[disabled]{cursor:not-allowed;opacity:.5}
+.node h3{font-size:clamp(20px,4.6vw,28px)}
+.node small{display:block;color:var(--muted);font-size:16px;font-weight:600;margin-top:2px}
+.node .row2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stars{display:flex;gap:2px;flex:none}
+.stars .ic{width:28px;height:28px;fill:#2C2370;stroke:none}
+.stars .on .ic{fill:var(--gold);filter:drop-shadow(0 0 6px rgba(255,199,0,.8))}
+.sec-t{font-size:22px;padding-top:22px;color:var(--gold)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;padding-top:10px}
+.bdg{display:flex;align-items:center;gap:8px;background:var(--panel);clip-path:var(--cut-s);padding:8px 16px 8px 12px;font-family:var(--f-display);font-size:14px;text-transform:uppercase}
+.bdg .ic{width:24px;height:24px}
+.bdg.off{opacity:.35;filter:grayscale(1)}.bdg.on{color:var(--gold)}.bdg.on .ic{filter:drop-shadow(0 0 6px var(--gold))}
+
+/* level */
+.lh{padding-block:26px 8px;display:grid;gap:8px}
+.lh h1{font-size:clamp(36px,9vw,72px);color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.stage{display:flex;gap:6px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:40;padding-block:10px;background:linear-gradient(180deg,var(--void) 70%,transparent)}
+.stage a{flex:1;text-align:center;text-decoration:none;background:var(--panel);border:2px solid var(--line);transform:skewX(-12deg);padding:8px 4px;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.stage a>*{display:inline-block;transform:skewX(12deg)}
+.stage a:hover{border-color:var(--gold)}
+.quest{--acc:var(--gold)}
+.quest b{font-family:var(--f-display);text-transform:uppercase;color:var(--gold);display:block;font-size:15px;letter-spacing:.1em}
+.quest span{font-size:21px}
+section{padding-block:22px 6px;display:grid;gap:14px;scroll-margin-top:130px}
+section>h2{font-size:30px;display:flex;align-items:baseline;gap:12px}
+section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);letter-spacing:.16em}
+.cprog{font-weight:700;color:var(--muted);letter-spacing:.05em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.flip{perspective:1000px;background:none;border:0;padding:0;text-align:left;color:inherit}
+.flip .in{display:grid;width:100%;height:100%;transition:transform .6s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.flip[aria-pressed="true"] .in{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:270px;backface-visibility:hidden;-webkit-backface-visibility:hidden;clip-path:var(--cut);padding:18px 18px 18px 22px;display:flex;flex-direction:column;gap:8px}
+.face.f{background:repeating-linear-gradient(135deg,#1C1450 0 14px,#241A66 14px 28px);justify-content:space-between;position:relative}
+.face.f::after{content:"";position:absolute;top:0;left:0;height:100%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);animation:sweep 3.2s infinite;pointer-events:none}
+.face.f .q{font-family:var(--f-display);font-size:72px;color:var(--cyan);line-height:1;text-shadow:0 0 22px rgba(25,211,255,.7)}
+.face.f h3{font-size:22px}
+.face.f .tap{font-size:14px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.face.b{background:linear-gradient(160deg,#1E5BFF,#6A2BE0);transform:rotateY(180deg);font-size:17.5px;line-height:1.3;overflow:hidden}
+.face.b h4{font-size:20px;color:var(--gold)}
+.face.b .ph{margin:-18px -18px 0 -22px;height:128px;flex:none;background:#0B0720;display:grid;place-items:center;position:relative;overflow:hidden}
+.face.b .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.face.b .ph .ic{width:56px;height:56px;color:var(--cyan)}
+.face.b .like{background:rgba(11,7,32,.45);padding:8px 12px;font-weight:700;display:flex;gap:10px;align-items:center}
+.lk{width:86px;height:86px;object-fit:cover;flex:none;clip-path:var(--cut-s)}
+.face.b .like em{font-style:normal;color:var(--gold);font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;display:block}
+
+.w{--acc:var(--cyan);position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:20px 22px 22px 26px;display:grid;gap:14px;min-width:0}
+.w::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc)}
+.w h3{font-size:26px}
+.hint{margin:0;color:var(--muted)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.target{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(24px,5.5vw,36px);text-align:center;padding:30px 16px;min-height:120px;display:grid;place-items:center;background:linear-gradient(180deg,#0B0720,#150E3D);clip-path:var(--cut);overflow-wrap:anywhere;animation:drop .45s cubic-bezier(.2,1.2,.4,1) both;line-height:1.15}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.opt{position:relative;background:var(--panel);border:0;border-left:8px solid var(--c,var(--line));padding:14px 16px;text-align:left;font-family:var(--f-body);font-weight:700;font-size:19px;display:flex;gap:10px;align-items:center;min-height:60px;clip-path:var(--cut-s);transition:transform .1s,background .15s;animation:slideR .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+.opt:hover:not([disabled]){background:var(--panel2);transform:translateX(6px)}
+.opt:active:not([disabled]){transform:scale(.97)}
+.opt.ok{background:#0E5B37;border-left-color:var(--lime)}
+.opt.no{background:#6A1730;border-left-color:var(--red);animation:shake .4s}
+.opt .m{margin-left:auto;font-family:var(--f-display);font-size:22px}
+.opt.ok .m{color:var(--lime)}.opt.no .m{color:var(--red)}
+.cats{display:flex;flex-wrap:wrap;gap:12px}
+.cats .opt{flex:1 1 160px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:17px}
+.qtext{font-family:var(--f-display);font-size:clamp(20px,4.4vw,28px);line-height:1.25;margin:0;text-transform:none;animation:slideL .45s cubic-bezier(.2,.8,.2,1) both}
+.blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--gold);text-align:center;margin-inline:2px;color:var(--gold)}
+.blank.f{color:var(--lime);border-color:var(--lime)}
+.pips{display:flex;gap:6px}
+.pips i{width:22px;height:10px;transform:skewX(-20deg);background:#2C2370;display:block}
+.pips i.ok{background:var(--lime)}.pips i.no{background:var(--red)}.pips i.cur{background:var(--gold);animation:pulse 1s infinite}
+.hud2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.score{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);color:var(--gold)}
+.meter{height:12px;width:140px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mag),var(--gold));transition:width .25s}
+.combo{font-family:var(--f-display);text-transform:uppercase;color:var(--mag);font-size:20px;min-width:110px;display:flex;align-items:center;gap:6px}
+.combo.on{animation:pulse .35s}
+.timer{height:10px;background:#0B0720;transform:skewX(-20deg);overflow:hidden}
+.timer i{display:block;height:100%;width:100%;background:var(--violet)}
+.byte{display:flex;gap:12px;align-items:flex-start;min-height:64px}
+.byte svg{flex:none;width:62px;height:62px}
+.bubble{position:relative;background:#0B0720;padding:10px 16px;flex:1;min-width:0;border-left:5px solid var(--cyan);font-size:18px;line-height:1.3;animation:slideR .3s both}
+.bubble.ok{border-color:var(--lime)}.bubble.no{border-color:var(--red)}
+.result{display:grid;gap:14px;justify-items:start}
+.big{font-family:var(--f-display);font-size:72px;line-height:1;color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.xpg{display:inline-block;background:var(--gold);color:var(--ink);font-family:var(--f-display);padding:4px 16px;transform:skewX(-10deg);animation:slam .5s both}
+.miss{display:grid;gap:6px;width:100%}
+.miss div{background:#3A1330;border-left:5px solid var(--red);padding:6px 12px;font-size:17px}
+
+/* boss arena */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;background:linear-gradient(180deg,#0B0720,#1A0F4A);clip-path:var(--cut);padding:14px 18px}
+.fighter{display:grid;gap:6px;justify-items:center;min-width:0}
+.fighter .nm{font-family:var(--f-display);font-size:14px;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.vs{font-family:var(--f-display);font-size:34px;color:var(--mag);text-shadow:3px 3px 0 #4A0A28}
+.hearts{display:flex;gap:4px}
+.hearts svg{width:26px;height:26px}
+.hp{display:flex;gap:4px;width:100%;max-width:200px}
+.hp i{flex:1;height:14px;background:var(--red);transform:skewX(-20deg);transition:background .2s,transform .3s}
+.hp i.lost{background:#2C1730;transform:skewX(-20deg) scaleY(.5)}
+.bossw{width:92px;height:92px}
+.hit{animation:shake .4s}
+.flashfx{position:fixed;inset:0;z-index:70;pointer-events:none;animation:flash .4s forwards}
+.fl{position:fixed;z-index:80;pointer-events:none;font-family:var(--f-display);font-size:34px;color:var(--gold);text-shadow:3px 3px 0 #000;animation:floatUp .9s forwards}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:90;display:grid;place-items:center;overflow:hidden;background:rgba(11,7,32,.0)}
+.ov .p1,.ov .p2{position:absolute;top:-10%;bottom:-10%;width:60%;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+.ov .p1{left:-10%;background:var(--mag);transform:translateX(-130%) skewX(-14deg)}
+.ov .p2{right:-10%;background:var(--violet);transform:translateX(130%) skewX(-14deg)}
+.ov.in .p1,.ov.in .p2{transform:translateX(0) skewX(-14deg)}
+.ov .tx{position:relative;text-align:center;display:grid;gap:10px;padding:20px}
+.ov .tx .a{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);letter-spacing:.3em;color:var(--gold);opacity:0;animation:slideL .4s .3s forwards}
+.ov .tx .b{font-family:var(--f-display);font-size:clamp(44px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 #000;opacity:0;animation:slam .5s .45s both;text-transform:uppercase}
+.ov .tx .c{font-size:22px;max-width:30ch;margin:0 auto;opacity:0;animation:up .5s .8s forwards}
+.ov.out{opacity:0;transition:opacity .35s}
+.ov.win .p1{background:var(--lime)}.ov.win .p2{background:var(--cyan)}.ov.win .tx .b{color:#fff}
+.ov.lose .p1{background:var(--red)}.ov.lose .p2{background:#6A1730}
+
+.stack{display:grid;gap:8px}
+.layer{padding:14px 18px;font-family:var(--f-display);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:58px;border:3px dashed var(--line);color:var(--muted);clip-path:var(--cut-s);font-size:17px}
+.layer small{font-family:var(--f-body);font-size:15px;text-transform:none;font-weight:600}
+.layer.placed{border-style:solid;border-color:transparent;color:#fff;animation:drop .45s both}
+.layer.l3{background:#7B4DFF}.layer.l2{background:#1E6BFF}.layer.l1{background:#0E9A55}.layer.l0{background:#E8590C}
+.layer.act{outline:4px solid var(--gold);transform:scale(1.03);animation:glow 1s infinite}
+.pool{display:flex;gap:10px;flex-wrap:wrap}.pool .opt{flex:1 1 200px}
+.flowtext{background:#0B0720;border-left:5px solid var(--gold);padding:14px 18px;min-height:78px}
+.boot{background:#04020E;color:#6BFFAE;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:15px;padding:14px 16px;min-height:150px;line-height:1.7;overflow-wrap:anywhere;border:2px solid var(--line)}
+.boot .e{color:#FF7B8A}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.apps button{background:var(--panel);border:0;clip-path:var(--cut-s);padding:14px 4px;display:grid;gap:4px;justify-items:center;font-family:var(--f-display);font-size:13px;text-transform:uppercase}
+.apps button .ic{width:34px;height:34px;color:var(--cyan)}
+.apps button[disabled]{opacity:.3;cursor:not-allowed}
+.apps button:not([disabled]){animation:drop .4s both}
+.sw{display:inline-flex;gap:10px;align-items:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px;background:var(--panel);border:2px solid var(--line);padding:8px 16px 8px 10px;transform:skewX(-10deg)}
+.sw i{width:42px;height:22px;background:var(--red);position:relative;display:block}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;transition:left .2s}
+.sw[aria-pressed="true"] i{background:var(--lime)}.sw[aria-pressed="true"] i::after{left:23px}
+.files{display:grid;gap:8px}
+.file{display:flex;align-items:center;gap:12px;background:#0B0720;padding:10px 14px;font-weight:700}
+.file .b2{flex:1;height:14px;background:#2C2370;transform:skewX(-20deg);overflow:hidden}
+.file .b2 i{display:block;height:100%;background:var(--cyan);transition:width .7s cubic-bezier(.3,1.2,.5,1)}
+.file .mb{font-family:var(--f-display);min-width:78px;text-align:right}
+.limit{display:flex;justify-content:space-between;font-family:var(--f-display);text-transform:uppercase;background:#0B0720;padding:12px 16px;border-left:6px solid var(--line)}
+.limit.okk{border-color:var(--lime);color:var(--lime)}.limit.bad{border-color:var(--red);color:var(--red)}
+
+/* leaderboard */
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tally div{background:var(--panel);clip-path:var(--cut-s);padding:10px 16px;font-weight:700;color:var(--muted);text-transform:uppercase;font-size:14px;letter-spacing:.06em}
+.tally b{display:block;font-family:var(--f-display);font-size:34px;color:#fff;letter-spacing:0}
+.board{display:grid;gap:10px;padding-top:16px}
+.pl{display:grid;grid-template-columns:54px 40px 1fr auto auto;gap:12px;align-items:center;background:var(--panel);clip-path:var(--cut-s);padding:10px 16px 10px 12px;animation:slideR .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms);min-width:0}
+.pl .rk{font-family:var(--f-display);font-size:34px;text-align:center;color:var(--muted)}
+.pl.r1{background:linear-gradient(90deg,#6B4B00,var(--panel));box-shadow:inset 6px 0 0 var(--gold)}.pl.r1 .rk{color:var(--gold);text-shadow:0 0 14px var(--gold)}
+.pl.r2{box-shadow:inset 6px 0 0 #C8D0E6}.pl.r2 .rk{color:#C8D0E6}
+.pl.r3{box-shadow:inset 6px 0 0 #E3A26B}.pl.r3 .rk{color:#E3A26B}
+.pl.me{outline:3px solid var(--cyan);outline-offset:-3px}
+.pl .nm{min-width:0;font-family:var(--f-display);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:18px}
+.pl .nm small{display:block;font-family:var(--f-body);font-size:14px;color:var(--muted);text-transform:none;font-weight:600}
+.pl .xp{font-family:var(--f-display);color:var(--gold);font-size:20px}
+.rm{background:none;border:2px solid var(--line);padding:2px 8px;font-size:12px;text-transform:uppercase}
+.note{background:#0B0720;border-left:5px solid var(--gold);padding:12px 16px;font-size:17px}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:85}
+.target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
+.target.pic{padding:10px}
+.ask{font-family:var(--f-display);font-size:clamp(20px,4.6vw,28px);text-transform:none;background:var(--gold);color:var(--ink);padding:12px 18px;clip-path:var(--cut-s);animation:slam .45s both}
+.shot{position:relative;line-height:0;max-width:640px;width:100%;margin:0 auto;border:3px solid var(--line);cursor:crosshair;overflow:hidden;touch-action:manipulation}
+.shot img{width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
+.rip{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid var(--red);border-radius:50%;pointer-events:none;animation:floatUp .7s forwards}
+.tgt{position:absolute;border:4px solid var(--lime);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(60,255,143,.8);pointer-events:none;animation:pulse .8s 3}
+.tgt.hint{border-color:var(--gold);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(255,199,0,.8)}
+.brief{position:fixed;inset:0;z-index:95;background:radial-gradient(90% 60% at 50% 100%,color-mix(in srgb,var(--world,#2A1B7A) 70%,#000) 0%,rgba(7,4,20,.97) 70%);display:grid;align-items:end;padding:20px max(16px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px));animation:flash 0s;cursor:pointer}
+.brief .bx{max-width:860px;margin:0 auto;width:100%;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;animation:up .5s both}
+.bgboss{position:absolute;inset:0 0 40% 0;display:grid;place-items:center;opacity:.28;pointer-events:none}
+.bgboss svg{width:min(60vw,420px);height:auto;animation:bob 3s ease-in-out infinite}
+.brief .bz svg{width:clamp(90px,22vw,170px);height:auto;animation:bob 2s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(25,211,255,.6))}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.brief .bt{background:#0B0720;border-left:6px solid var(--cyan);padding:16px 20px;clip-path:var(--cut);min-height:150px;display:grid;gap:8px;align-content:start}
+.brief .who{font-family:var(--f-display);font-size:14px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
+.brief p{margin:0;font-size:clamp(20px,4.4vw,28px);line-height:1.3}
+.brief .go{justify-self:end;font-family:var(--f-display);color:var(--gold);font-size:14px;letter-spacing:.14em;text-transform:uppercase;animation:pulse 1s infinite}
+.can{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:20px}
+.sl{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:start}
+.sl.one{grid-template-columns:1fr}
+@media (max-width:700px){.sl{grid-template-columns:1fr}}
+.pts2{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px;font-size:clamp(19px,3.8vw,23px);line-height:1.35}
+.pts2 li{padding-left:18px;position:relative;opacity:0;animation:slideL .5s cubic-bezier(.2,.8,.2,1) forwards}
+.pts2 li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.pts2 b{color:var(--gold)}
+.slp{margin:0;position:relative;background:#0B0720;clip-path:var(--cut-s);animation:drop .5s .2s both}
+.slp img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000}
+.slp .lk2{position:absolute;right:8px;bottom:44px;width:34%;max-height:none;border:3px solid var(--gold);object-fit:cover;aspect-ratio:1;background:#000}
+.slp figcaption{padding:8px 14px;font-size:16px;color:var(--muted)}
+.qc{display:grid;gap:10px;background:#0B0720;padding:14px 16px;border-left:6px solid var(--gold)}
+.tick{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:var(--panel);border:0;border-left:6px solid var(--line);clip-path:var(--cut-s);padding:14px 16px;font-size:19px;font-weight:600}
+.tick .bx2{flex:none;width:28px;height:28px;border:3px solid var(--line);background:#0B0720;display:grid;place-items:center;transform:rotate(45deg) scale(.8)}
+.tick[aria-pressed="true"]{border-left-color:var(--lime)}
+.tick[aria-pressed="true"] .bx2{background:var(--lime);border-color:var(--lime)}
+textarea{width:100%;min-height:96px;font:600 19px/1.4 var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);padding:12px 14px;resize:vertical}
+.brief .skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:2px solid var(--line);color:var(--muted);font-family:var(--f-display);text-transform:uppercase;font-size:13px;padding:6px 14px}
+@media (max-width:560px){.xpbox{display:none}.logo{font-size:16px}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
+</style>
+
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="bar"><div class="wrap">
+  <button class="logo" id="logo" type="button">System <b>Squad</b></button>
+  <div class="hud" id="hud"></div>
+</div></div>
+<main class="wrap" id="app"></main>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+const MCQ=[[{"q":"Computer software can best be described as _____.","o":["the physical parts of a computer","a set of instructions and programs","the computer's monitor","a type of keyboard"]},{"q":"Which of the following is an example of system software?","o":["Microsoft Word","Windows operating system","A web browser","A calculator app"]},{"q":"Which of the following is an example of application software?","o":["Linux","macOS","Microsoft Excel","Windows"]},{"q":"The main function of system software is to _____.","o":["manage and control computer hardware","type letters only","play music only","print documents only"]},{"q":"Unlike hardware, software cannot be _____.","o":["installed","physically touched","updated","used"]}],[{"q":"Utility programs are mainly used to _____.","o":["entertain users","maintain and optimise the computer system","replace the operating system","design websites only"]},{"q":"A program that detects and removes harmful software is called _____.","o":["an antivirus","a browser","a spreadsheet","a presentation tool"]},{"q":"A utility tool that frees up storage space by removing unnecessary files is called _____.","o":["disk cleanup","word processor","web browser","email client"]},{"q":"File compression tools are mainly used to _____.","o":["reduce the size of files","increase file size","delete files permanently","print files"]},{"q":"Backup software is used to _____.","o":["copy important data to another location for safekeeping","permanently delete old files","design graphics","browse the internet"]}],[{"q":"An operating system is best described as software that _____.","o":["manages computer hardware and software resources","only plays videos","only prints documents","only stores photographs"]},{"q":"Which of the following is a function of an operating system?","o":["Managing memory and the processor","Cooking food","Cleaning the classroom","Teaching lessons"]},{"q":"The operating system provides a _____ through which users interact with the computer.","o":["user interface","keyboard only","printer only","speaker only"]},{"q":"Without an operating system, a computer _____.","o":["can run any software easily","cannot start up or run application software","becomes faster","becomes a calculator only"]},{"q":"Managing files and folders on a computer is a function of the _____.","o":["operating system","printer","scanner","speaker"]}],[{"q":"Which of these is a mobile operating system?","o":["Android","Windows Server","Linux Server","DOS"]},{"q":"An operating system that allows only one user to work at a time is called a _____ operating system.","o":["single-user","multi-user","network","mobile"]},{"q":"Which of the following is an example of a desktop operating system?","o":["iOS","Windows","Android","Symbian"]},{"q":"An operating system that manages several computers connected in a network is called a _____ operating system.","o":["network","single-user","mobile","game"]},{"q":"iOS is the mobile operating system developed mainly for _____ devices.","o":["Apple","Samsung","Tecno","Infinix"]}]];
+const HW=[{"obj":["Define computer software and distinguish it from hardware.","Differentiate between system software and application software, with examples."],"th":["Define computer software and explain how it differs from computer hardware.","Distinguish between system software and application software, giving two examples of each.","Explain why an operating system is necessary before application software can be used."],"asg":"List three examples of system software and three examples of application software found on computers or phones you have used.","prj":"Find out, by asking an adult or checking a device, the name and version of the operating system it uses, and write a short note about it."},{"obj":["Explain the meaning and purpose of utility programs.","Identify at least four utility programs and state their functions."],"th":["Explain the meaning and general purpose of utility programs.","Describe the function of an antivirus program.","State two other utility programs, apart from antivirus, and explain what each one does."],"asg":"Find out the name of any antivirus program installed on a computer you have access to, and write two sentences about what it does.","prj":"Prepare a short poster illustrating four utility programs and their functions, for classroom display."},{"obj":["Define an operating system.","State at least four functions of an operating system."],"th":["Define an operating system in your own words.","State four functions of an operating system.","Explain what would likely happen if a computer had no operating system installed."],"asg":"Write down the name of the operating system installed on any computer or phone you have used, and list two functions it performs.","prj":"Observe a computer starting up (booting) and write, in order, three things you notice happening on the screen."},{"obj":["Identify types of operating systems: single-user, multi-user, mobile and network.","State examples of operating systems used on computers and mobile devices."],"th":["State two types of operating systems and give one example of each.","Explain the difference between a single-user and a multi-user operating system.","Name two mobile operating systems commonly found on smartphones."],"asg":"Identify the operating system used on a phone or computer in your home, and state whether it is a mobile or desktop operating system.","prj":"In a table, compare any two operating systems, such as Windows and Android, under three headings: Type, Common Devices, One Special Feature."}];
+const ANS=[[1,1,2,0,1],[1,0,0,0,0],[0,0,0,1,0],[0,0,1,0,0]];
+const WHY=[
+ ['Software is the set of instructions and programs. You cannot touch it. The physical parts are hardware.','Windows is an operating system, and an operating system is system software. Word, a browser and a calculator app are application software.','Microsoft Excel is for spreadsheets, a job a user wants done. Linux, macOS and Windows are operating systems.','System software manages and controls the hardware so that application software can run.','You can touch hardware like a keyboard. Software is instructions, so you cannot touch it.'],
+ ['Utility programs maintain and optimise the computer so it keeps running smoothly.','An antivirus finds and removes harmful software.','Disk cleanup removes unnecessary files to free up storage space.','Compression makes files smaller so they are easier to store or share.','Backup software copies important data somewhere else, in case the original is lost.'],
+ ['The operating system manages the computer\'s hardware and software resources.','Managing memory and the processor is one of the main jobs of the operating system.','The user interface is how you talk to the computer: icons, menus and touch. The operating system provides it.','Without an operating system the computer cannot start up or run apps.','Managing files and folders is a job of the operating system.'],
+ ['Android is a mobile operating system, made for phones and tablets.','Single-user means only one person can work at a time.','Windows is a desktop operating system. iOS and Android are mobile.','A network operating system manages and coordinates computers connected in a network.','iOS is made by Apple, for iPhones and iPads.']
+];
+/* img: photo at img/<name>.jpg. li: a Nigerian-life photo for the "think of it like" box. */
+const LEVELS=[
+ {id:1,name:'Meet the Software',wp:'Week 6 · Period 1',topic:'System Software and Application Software',badge:'Software Spotter',boss:['The Glitch','#FF2E88'],
+  mission:'Find out what software is, then put every program in the right team.',
+  cards:[
+   {t:'Software',ic:'code',img:'word-screen',d:'Software is a set of instructions that tells the computer what to do. You cannot touch it.',like:'A recipe. The recipe tells you what to cook, but it is not the pot or the stove.'},
+   {t:'Hardware vs software',ic:'laptop',img:'keyboard',d:'Hardware is the parts you can touch, like the keyboard and the screen. Software is the instructions inside. A computer needs both.',like:'Your phone screen is hardware. WhatsApp is software.'},
+   {t:'System software',ic:'gear',img:'windows-desktop',d:'System software controls the hardware so that other programs can run. Windows, macOS and Linux are examples.',like:'The school manager. The manager does not teach, but the school cannot run without the manager.'},
+   {t:'Application software',ic:'tool',img:'browser-screen',d:'Application software (apps) helps you do a job, like typing a letter or making a table. Word, Excel and web browsers are examples.',like:'The things in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
+ {id:2,name:'Tech Clinic',wp:'Week 6 · Period 2',topic:'Utility Programs and Their Functions',badge:'Tech Doctor',boss:['Virus Lord','#FF4757'],
+  mission:'Utility programs keep a computer healthy. Treat the sick computers with the right tool.',
+  cards:[
+   {t:'Utility programs',ic:'tool',img:'task-manager',d:'Utility programs are small helper programs. They keep the computer clean, safe and working well.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
+   {t:'Antivirus',ic:'shield',img:'antivirus-scan',d:'An antivirus finds harmful programs (viruses) and removes them.',like:'The security guard at the gate. He checks every visitor and sends troublemakers away.'},
+   {t:'Disk cleanup',ic:'broom',img:'disk-cleanup',d:'Disk cleanup deletes files you do not need, so you get more free space.',like:'The cleaner who sweeps the rubbish out of the classroom, so there is space to sit.'},
+   {t:'File compression',ic:'zip',img:'zip-files',d:'Compression makes a file smaller. Small files are easier to store and to send.',like:'Putting clothes in a vacuum bag. The same clothes take up less room in your box.'},
+   {t:'Backup software',ic:'cloud',img:'cloud-backup',d:'Backup software makes an extra copy of your important files and keeps it in another place.',like:'A photocopy of your result slip kept at home, in case the real one is lost.'}]},
+ {id:3,name:'Run the Machine',wp:'Week 8 · Period 1',topic:'Functions of an Operating System',badge:'OS Boss',boss:['Kernel Panic','#FFC700'],
+  mission:'You are the operating system today. Handle every job, and see what happens when the OS is missing.',
+  cards:[
+   {t:'Operating system',ic:'gear',img:'windows-desktop',d:'The operating system (OS) is the main program of a computer. It manages the hardware and the apps so that everything works together.',like:"The school principal. Everything goes through the principal's office."},
+   {t:'Memory and processor',ic:'chip',img:'task-manager',d:'The OS decides which program gets memory, and when the processor works on it. This stops programs from fighting each other.',like:'The timetable officer who decides which class uses which room, and when.'},
+   {t:'Input and output devices',ic:'plug',img:'printer',d:'The OS controls the keyboard, mouse, screen and printer. When you press Print, the OS talks to the printer.',like:'The prefect who directs traffic so everyone moves the right way.'},
+   {t:'Files and folders',ic:'folder',img:'file-explorer',li:'filing-cabinet',d:'The OS saves your files, gives them names, finds them and keeps them in folders.',like:'The school registry and its filing cabinets.'},
+   {t:'User interface',ic:'screen',img:'windows-desktop',d:'The user interface is how you talk to the computer: icons, menus, windows and touch. The OS gives it to you.',like:'The front desk. It is where you speak to the school.'},
+   {t:'Security',ic:'lock',img:'login-screen',li:'school-gate',d:'The OS protects the computer. It uses passwords to decide who can come in.',like:'The gateman who asks, "Who are you?" before he opens the gate.'}]},
+ {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',boss:['The Crash','#8A5CFF'],
+  mission:'There are different types of operating systems. Find out which one is used where.',
+  cards:[
+   {t:'Single-user',ic:'user',img:'windows-desktop',d:'Only one person can use it at a time. Example: Windows on your own laptop.',like:'A private car. One driver at a time.'},
+   {t:'Multi-user',ic:'users',img:'server-room',li:'danfo-bus',d:'Many people use the same computer at the same time. This is common on big servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
+   {t:'Mobile',ic:'phone',img:'android-phone',d:'Made for phones and tablets. Android and iOS are mobile operating systems. Apple makes iOS.',like:'The brain of your phone. It is built for touch screens.'},
+   {t:'Network',ic:'network',img:'school-network-lab',li:'traffic-warden',d:'Manages computers that are joined together in a network, for example the computers in a school lab.',like:'The traffic warden at a busy junction. He keeps every vehicle moving.'},
+   {t:'Common examples',ic:'list',img:'iphone',d:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.',like:'Computers: Windows, macOS, Linux. Phones and tablets: Android, iOS.'}]}
+];
+/* Teaching slides. **word** = key word. Each slide ends with a quick check (first option is the right one; options are shuffled when shown). */
+const TEACH={
+1:[
+ {h:'What is software?',lines:['Software is a set of **instructions**.','The instructions tell the computer what to do.','Think of a recipe. The recipe is not the food and not the pot. It only tells you what to do.','You **cannot touch** software.'],img:'word-screen',cap:'You can see Word on the screen, but you cannot touch it. It is software.',q:'Which one can you NOT touch?',o:['A program (software)','A keyboard','A mouse','A monitor']},
+ {h:'Hardware and software',lines:['**Hardware** is the parts you can touch: keyboard, mouse, screen, printer.','**Software** is the instructions inside.','A computer needs both. A phone with no apps cannot do much. Apps with no phone cannot run.'],img:'keyboard',cap:'A keyboard is hardware.',q:'Which one is hardware?',o:['A mouse','Microsoft Word','Windows','Google Chrome']},
+ {h:'Two kinds of software',lines:['There are two main kinds of software.','**System software** runs the computer.','**Application software** helps YOU do a job.'],img:'',cap:'',q:'Typing a letter is a job. Which software helps you do it?',o:['Application software','System software','Hardware','Electricity']},
+ {h:'System software',lines:['System software **controls the hardware**.','It makes sure other programs can run.','The most important one is the **operating system** (OS).','Examples: **Windows**, **macOS**, **Linux**.'],img:'windows-desktop',cap:'Windows is system software. It draws the desktop and runs the computer.',q:'Which one is system software?',o:['Windows','Microsoft Excel','Google Chrome','A calculator app']},
+ {h:'Application software',lines:['Application software is also called an **app**.','**Word** helps you write documents.','**Excel** helps you work with numbers and tables.','A **web browser** helps you visit websites.'],img:'excel-screen',cap:'Excel is an app for tables and numbers.',q:'You want to make a table of marks. Which app is best?',o:['Microsoft Excel','Linux','A mouse','Windows']},
+ {h:'How they work together',lines:['You tap the Word icon.','Word asks the **operating system** for help.','The operating system uses the **hardware** to open Word.','No system software means **no apps**.'],img:'',cap:'',q:'What must be on the computer before an app can run?',o:['System software','A printer','A mouse pad','Nothing']}
+],
+2:[
+ {h:'What is a utility program?',lines:['A utility program is a small **helper** program.','It keeps the computer **clean, safe and working well**.','It is a kind of system software.','It works together with the operating system.'],img:'task-manager',cap:'Task Manager is a utility. It shows what the computer is doing.',q:'Utility programs help to...',o:['keep the computer healthy','play games only','replace the keyboard','draw pictures']},
+ {h:'Antivirus',lines:['A **virus** is a harmful program. It can damage or steal your files.','An **antivirus** finds viruses and removes them.','Keep it updated, so it can catch new viruses.'],img:'antivirus-scan',cap:'An antivirus scans the computer. "Scan now" starts a check.',q:'What does an antivirus do?',o:['Finds and removes harmful software','Makes files smaller','Copies files to a flash drive','Cleans the screen']},
+ {h:'Disk cleanup',lines:['Over time the computer fills with **junk**: old temporary files and things you do not need.','**Disk cleanup** deletes them and gives you free space.','More free space helps the computer work better.'],img:'disk-cleanup',cap:'Disk cleanup is cleaning unnecessary files.',q:'Your storage is full of junk files. What do you use?',o:['Disk cleanup','Antivirus','A printer','A mouse']},
+ {h:'File compression',lines:['**Compression** makes a file smaller.','A smaller file is easier to **store** and to **send** by email or WhatsApp.','A compressed file is called a **zip file**. To use it, you unzip it.'],img:'zip-files',cap:'Zip files look like a folder with a zipper.',q:'What is a zip file?',o:['A file that was made smaller','A virus','A printer','A keyboard']},
+ {h:'Backup software',lines:['A **backup** is an extra copy of your important files, kept in **another place**.','If the first copy is lost, you still have the second one.','You can back up to a flash drive, an external disk, or the **cloud** (like Google Drive).'],img:'cloud-backup',cap:'Backing up a flash drive to Google Drive.',q:'Why do we make a backup?',o:['To recover our files if the original is lost','To make the computer slower','To delete files','To print']},
+ {h:'Pick the right tool',lines:['Virus or strange pop-ups? Use **antivirus**.','Storage is full of junk? Use **disk cleanup**.','File is too big to send? Use **compression**.','Afraid of losing your files? Make a **backup**.'],img:'',cap:'',q:'A folder is too big to email. Which utility helps?',o:['File compression','Antivirus','Disk cleanup','Backup software']}
+],
+3:[
+ {h:'What is an operating system?',lines:['The **operating system (OS)** is the main system software.','It **manages** all the hardware and all the apps.','It is like the school principal. Everything goes through the principal.','Examples: Windows, macOS, Linux, Android, iOS.'],img:'windows-desktop',cap:'This is Windows, an operating system.',q:'The operating system...',o:['manages the hardware and the apps','is a type of printer','is only for games','is a type of keyboard']},
+ {h:'Job 1: Memory and processor',lines:['The **processor** (CPU) does the work.','**Memory** (RAM) is the space where programs stay while they run.','Many programs run at the same time. The OS decides **who gets memory and processor time**, and when.'],img:'task-manager',cap:'Task Manager shows memory and processor use. The OS is managing them.',q:'Who shares memory and processor time between programs?',o:['The operating system','The mouse','The printer','The speaker']},
+ {h:'Job 2: Input and output devices',lines:['**Input** devices send things in: keyboard, mouse.','**Output** devices show things out: screen, printer.','The OS **controls** them. When you press Print, the OS talks to the printer.'],img:'printer',cap:'A printer is connected to a laptop. The OS makes them work together.',q:'You press Print. Who talks to the printer?',o:['The operating system','The keyboard','The monitor','Nobody']},
+ {h:'Job 3: Files and folders',lines:['The OS **saves** your files and gives them **names**.','It keeps them in **folders**, so you can find them.','It can copy, move, rename and delete files.','Like a school registry with filing cabinets.'],img:'file-explorer',li:'filing-cabinet',cap:'File Explorer shows folders. The OS organises them.',q:'Who saves and finds your files?',o:['The operating system','The speaker','The webcam','The scanner']},
+ {h:'Job 4: User interface',lines:['The **user interface** is how you talk to the computer.','Icons, menus, windows, the Start button and touch are all part of it.','The OS gives it to you. Without it, you would have to type secret commands.'],img:'windows-desktop',cap:'Icons and the Start button are the user interface.',q:'Icons and menus on the screen are called the...',o:['user interface','printer','battery','keyboard']},
+ {h:'Job 5: Security',lines:['The OS **protects** the computer.','It asks for a **password**, so strangers cannot come in.','It decides who can open which files.','Like the gateman at the school gate.'],img:'login-screen',li:'school-gate',cap:'A login screen is the OS doing its security job.',q:'A password screen is the OS doing which job?',o:['Security','Printing','Cleaning','Drawing']},
+ {h:'No OS, no computer',lines:['Without an operating system, a computer **cannot start**.','It also **cannot run apps**.','The hardware is there, but nothing manages it.','So the operating system is the most important software.'],img:'',cap:'',q:'A computer with no operating system...',o:['cannot start or run apps','runs faster','only works as a calculator','can run any app easily']}
+],
+4:[
+ {h:'Types of operating systems',lines:['We group operating systems by **how they are used**.','There are four main types.','**Single-user**, **multi-user**, **mobile** and **network**.'],img:'',cap:'',q:'We group operating systems by...',o:['how they are used','their colour','the school they are in','the shape of the computer']},
+ {h:'Single-user OS',lines:['Only **one person** can use it at a time.','Like a private car. One driver at a time.','Example: **Windows** on your own laptop or PC.'],img:'windows-desktop',cap:'Windows on a personal computer.',q:'Windows on your own laptop is usually...',o:['single-user','multi-user','network','mobile']},
+ {h:'Multi-user OS',lines:['**Many people** use the same computer **at the same time**.','Like a danfo bus. Many passengers ride the same bus.','This is common on big **servers**.'],img:'server-room',li:'danfo-bus',cap:'A room full of servers. Many people use them at once.',q:'Many people use one big server at the same time. It is...',o:['multi-user','single-user','mobile','switched off']},
+ {h:'Mobile OS',lines:['Made for **phones and tablets**.','Made for touch screens and small batteries.','**Android** is made by Google. Tecno, Infinix and Samsung phones use it.','**iOS** is made by **Apple**. iPhones and iPads use it.'],img:'android-phone',cap:'An Android phone home screen.',q:'iOS is made by...',o:['Apple','Tecno','Infinix','Samsung']},
+ {h:'Network OS',lines:['It manages computers that are **joined together** in a network.','Like the computers in a school lab.','It shares files and printers and decides who can log in.','Like a traffic warden at a busy junction.'],img:'school-network-lab',li:'traffic-warden',cap:'A school computer lab. Network software joins them.',q:'An OS that manages computers joined together is...',o:['a network OS','a single-user OS','a mobile OS','a game OS']},
+ {h:'Famous examples',lines:['**Computers:** Windows, macOS, Linux.','**Phones and tablets:** Android, iOS.','Same job (manage the machine), made for different devices.'],img:'iphone',cap:'An iPhone home screen. It runs iOS.',q:'Which one is a mobile operating system?',o:['Android','Windows','Linux','macOS']}
+]};
+const RECAP={
+1:['Software is a set of instructions. You cannot touch it.','Hardware is the parts you can touch.','System software runs the computer. Example: Windows.','Application software helps you do a job. Example: Word.'],
+2:['Utility programs keep the computer clean, safe and working well.','Antivirus removes harmful software.','Disk cleanup frees space. Compression makes files smaller.','Backup makes an extra copy in another place.'],
+3:['The OS manages the hardware and the apps.','Its jobs: memory and processor, devices, files and folders, user interface, security.','Without an OS, a computer cannot start or run apps.'],
+4:['Single-user: one person at a time.','Multi-user: many people at the same time.','Mobile: phones and tablets (Android, iOS).','Network: manages connected computers.']
+};
+const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+let TTS=null;
+async function speak(t){
+  if(!TTS||!S.voice)return;
+  try{if(MG)MG.gain.value=.3;await TTS.speak(t,{voice:'buttery'})}catch(e){}finally{if(MG)MG.gain.value=1}
+}
+function imgFail(i){if(!i.dataset.t){i.dataset.t=1;i.src=i.getAttribute("src").replace(".jpg",".png")}else i.remove()}
+const STORY={
+ 1:['Emergency! The Glitch has messed up the school computer lab.','Nobody knows which programs run the computer and which ones help people do work.','You can help. Let us learn first, then play!'],
+ 2:['The computers in the lab are sick. Some have viruses. Some are full of junk files.','Virus Lord is making it worse every day.','Learn the right tools, then treat the computers and beat him.'],
+ 3:['Kernel Panic has switched off the operating system. Now nothing will start.','You must learn what the operating system does to bring the computer back to life.','Think of a school principal. Everything goes through the principal.'],
+ 4:['The Crash is attacking phones, laptops and servers all over the city.','To stop him, you must know which type of operating system is used where.','Look at the real devices, learn, then beat him.']
+};
+const EPI={1:'The Glitch is gone. The lab is safe.',2:'Virus Lord has been deleted. The clinic is open for business.',3:'Kernel Panic is beaten. The operating system is back online.',4:'The Crash is stopped. Every device is safe.'};
+function briefing(n){
+  return new Promise(res=>{
+    const lines=STORY[n];let li=0,ch=0,timer=null,typing=false;
+    const o=document.createElement('div');o.className='brief';
+    o.innerHTML=`<button class="skip" id="sk">Skip</button><div class="bgboss" aria-hidden="true">${bossSVG(LEVELS[n-1].boss[1],'idle')}</div><div class="bx"><div class="bz">${byteSVG('idle')}</div><div class="bt"><div class="who">Byte · Mission briefing</div><p id="bl" aria-live="polite"></p><div class="go">Tap to continue</div></div></div>`;
+    document.body.appendChild(o);const p=$('#bl',o);
+    const finish=()=>{clearInterval(timer);if(TTS)try{TTS.stop()}catch(e){}o.remove();res()};
+    function startLine(){ch=0;typing=true;p.textContent='';speak(lines[li]);clearInterval(timer);
+      timer=setInterval(()=>{ch++;p.textContent=lines[li].slice(0,ch);if(ch%3===0&&S.sfx)tone(900+Math.random()*200,now(),.03,'square',.03);if(ch>=lines[li].length){clearInterval(timer);typing=false}},26)}
+    o.onclick=e=>{if(e.target.id==='sk')return finish();if(typing){clearInterval(timer);p.textContent=lines[li];typing=false;return}li++;if(li>=lines.length)finish();else{sfx.tap();startLine()}};
+    startLine();
+  });
+}
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const IC={
+ code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',music:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',voice:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const COLS=['#FF2E88','#19D3FF','#3CFF8F','#FFC700','#8A5CFF','#FF7A1A'];
+const CATC=['#19D3FF','#FF2E88','#FFC700','#3CFF8F','#8A5CFF'];
+
+/* ---------- state ---------- */
+let S={};try{S=JSON.parse(localStorage.getItem('dt-squad')||'{}')}catch(e){}
+S.cards=S.cards||{};S.teach=S.teach||{};S.think=S.think||{};S.task=S.task||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.best=S.best||0;
+if(S.music===undefined)S.music=true;if(S.sfx===undefined)S.sfx=S.sound!==false;
+const save=()=>{try{localStorage.setItem('dt-squad',JSON.stringify(S))}catch(e){}};
+function xpOf(){
+  let x=0;
+  Object.values(S.cards).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.teach).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.think).forEach(a=>x+=a.filter(t=>t&&t.trim().length>8).length*10);
+  Object.values(S.task).forEach(o=>x+=(o.a?10:0)+(o.p?10:0));
+  Object.values(S.games).forEach(v=>x+=v);
+  Object.values(S.boss).forEach(v=>{x+=v*20;if(v===5)x+=50;if(v>=3)x+=100});
+  x+=S.final*15;if(S.final===10)x+=100;
+  return x;
+}
+const TITLES=['Newbie','Tech Cadet','Byte Hunter','System Pro','Tech Legend'];
+const lvlOf=x=>Math.floor(x/250)+1;
+const titleOf=x=>TITLES[Math.min(TITLES.length-1,lvlOf(x)-1)];
+function badges(){
+  const b=LEVELS.map((l,i)=>({n:l.badge,ic:['code','tool','gear','phone'][i],on:(S.boss[l.id]||0)>=3}));
+  b.push({n:'Perfect Score',ic:'star',on:Object.values(S.boss).some(v=>v===5)||S.final===10});
+  b.push({n:'Combo Master',ic:'flame',on:S.best>=5});
+  b.push({n:'Grand Champion',ic:'trophy',on:S.final>=8});
+  return b;
+}
+
+/* ---------- audio: sfx + chiptune music ---------- */
+let AC=null,MG=null,NB=null;
+function actx(){
+  if(AC)return AC;
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=1;MG.connect(AC.destination);
+    NB=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(e){AC=null}
+  return AC;
+}
+function tone(f,t,d,type='square',v=.08,dest){
+  const c=actx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);o.connect(g);g.connect(dest||MG);o.start(t);o.stop(t+d+.02);
+}
+function noise(t,d,v,hp){
+  const c=actx();if(!c)return;const s=c.createBufferSource();s.buffer=NB;const g=c.createGain(),f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp;
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+d);
+}
+const now=()=>AC?AC.currentTime:0;
+const sfx={
+  ok(){if(!S.sfx||!actx())return;const t=now();tone(659,t,.1);tone(880,t+.09,.1);tone(1175,t+.18,.2)},
+  no(){if(!S.sfx||!actx())return;const t=now();tone(220,t,.2,'sawtooth',.09);tone(150,t+.12,.3,'sawtooth',.09)},
+  tap(){if(!S.sfx||!actx())return;tone(520,now(),.06,'square',.05)},
+  flip(){if(!S.sfx||!actx())return;const t=now();tone(330,t,.08);tone(660,t+.07,.12)},
+  hit(){buzz(60);if(!S.sfx||!actx())return;const t=now();noise(t,.18,.25,300);tone(110,t,.2,'sawtooth',.12)},
+  win(){if(!S.sfx||!actx())return;const t=now();[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.3,'square',.08))},
+  lose(){if(!S.sfx||!actx())return;const t=now();[392,330,262,196].forEach((f,i)=>tone(f,t+i*.18,.35,'sawtooth',.08))},
+  whoosh(){if(!S.sfx||!actx())return;noise(now(),.35,.12,1500)},
+  up(){if(!S.sfx||!actx())return;const t=now();[392,523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,'triangle',.1))}
+};
+/* music: 16-step bar, Am F C G. "menu" is relaxed, "battle" adds drums and runs faster. */
+const MU={mode:'menu',step:0,next:0,timer:null,on:false};
+const ROOTS=[110,87.31,130.81,98],TRI=[[1,1.2,1.5],[1,1.25,1.5],[1,1.25,1.5],[1,1.25,1.5]];
+const MEL=[0,4,2,4, 5,4,2,0, 4,5,7,5, 4,2,0,2];
+const PENT=[440,523.25,587.33,659.25,783.99,880,1046.5,1174.66];
+function schedule(){
+  const c=actx();if(!c)return;const bpm=MU.mode==='battle'?142:112,sd=60/bpm/4;
+  while(MU.next<c.currentTime+.18){
+    const s=MU.step%64,bar=(s>>4)&3,p=s&15,t=MU.next,r=ROOTS[bar],v=MU.mode==='battle'?1:.7;
+    if(p%2===0)tone(r*2*(TRI[bar][(p/2|0)%3]),t,sd*1.6,'square',.025*v);
+    if(p%4===0||(MU.mode==='battle'&&p%4===2))tone(r,t,sd*1.8,'triangle',.11*v);
+    if(p%2===0&&(bar%2===1||MU.mode==='battle'))tone(PENT[MEL[p]%8],t,sd*1.4,'square',.03*v);
+    if(MU.mode==='battle'){if(p%4===0){tone(120,t,.1,'sine',.18);noise(t,.04,.06,5000)}if(p===4||p===12)noise(t,.12,.14,1200);if(p%2===1)noise(t,.03,.04,7000)}
+    else if(p%4===0)noise(t,.03,.03,6000);
+    MU.next+=sd;MU.step++;
+  }
+}
+function musicSet(mode){
+  MU.mode=mode;if(!S.music||MU.on)return;const c=actx();if(!c)return;
+  if(c.state==='suspended')c.resume();MU.on=true;MU.next=c.currentTime+.05;MU.timer=setInterval(schedule,40);
+}
+function musicStop(){clearInterval(MU.timer);MU.on=false}
+function musicSync(){if(S.music)musicSet(MU.mode);else musicStop()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)musicStop();else musicSync()});
+
+/* ---------- visuals: rain, particles, floaters, overlays ---------- */
+(function rain(){
+  const cv=$('#rain'),cx=cv.getContext('2d');let cols=[],W=0,H=0,last=0;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;cols=Array.from({length:Math.ceil(W/26)},()=>({y:Math.random()*H,s:2+Math.random()*3}))}
+  size();addEventListener('resize',size);
+  function draw(t){
+    if(!document.hidden&&t-last>60){last=t;cx.clearRect(0,0,W,H);cx.font='700 16px monospace';
+      cols.forEach((c,i)=>{c.y+=c.s;if(c.y>H+20){c.y=-20;c.s=2+Math.random()*3}
+        for(let k=0;k<6;k++){cx.fillStyle=`rgba(25,211,255,${.5-k*.08})`;cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}
+    if(!RM)requestAnimationFrame(draw)}
+  if(RM){size();cx.font='700 16px monospace';cols.forEach((c,i)=>{for(let k=0;k<4;k++){cx.fillStyle='rgba(25,211,255,.2)';cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}else requestAnimationFrame(draw);
+})();
+function burst(n=80,x,y){
+  if(RM)return;const cv=$('#fx'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cs=['#FFC700','#19D3FF','#3CFF8F','#FF2E88','#8A5CFF','#fff'];x=x??innerWidth/2;y=y??innerHeight*.45;
+  const ps=Array.from({length:n},()=>({x,y,vx:(Math.random()-.5)*16,vy:-Math.random()*14-2,r:4+Math.random()*7,c:cs[Math.random()*6|0],a:Math.random()*6}));
+  let f=0;(function st(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.a+=.3;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);cx.restore()});if(++f<90)requestAnimationFrame(st);else cx.clearRect(0,0,cv.width,cv.height)})();
+}
+function floatTxt(txt,el,color){
+  const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};
+  const d=document.createElement('div');d.className='fl';d.textContent=txt;d.style.left=(r.left+r.width/2-30)+'px';d.style.top=(r.top-6)+'px';if(color)d.style.color=color;
+  document.body.appendChild(d);setTimeout(()=>d.remove(),950);
+}
+function flashFx(color){const d=document.createElement('div');d.className='flashfx';d.style.background=color;document.body.appendChild(d);setTimeout(()=>d.remove(),450)}
+function shakeScreen(){buzz(80);document.body.classList.add('shk');setTimeout(()=>document.body.classList.remove('shk'),380)}
+function overlay(kind,a,b,c,ms=2200){
+  return new Promise(res=>{
+    const o=document.createElement('div');o.className='ov '+(kind||'');o.innerHTML=`<div class="p1"></div><div class="p2"></div><div class="tx"><div class="a">${esc(a)}</div><div class="b">${esc(b)}</div>${c?`<div class="c">${esc(c)}</div>`:''}</div>`;
+    document.body.appendChild(o);sfx.whoosh();requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('in')));
+    let closed=false;const close=()=>{if(closed)return;closed=true;o.classList.add('out');setTimeout(()=>{o.remove();res()},350)};
+    o.onclick=close;setTimeout(close,ms);
+  });
+}
+function revealOnScroll(root){
+  if(!('IntersectionObserver'in window)||RM)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove('pre');e.target.classList.add('rv');io.unobserve(e.target)}}),{threshold:.08});
+  root.querySelectorAll('[data-rv]').forEach(el=>{const r=el.getBoundingClientRect();if(r.top>innerHeight){el.classList.add('pre');io.observe(el)}});
+  setTimeout(()=>root.querySelectorAll('.pre').forEach(el=>{el.classList.remove('pre')}),20000);
+}
+
+/* ---------- Byte the mascot ---------- */
+function byteSVG(m){
+  const mouth=m==='no'?'<path d="M20 43q6-5 12 0"/>':m==='ok'?'<path d="M19 40q7 8 14 0"/>':'<path d="M21 41h10"/>';
+  const eyes=m==='ok'?'<path d="M18 29q3-4 6 0M30 29q3-4 6 0"/>':'<circle cx="21" cy="29" r="3" fill="currentColor"/><circle cx="33" cy="29" r="3" fill="currentColor"/>';
+  return `<svg viewBox="0 0 54 58" aria-hidden="true"><path d="M27 4v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="4" r="3.5" fill="#FFC700"/><path d="M10 12h34l4 8v22l-6 6H12l-6-6V20z" fill="#19D3FF" stroke="#0A6F8C" stroke-width="3"/><rect x="12" y="19" width="30" height="26" fill="#fff"/><g style="color:#101B3B" stroke="#101B3B" stroke-width="2.5" fill="none" stroke-linecap="round">${eyes}${mouth}</g><rect x="1" y="26" width="5" height="10" fill="#FFC700"/><rect x="48" y="26" width="5" height="10" fill="#FFC700"/></svg>`;
+}
+const say=(el,mood,txt)=>{el.innerHTML=`${byteSVG(mood)}<div class="bubble ${mood==='idle'?'':mood}">${esc(txt)}</div>`};
+const CHEER=['Ehen! You sabi this one.','Correct! Keep going.','Sharp! That is how it is done.','Yes! Byte is proud of you.','Oya, na you be that!'];
+const OOPS=['Oops. No wahala, now you know.','Not this time. Read the reason.','Close. Learn from this one.','Tricky one. The next one is yours.'];
+const pick=a=>a[Math.random()*a.length|0];
+function bossSVG(color,mood){
+  const eye=mood==='dead'?'<path d="M30 40l12 12M42 40L30 52M62 40l12 12M74 40L62 52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>':`<path d="M28 44l18 6-18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/><path d="M76 44L58 50l18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/>`;
+  return `<svg class="bossw" viewBox="0 0 104 104" aria-hidden="true"><path d="M20 22L10 4l24 10zM84 22l10-18-24 10z" fill="${color}"/><path d="M14 30l12-12h52l12 12v44l-12 14H26L14 74z" fill="${color}" stroke="#000" stroke-opacity=".35" stroke-width="3"/><path d="M26 34h52v36H26z" fill="#0B0720"/>${eye}<path d="M32 70l6-8 6 8 6-8 6 8 6-8 6 8" stroke="#fff" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>`;
+}
+const heart=on=>`<svg viewBox="0 0 24 24"><path d="M12 21l-8-8a5 5 0 0 1 8-6 5 5 0 0 1 8 6z" fill="${on?'#FF2E88':'#2C2370'}"/></svg>`;
+
+/* ---------- HUD + router ---------- */
+let lastLv=null;
+function paintHud(){
+  const x=xpOf(),lv=lvlOf(x);
+  if(S.name){
+    $('#hud').innerHTML=`<div class="xpbox"><div class="t"><span>${esc(titleOf(x))}</span><span>LV ${lv}</span></div><div class="xpbar"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="score" style="font-size:18px">${x} XP</span>
+    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button>${TTS?`<button id="nvo" class="${S.voice?'':'off'}" aria-label="Byte voice" aria-pressed="${!!S.voice}">${ic('voice')}</button>`:''}${document.documentElement.requestFullscreen?`<button id="nfs" aria-label="Full screen">${ic('full')}</button>`:''}</div>
+    <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`;
+    $('#nm').onclick=()=>location.hash='map';
+    $('#nmu').onclick=()=>{S.music=!S.music;save();musicSync();paintHud()};$('#nsx').onclick=()=>{S.sfx=!S.sfx;save();sfx.tap();paintHud()};
+    const vo=$('#nvo');if(vo)vo.onclick=()=>{S.voice=!S.voice;save();paintHud();if(S.voice)speak('Hi! I am Byte. I will read the mission briefings to you.')};
+    const fs=$('#nfs');if(fs)fs.onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+  }else $('#hud').innerHTML='';
+  if(lastLv!==null&&lv>lastLv){sfx.up();burst(120);overlay('win','LEVEL UP',`LV ${lv}`,`You are now a ${titleOf(x)}`,2000)}
+  lastLv=lv;
+}
+const app=$('#app');
+function route(){
+  const h=location.hash.slice(1)||'map';route.cur=h;
+  if(!S.name||!route.started){start();return}
+  const m=h.match(/^l([1-4])$/);
+  if(m)level(+m[1]);else if(h==='final')finalRound();else mapView();
+  window.scrollTo(0,0);paintHud();
+}
+addEventListener('hashchange',()=>{if(route.started)route()});
+$('#logo').onclick=()=>{if(route.started)location.hash='map'};
+
+/* ---------- start screen ---------- */
+function start(){
+  paintHud();
+  let color=S.color||COLS[1];
+  const title='SYSTEM SQUAD'.split(' ');
+  app.innerHTML=`<div class="start"><h1 aria-label="System Squad">${title.map((w,wi)=>`<div>${[...w].map((ch,i)=>`<span style="animation-delay:${(wi*6+i)*70}ms">${ch}</span>`).join('')}</div>`).join('')}</h1>
+  <p class="tag">Beat the levels. Defeat the bosses. Collect XP and badges. Learn how computers really work.</p>
+  ${S.name?`<div class="press">Welcome back, ${esc(S.name)}</div><button class="btn" id="go"><span>Press start</span></button>`:`<div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="EXAMPLE: CODEKING"></div>
+  <div class="field"><label>Pick your colour</label><div class="hexes" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
+  <button class="btn" id="go"><span>Press start</span></button>`}
+  <div class="byte" id="by" style="max-width:520px"></div></div>`;
+  say($('#by'),'idle',S.name?'Sound is on. Tap the music buttons at the top if you want it quiet.':'I am Byte. Use a nickname, not your full name. Turn your sound on for the full game.');
+  app.querySelectorAll('#cl button').forEach(b=>b.onclick=()=>{color=b.dataset.c;sfx.tap();app.querySelectorAll('#cl button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+  $('#go').onclick=async()=>{
+    if(!S.name){const n=$('#nick').value.trim();if(!n){say($('#by'),'no','Type a nickname first.');$('#nick').focus();return}S.name=n;S.color=color;save()}
+    actx();if(AC&&AC.state==='suspended')AC.resume();musicSet('menu');sfx.win();burst(90);
+    route.started=true;lastLv=lvlOf(xpOf());
+    await overlay('', 'Welcome', S.name, 'Four levels. Four bosses. One champion.',1900);
+    location.hash==='#map'?route():location.hash='map';
+  };
+}
+
+/* ---------- map ---------- */
+const done=l=>(S.boss[l]||0)>=3;
+const starsFor=l=>{const b=S.boss[l]||0;return b>=5?3:b>=4?2:b>=3?1:0};
+const stars=n=>`<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`;
+function mapView(){
+  musicSet('menu');MU.mode='menu';document.title='System Squad';setWorld();
+  const x=xpOf();const allDone=LEVELS.every(l=>done(l.id));
+  const cur=LEVELS.findIndex(l=>!done(l.id));
+  app.innerHTML=`<div class="hero rv"><div class="eyebrow">${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP</div><h1><span class="skew">Choose your mission, ${esc(S.name)}</span></h1><p>Clear a level to unlock the next one.</p></div>
+  <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);const cls=done(l.id)?'go':i===cur?'cur':'';
+    return `<div class="step ${cls} rv" style="animation-delay:${i*120}ms"><div class="hex">${locked?ic('lock'):l.id}</div><button class="node" data-l="${l.id}" ${locked?'disabled':''}><div class="panel"><div class="row2"><div><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></div>${stars(starsFor(l.id))}</div></div></button></div>`}).join('')}
+  <div class="step fin ${allDone?'cur':''} rv" style="animation-delay:520ms"><div class="hex">${allDone?ic('trophy'):ic('lock')}</div><button class="node" id="fin" ${allDone?'':'disabled'}><div class="panel"><h3>Grand Challenge</h3><small>10 mixed questions, 25 seconds each. Unlocks after all four bosses. Best: ${S.final}/10</small></div></button></div></div>
+  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
+  app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>{sfx.tap();location.hash='l'+b.dataset.l});
+  $('#fin').onclick=()=>{sfx.tap();location.hash='final'};
+}
+
+/* ---------- level ---------- */
+async function level(n){
+  const L=LEVELS[n-1];document.title=L.name+' · System Squad';
+  S.cards[n]=S.cards[n]||L.cards.map(()=>false);
+  app.innerHTML='';window.scrollTo(0,0);
+  musicSet('menu');MU.mode='menu';
+  paintHud();
+  setWorld(L.boss[1]);
+  await overlay('',`Level ${n}`,L.name,'',1500);
+  if(location.hash!=='#l'+n)return;
+  await briefing(n);
+  if(location.hash!=='#l'+n)return;
+  const W=widgetsFor(n);
+  S.teach[n]=S.teach[n]||TEACH[n].map(()=>false);
+  S.think[n]=S.think[n]||HW[n-1].th.map(()=>'');
+  S.task[n]=S.task[n]||{a:false,p:false};
+  app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
+  <nav class="stage"><a href="#" data-s="learn"><span>Learn</span></a><a href="#" data-s="cards"><span>Cards</span></a><a href="#" data-s="play"><span>Play</span></a><a href="#" data-s="boss"><span>Boss</span></a><a href="#" data-s="home"><span>Home</span></a></nav>
+  <div class="panel quest rv"><b>By the end you can</b><ul class="can">${HW[n-1].obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN WITH BYTE</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
+  <section id="s-cards"><h2 data-rv><span class="skew">Stage 2</span><small>REVIEW CARDS</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">`:''}${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
+  <section id="s-play"><h2 data-rv><span class="skew">Stage 3</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
+  <section id="s-boss"><h2 data-rv><span class="skew">Stage 4</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
+  <section id="s-home"><h2 data-rv><span class="skew">Stage 5</span><small>CLASS WORK AND HOMEWORK</small></h2>
+    ${HW[n-1].th.map((q,k)=>`<div class="w" style="--acc:var(--gold)"><label for="th${k}" class="qtext">${esc(q)}</label><textarea id="th${k}" data-k="${k}" placeholder="Write your answer in your own words. +10 XP">${esc(S.think[n][k]||'')}</textarea></div>`).join('')}
+    <button class="tick" data-t="a" aria-pressed="${S.task[n].a}"><span class="bx2"></span><span><b>Assignment.</b> ${esc(HW[n-1].asg)}</span></button>
+    <button class="tick" data-t="p" aria-pressed="${S.task[n].p}"><span class="bx2"></span><span><b>Project.</b> ${esc(HW[n-1].prj)}</span></button></section>
+  <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
+  app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
+  const cp=()=>{$('#cp').textContent=`Cards revealed: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
+  app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);sfx.flip();
+    if(!open&&!S.cards[n][i]){S.cards[n][i]=true;save();cp();floatTxt('+5 XP',b,'#FFC700');burst(25,b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+60);paintHud()}});
+  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{S.think[n][+t.dataset.k]=t.value;save();clearTimeout(t._t);t._t=setTimeout(paintHud,800)});
+  app.querySelectorAll('.tick').forEach(b=>b.onclick=()=>{const k=b.dataset.t;S.task[n][k]=!S.task[n][k];b.setAttribute('aria-pressed',S.task[n][k]);sfx.ok();save();paintHud()});
+  teachPlayer($('#teach'),n);
+  const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';d.dataset.rv='';d.style.setProperty('--acc',CATC[gi%5]);ws.appendChild(d);fn(d,n,gi)});
+  boss($('#bossbox'),n);
+  revealOnScroll(app);
+}
+
+/* ---------- MCQ runner: used by boss battles and the grand challenge ---------- */
+function mcqRun(el,qs,opt){
+  let i=0,score=0,hearts=3,hist=[],timer=null;
+  const bs=opt.boss;
+  function pips(){return `<div class="pips">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`}
+  function arena(mood){
+    if(!bs)return '';
+    return `<div class="arena"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span><div class="hearts" id="ht">${[0,1,2].map(k=>heart(k<hearts)).join('')}</div></div><div class="vs">VS</div><div class="fighter" id="bf">${bossSVG(bs[1],mood||'idle')}<span class="nm" style="color:${bs[1]}">${esc(bs[0])}</span><div class="hp" aria-label="Boss health">${qs.map((_,k)=>`<i class="${k<score?'lost':''}" style="background:${k<score?'':bs[1]}"></i>`).join('')}</div></div></div>`;
+  }
+  function draw(){
+    clearInterval(timer);
+    if(i>=qs.length||hearts<=0)return opt.done(score,qs.length,el,hearts<=0);
+    const q=qs[i];
+    el.innerHTML=`${arena()}<div class="hud2"><span class="eyebrow">${bs?'Round':'Question'} ${i+1} of ${qs.length}</span>${pips()}</div>${opt.time?'<div class="timer" aria-hidden="true"><i id="tm"></i></div>':''}
+    <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</p>
+    <div class="opts">${q.opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
+    <div class="byte" id="by"></div><div id="nx"></div>`;
+    say($('#by',el),'idle',opt.time?'Be quick, but think!':bs?'Answer right to hit the boss. Three wrong answers and you lose.':'Take your time.');
+    const lock=(good,btn)=>{
+      clearInterval(timer);
+      el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(q.opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});
+      const right=q.opts.find(x=>x.ok).t;$('#qt',el).innerHTML=esc(q.q).replace(/_{3,}/,`<span class="blank f">${esc(right)}</span>`);
+      hist[i]=good;
+      if(good){score++;sfx.ok();if(bs){sfx.hit();const f=$('#bf',el);f&&(f.innerHTML=bossSVG(bs[1],'hit')+f.innerHTML.slice(f.innerHTML.indexOf('</svg>')+6));f&&f.classList.add('hit');floatTxt('HIT!',f,'#3CFF8F');flashFx('rgba(60,255,143,.25)');
+        const seg=el.querySelectorAll('.hp i')[score-1];seg&&(seg.classList.add('lost'),seg.style.background='')}else{floatTxt('+1',btn,'#3CFF8F')}}
+      else{hearts--;sfx.no();shakeScreen();flashFx('rgba(255,71,87,.3)');if(bs){const h=$('#ht',el);h&&(h.innerHTML=[0,1,2].map(k=>heart(k<hearts)).join(''))}}
+      say($('#by',el),good?'ok':'no',(good?pick(CHEER):pick(OOPS))+' '+q.why);
+      const last=i===qs.length-1||hearts<=0;
+      $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${last?'See result':'Next'}</span></button>`;
+      const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+    };
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok){b.classList.add('no');b.querySelector('.m').textContent='✗'}lock(o.ok,b)});
+    if(opt.time){const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
+  }
+  draw();
+}
+function mkQ(l,k){const m=MCQ[l][k];return {q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[l][k]}))),why:WHY[l][k]}}
+
+function boss(el,n){
+  const l=n-1,L=LEVELS[l];
+  function intro(){
+    el.innerHTML=`<div class="arena" style="margin-bottom:6px"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span></div><div class="vs">VS</div><div class="fighter">${bossSVG(L.boss[1],'idle')}<span class="nm" style="color:${L.boss[1]}">${esc(L.boss[0])}</span></div></div>
+    <p class="hint">5 rounds. Each right answer hits the boss. You have 3 lives. Land 3 hits to win, 5 hits for three stars.</p>
+    <div><button class="btn mg" id="fight"><span>Fight!</span></button></div>`;
+    $('#fight',el).onclick=async()=>{actx();await overlay('lose','Boss battle',L.boss[0],'Answer right to hit. Three wrong answers and you lose.',1700);musicSet('battle');MU.mode='battle';fight()};
+  }
+  function fight(){
+    const qs=shuffle([0,1,2,3,4]).map(k=>mkQ(l,k));
+    el.innerHTML='<div id="bq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#bq',el),qs,{boss:L.boss,done:async(score,total,box,dead)=>{
+      MU.mode='menu';
+      const prev=S.boss[n]||0,first=!done(n);const before=xpOf();S.boss[n]=Math.max(prev,score);save();
+      const gain=xpOf()-before,ok=score>=3;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Battle report</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Rematch</span></button>${ok&&n<4?`<a class="btn" href="#l${n+1}"><span>Next level</span></a>`:''}${ok&&n===4?`<a class="btn" href="#final"><span>Grand Challenge</span></a>`:''}</div></div>`;
+      say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! The boss never had a chance.':ok?'Boss defeated! Next level unlocked. Fight again for more stars.':'You were beaten this time. Reveal the cards again, play the games and come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';intro()};
+      if(ok){sfx.win();burst(130)}else sfx.lose();
+      paintHud();
+      await overlay(ok?'win':'lose',ok?'Victory':'Defeated',ok?'Boss down':'Try again',ok?EPI[n]:'',2400);
+      musicSet('menu');
+    }});
+  }
+  intro();
+}
+
+/* ---------- sort game ---------- */
+function sortGame(def){
+  return (el,n,gi)=>{
+    let deck,i,pts,ok,combo,miss,best;const key=n+'.'+gi;
+    function start(){deck=shuffle(def.items).slice(0,def.n||8);i=0;pts=0;ok=0;combo=0;miss=[];best=0;draw()}
+    function draw(){
+      if(i>=deck.length)return finish();
+      const it=deck[i];
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Target ${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${combo>=2?ic('flame')+' Combo x'+combo:''}</span><div class="meter" aria-hidden="true"><i style="width:${Math.min(combo,5)*20}%"></i></div><span class="score">${pts}</span></div>
+      <div class="target ${it.img?'pic':''}" aria-live="polite">${it.img?`<img src="img/${it.img}.jpg" alt="Picture to identify">`:esc(it.t)}</div>
+      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
+      <div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle',def.prompt||'Pick the right team. Fast answers in a row build your combo.');
+      el.querySelectorAll('.cats .opt').forEach(b=>b.onclick=()=>{
+        const k=+b.dataset.k,right=k===it.c;
+        el.querySelectorAll('.cats .opt').forEach((x,j)=>{x.disabled=true;if(j===it.c)x.classList.add('ok')});
+        if(right){combo++;best=Math.max(best,combo);ok++;const g=10+Math.min(combo-1,5)*2;pts+=g;sfx.ok();floatTxt('+'+g,b,'#FFC700');if(combo===3||combo===5||combo===8)burst(50,innerWidth/2,innerHeight/2)}
+        else{b.classList.add('no');combo=0;miss.push(it);sfx.no();shakeScreen()}
+        say($('#by',el),right?'ok':'no',(right?pick(CHEER):pick(OOPS))+' '+def.cats[it.c].n+': '+def.cats[it.c].info);
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===deck.length-1?'Finish':'Next'}</span></button>`;
+        const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+      });
+    }
+    function finish(){
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);S.best=Math.max(S.best,best);save();
+      if(ok===deck.length){sfx.win();burst(90)}else if(ok>=deck.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${deck.length}</span></div><span class="score">${pts} points · best combo x${best}</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}
+      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} belongs with <b>${esc(def.cats[m.c].n)}</b></div>`).join('')}</div>`:'<p style="margin:0;font-weight:700;color:var(--lime)">Flawless run.</p>'}
+      <button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
+    }
+    start();
+  };
+}
+
+/* ---------- special widgets ---------- */
+function stackGame(el,n,gi){
+  const layers=[['Hardware','The touchable parts: screen, keyboard, processor','l0'],['Operating system','System software that runs the hardware','l1'],['Application software','Word, Excel, browsers','l2'],['You, the user','Tapping, typing and clicking','l3']];
+  let placed=0,mistakes=0;
+  function draw(fin){
+    const pool=layers.map((l,i)=>[l,i]).filter(([,i])=>i>=placed);
+    el.innerHTML=`<h3><span class="skew">Build the stack</span></h3><p class="hint">A computer works in layers. Tap the layers one at a time, starting from the very bottom.</p>
+    <div class="stack">${layers.slice().reverse().map((l,ri)=>{const i=3-ri;return `<div class="layer ${i<placed?'placed '+l[2]:''}"><span>${i<placed?l[0]:'Empty slot'}</span><small>${i<placed?l[1]:'Layer '+(i+1)+' from the bottom'}</small></div>`}).join('')}</div>
+    ${fin?'':`<div class="pool">${shuffle(pool).map(([l,i])=>`<button class="opt" style="--c:${CATC[i]}" data-i="${i}">${l[0]}</button>`).join('')}</div>`}<div class="byte" id="by"></div>`;
+    say($('#by',el),fin?'ok':'idle',fin?'Perfect stack! You talk to apps, apps talk to the operating system, and the operating system controls the hardware.':'Think: what must exist first before anything else can run?');
+    el.querySelectorAll('.pool .opt').forEach(b=>b.onclick=()=>{
+      if(+b.dataset.i===placed){placed++;sfx.ok();if(placed===4){const pts=Math.max(10,40-mistakes*10),prev=S.games[n+'.'+gi]||0;S.games[n+'.'+gi]=Math.max(prev,pts);save();burst(70);sfx.win();draw(true);paintHud();return}draw(false)}
+      else{mistakes++;b.classList.add('no');sfx.no();shakeScreen();say($('#by',el),'no','Not yet. Which layer sits underneath everything else?')}
+    });
+  }
+  draw(false);
+}
+function flowGame(el,n,gi){
+  const steps=[[3,'You tap the Word icon.'],[2,'Word (application software) asks the operating system for a place to run.'],[1,'The operating system gives Word some memory and tells the processor to start it.'],[0,'The hardware does the work. The screen lights up with a blank page.'],[1,'The operating system sends the picture to the screen. You see Word, ready to type. Without the OS in the middle, none of this would happen.']];
+  let k=0;
+  function draw(){
+    const act=steps[k][0];
+    el.innerHTML=`<h3><span class="skew">Follow a tap</span></h3><p class="hint">What happens inside the computer when you open Word? Step through it.</p>
+    <div class="stack">${[3,2,1,0].map(i=>{const L=[['Hardware','l0'],['Operating system','l1'],['Application software','l2'],['You','l3']][i];return `<div class="layer placed ${L[1]} ${i===act?'act':''}"><span>${L[0]}</span></div>`}).join('')}</div>
+    <div class="flowtext" aria-live="polite">Step ${k+1} of ${steps.length}. ${steps[k][1]}</div>
+    <div class="row"><button class="btn gh" id="pv" ${k?'':'disabled'}><span>Back</span></button><button class="btn" id="nx"><span>${k<steps.length-1?'Next step':'Start again'}</span></button></div>`;
+    $('#pv',el).onclick=()=>{sfx.tap();k--;draw()};
+    $('#nx',el).onclick=()=>{sfx.tap();if(k<steps.length-1){k++;if(k===steps.length-1&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=15;save();floatTxt('+15 XP',$('#nx',el),'#FFC700');burst(40);paintHud()}}else k=0;draw()};
+  }
+  draw();
+}
+function compressGame(el,n,gi){
+  const F=[['Class photos',18],['Project video',30],['Notes (Word)',4]];let comp=false;const sel=[true,true,true];
+  function draw(){
+    const size=f=>comp?f*0.45:f;const tot=F.reduce((a,f,i)=>a+(sel[i]?size(f[1]):0),0);const ok=tot<=25&&sel.some(Boolean);
+    el.innerHTML=`<h3><span class="skew">Squeeze the files</span></h3><p class="hint">You must email your project, but the email limit is 25 MB. Keep all three files ticked, then press Compress.</p>
+    <div class="files">${F.map((f,i)=>`<label class="file"><input type="checkbox" data-i="${i}" ${sel[i]?'checked':''} style="width:22px;height:22px;accent-color:#19D3FF"><span style="flex:0 0 130px">${f[0]}</span><span class="b2"><i style="width:${size(f[1])/30*100}%"></i></span><span class="mb">${size(f[1]).toFixed(1)} MB</span></label>`).join('')}</div>
+    <div class="limit ${comp?(ok?'okk':'bad'):''}"><span>Total ${tot.toFixed(1)} MB</span><span>Limit 25 MB</span></div>
+    <div class="row" style="justify-content:flex-start"><button class="btn cy" id="cz"><span>${comp?'Un-compress':'Compress'}</span></button></div><div class="byte" id="by"></div>`;
+    say($('#by',el),comp?(ok?'ok':'no'):'idle',comp?(ok?'It fits! File compression reduces size so files are easier to store or share. (Real results vary by file type.)':'Still too big. Tick all your files, then compress.'):'Right now the total is too big. Which utility program helps?');
+    el.querySelectorAll('input').forEach(c=>c.onchange=()=>{sel[+c.dataset.i]=c.checked;sfx.tap();draw()});
+    $('#cz',el).onclick=()=>{comp=!comp;sfx.flip();draw();const t=F.reduce((a,f)=>a+f[1]*.45,0);if(comp&&t<=25&&sel.every(Boolean)&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();burst(60);sfx.win();paintHud()}};
+  }
+  draw();
+}
+function bootGame(el,n,gi){
+  let os=true,state='off',timers=[];
+  const logs=[['BIOS check ... OK',0],['Loading operating system ...',500],['Memory ready ... OK',1000],['Keyboard and mouse found ... OK',1500],['Screen ready ... OK',2000],['Welcome! Your desktop is ready.',2500]];
+  function draw(lines){
+    el.innerHTML=`<h3><span class="skew">Power on</span></h3><p class="hint">Turn the operating system off, press power, and see what happens to the apps.</p>
+    <div class="row"><button class="sw" id="os" aria-pressed="${os}"><i></i>Operating system installed</button><button class="btn" id="pw"><span>Press power</span></button></div>
+    <div class="boot" id="bt" aria-live="polite">${lines||'Computer is off.'}</div>
+    <div class="apps">${[['doc','Word'],['globe','Browser'],['calc','Calculator'],['camera','Camera']].map(a=>`<button data-a="${a[1]}" ${state==='on'?'':'disabled'}>${ic(a[0])}${a[1]}</button>`).join('')}</div><div class="byte" id="by"></div>`;
+    say($('#by',el),state==='err'?'no':state==='on'?'ok':'idle',state==='err'?'Without an operating system, the computer cannot start up or run any application. The hardware is fine, but nothing manages it.':state==='on'?'The operating system started everything: memory, keyboard, screen and apps.':'Try it both ways.');
+    $('#os',el).onclick=()=>{os=!os;state='off';timers.forEach(clearTimeout);sfx.tap();draw()};
+    $('#pw',el).onclick=run;
+    el.querySelectorAll('.apps button').forEach(b=>b.onclick=()=>{sfx.ok();say($('#by',el),'ok',b.dataset.a+' is open. The OS gave it memory and let it use the screen.')});
+  }
+  function run(){
+    timers.forEach(clearTimeout);state='boot';sfx.whoosh();
+    if(!os){state='err';sfx.no();shakeScreen();draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');mark();return}
+    const acc=[];draw('Power on ...');
+    logs.forEach(([t,d],k)=>timers.push(setTimeout(()=>{acc.push(t);sfx.tap();$('#bt',el)&&($('#bt',el).innerHTML='Power on ...<br>'+acc.join('<br>'));if(k===logs.length-1){state='on';sfx.ok();draw('Power on ...<br>'+acc.join('<br>'));mark()}},d+200)));
+  }
+  function mark(){S.bootSeen=S.bootSeen||{};S.bootSeen[os?'on':'off']=true;if(S.bootSeen.on&&S.bootSeen.off&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();paintHud();burst(60);sfx.win()}}
+  draw();
+}
+
+function teachPlayer(el,n){
+  const T=TEACH[n];let i=0,tries=0,answered=false;
+  const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  function draw(){
+    if(i>=T.length)return recap();
+    const t=T[i];tries=0;answered=false;
+    const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
+    el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
+    <div class="sl ${t.img?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul></div>
+    ${t.img?`<figure class="slp"><img src="img/${t.img}.jpg" alt="">${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
+    <div class="byte" id="by"></div>
+    <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
+    say($('#by',el),'idle','Read the points, then answer the quick check.');
+    el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
+      if(answered)return;const o=opts[+b.dataset.k];
+      if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
+        if(!S.teach[n][i]&&tries===0){S.teach[n][i]=true;save();floatTxt('+5 XP',b,'#FFC700');paintHud()}
+        say($('#by',el),'ok',pick(CHEER));$('#nx',el).disabled=false;$('#nx',el).focus({preventScroll:true})}
+      else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Read the points again and try another answer.');
+        if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');$('#nx',el).disabled=false}}
+    });
+    $('#pv',el).onclick=()=>{sfx.tap();i--;draw();el.scrollIntoView({block:'nearest'})};
+    $('#nx',el).onclick=()=>{sfx.tap();i++;draw();el.scrollIntoView({block:'nearest'})};
+  }
+  function recap(){
+    const got=S.teach[n].filter(Boolean).length;
+    sfx.win();burst(50);
+    el.innerHTML=`<div class="eyebrow">Lesson complete</div><h3><span class="skew">What you learned</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
+    <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Flip the cards</span></button></div>`;
+    say($('#by',el),'ok',`You got ${got} of ${T.length} quick checks right on the first try. Now flip the review cards, then play the games.`);
+    $('#again',el).onclick=()=>{i=0;draw()};$('#go2',el).onclick=()=>{sfx.tap();$('#s-cards').scrollIntoView({behavior:RM?'auto':'smooth'})};
+  }
+  draw();
+}
+function hotGame(def){
+  return (el,n,gi)=>{
+    let q,i,pts,ok;const key=n+'.'+gi;
+    function start(){q=shuffle(def.targets).slice(0,def.n||5);i=0;pts=0;ok=0;draw()}
+    function draw(){
+      if(i>=q.length)return finish();
+      const t=q[i];let tries=0,solved=false;
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Mission ${i+1} of ${q.length}</span><span class="score">${pts}</span></div>
+      <div class="ask">${esc(t.prompt)}</div><div class="shot" id="sh"><img src="img/${t.img}.jpg" alt="Screenshot. Tap the right spot." draggable="false" onload="this.parentNode.style.maxWidth=Math.min(640,500*this.naturalWidth/this.naturalHeight)+'px'"></div><div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle','Tap the exact spot on the picture.');
+      const sh=$('#sh',el),im=$('img',sh);
+      const mark=(cls)=>t.rects.forEach(r=>{const d=document.createElement('div');d.className='tgt '+cls;d.style.cssText=`left:${r[0]}%;top:${r[1]}%;width:${r[2]-r[0]}%;height:${r[3]-r[1]}%`;sh.appendChild(d)});
+      const end=(good)=>{solved=true;
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===q.length-1?'Finish':'Next'}</span></button>`;const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true})};
+      sh.onclick=e=>{
+        if(solved)return;const r=im.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+        const hit=t.rects.some(a=>x>=a[0]&&x<=a[2]&&y>=a[1]&&y<=a[3]);
+        if(hit){const g=tries===0?15:tries===1?8:3;pts+=g;ok++;mark('');sfx.ok();floatTxt('+'+g,sh,'#FFC700');say($('#by',el),'ok',pick(CHEER)+' '+t.why);end(true)}
+        else{tries++;sfx.no();shakeScreen();const d=document.createElement('div');d.className='rip';d.style.left=x+'%';d.style.top=y+'%';sh.appendChild(d);setTimeout(()=>d.remove(),750);
+          if(tries>=2){mark('hint');say($('#by',el),'no','That glowing spot is the answer. '+t.why);end(false)}else say($('#by',el),'no','Not there. Look again. '+(t.hint||''))}
+      };
+    }
+    function finish(){
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);save();
+      if(ok===q.length){sfx.win();burst(90)}else if(ok>=q.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${q.length}</span></div><span class="score">${pts} points</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}<button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
+    }
+    start();
+  };
+}
+const P=(label,img,c)=>({t:label,img,c});
+const HS=[
+ // [img, prompt, rects (percent x0,y0,x1,y1), why]
+];
+/* ---------- sort data ---------- */
+const C=(n,info)=>({n,info});
+const I=(arr,c)=>arr.map(t=>({t,c}));
+const G=(title,intro,cats,items,n,prompt)=>sortGame({title,intro,cats,items,n,prompt});
+function widgetsFor(n){
+  return {
+  1:[stackGame,flowGame,G('Photo ID','Look at the picture. Which team does it belong to?',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[P('Keyboard','keyboard',0),P('Laptop and printer','printer',0),P('Windows desktop','windows-desktop',1),P('Word','word-screen',2),P('Excel','excel-screen',2),P('Web browser','browser-screen',2)],6,'What is in the picture?'),hotGame({title:'App detective',intro:'Explore real screens. Tap the right spot.',n:5,targets:[
+  {img:'word-screen',prompt:'In Word, tap the white page where you type.',rects:[[4,32,94,96]],why:'Word is application software for writing documents.'},
+  {img:'word-screen',prompt:'In Word, tap the ribbon with the tools.',rects:[[0,12,100,29]],why:'The ribbon holds the tools that Word gives you.'},
+  {img:'excel-screen',prompt:'In Excel, tap the selected cell A1.',rects:[[6,47,17.6,53]],why:'Excel is application software for spreadsheets. Data sits in cells.'},
+  {img:'excel-screen',prompt:'In Excel, tap the row of column letters (A, B, C ...).',rects:[[6,42.7,95,46.7]],why:'Columns have letters and rows have numbers.'},
+  {img:'browser-screen',prompt:'In the browser, tap the address bar.',rects:[[3.7,6.8,57,11.5]],why:'A web browser is application software for the internet. You type web addresses in the address bar.'},
+  {img:'browser-screen',prompt:'In the browser, tap the search box on the Google page.',rects:[[27,52.5,73,59.5]],why:'The search box is where you type what you want to find.'},
+  {img:'windows-desktop',prompt:'On this Windows screen, tap the Word icon. It is an application.',rects:[[14.2,46.5,18.3,54]],why:'Word is an application. The desktop around it is drawn by the operating system, which is system software.'}]}),G('Hardware, system or app?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
+  2:[G('Spot the tool','Look at the screen. Which utility program is it?',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[P('Antivirus screen','antivirus-scan',0),P('Disk cleanup window','disk-cleanup',1),P('Zip files','zip-files',2),P('USB to Google Drive backup','cloud-backup',3)],4,'Which utility program is this?'),hotGame({title:'Utility inspector',intro:'Explore the screens of real utility programs.',n:5,targets:[
+  {img:'antivirus-scan',prompt:'Tap the button that starts a scan.',rects:[[73.8,62,91,68]],why:'An antivirus scans the computer for harmful software.'},
+  {img:'antivirus-scan',prompt:'Tap the message that says the PC is protected.',rects:[[1,1.7,58,7.3]],why:'The status tells you the antivirus is working.'},
+  {img:'disk-cleanup',prompt:'Tap the bar that shows the cleanup progress.',rects:[[22,59,61,64]],why:'Disk cleanup removes unnecessary files to free up space.'},
+  {img:'disk-cleanup',prompt:'Tap the button that would stop the cleaning.',rects:[[63,58,76,65]],why:'Cancel stops the cleanup.'},
+  {img:'zip-files',prompt:'Tap any compressed (zip) file.',rects:[[3,24,24,56],[36,24,56,56],[70,24,90,56],[3,62,24,93],[36,62,56,93],[70,62,90,93]],why:'Zip files are compressed, so they take up less space.'}]}),G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
+  3:[G('Which job is on screen?','Look at the picture. Which operating system job is it showing?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[P('Task Manager','task-manager',0),P('Printer connected to a laptop','printer',1),P('File Explorer','file-explorer',2),P('Windows desktop','windows-desktop',3),P('Login screen','login-screen',4)],5,'Which operating system job is this?'),hotGame({title:'OS explorer',intro:'Real screens, real jobs. Tap the right spot.',n:6,targets:[
+  {img:'windows-desktop',prompt:'Tap the Start button.',rects:[[2,92,7,97.5]],why:'The OS gives you the Start button to open apps. That is the user interface.'},
+  {img:'windows-desktop',prompt:'Tap the Recycle Bin.',rects:[[3,24,8,32]],why:'The OS manages files. Deleted files go to the Recycle Bin first.'},
+  {img:'windows-desktop',prompt:'Tap the clock on the taskbar.',rects:[[86.5,93.4,92.5,96.6]],why:'The taskbar is part of the OS interface.'},
+  {img:'task-manager',prompt:'Tap the processor (CPU) usage.',rects:[[1,11,34,20.5]],why:'The OS shares the processor between programs.'},
+  {img:'task-manager',prompt:'Tap the graph that shows memory (RAM) in use.',rects:[[40,17.8,96,59.6]],why:'The OS decides which program gets memory.'},
+  {img:'task-manager',prompt:'Tap how much memory is in use right now.',rects:[[40,74,60,80]],why:'The OS keeps track of memory use all the time.'},
+  {img:'file-explorer',prompt:'Tap the Downloads folder.',rects:[[46.5,25.8,68.4,36]],why:'The OS stores and organises files and folders.'},
+  {img:'file-explorer',prompt:'Tap the search box.',rects:[[62.4,10.6,98.3,17.7]],why:'The OS helps you find files by name.'},
+  {img:'login-screen',prompt:'Tap the box where you type your password.',rects:[[19.2,46.2,80.8,53.8]],why:'Security: the OS controls who can use the system.'},
+  {img:'login-screen',prompt:'Tap the button that logs you in.',rects:[[19.2,58.1,80.8,66]],why:'Only people with the right password get in.'}]}),G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
+  4:[G('Photo ID','Look at the picture. Which type of operating system fits?',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[P('Windows PC','windows-desktop',0),P('Server room','server-room',1),P('iPhone','iphone',2),P('Android phone','android-phone',2),P('School computer lab','school-network-lab',3)],5,'Which type of OS is this?'),hotGame({title:'Phone tour',intro:'Phones run a mobile operating system. Android phones and iPhones both have one. Explore them.',n:5,targets:[
+  {img:'android-phone',prompt:'On the Android phone, tap the Chrome browser at the bottom.',rects:[[54,80,70,92]],why:'Chrome is an app. The mobile OS shows apps as icons and opens them when you touch.'},
+  {img:'android-phone',prompt:'Tap the YouTube app.',rects:[[54,47,70,59]],why:'The mobile OS lets you open apps by touch.'},
+  {img:'android-phone',prompt:'Tap the Play Store, where you download apps.',rects:[[77,61,93,73]],why:'The OS lets you install new apps from the store.'},
+  {img:'android-phone',prompt:'Tap the Home button at the bottom of the screen.',rects:[[46,94,54,99.5]],why:'The home button always takes you back to the main screen. The OS gives you this button.'},
+  {img:'iphone',prompt:'Tap the Phone app in the dock at the bottom.',rects:[[12.7,86.7,27,94.6]],why:'The mobile OS shows your apps and lets you open them by touch.'},
+  {img:'iphone',prompt:'Tap the Settings app.',rects:[[73.7,58.7,87.9,65.5]],why:'Settings lets you control the phone. The OS manages it.'},
+  {img:'iphone',prompt:'Tap the Camera app.',rects:[[73.7,23.7,87.9,30]],why:'The mobile OS controls the camera device for apps.'}]}),G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
+  }[n];
+}
+
+/* ---------- grand challenge ---------- */
+async function finalRound(){
+  document.title='Grand Challenge · System Squad';paintHud();
+  app.innerHTML='';await overlay('lose','Final round','Grand Challenge','10 questions. 25 seconds each.',2000);
+  if(location.hash!=='#final')return;
+  musicSet('battle');MU.mode='battle';
+  app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1><span class="skew">Grand Challenge</span></h1></div><div class="panel quest"><b>Beat the clock</b><span>10 mixed questions. Get 8 or more for the Grand Champion badge.</span></div><div class="w" id="fb" style="margin-top:16px;--acc:var(--violet)"></div><div class="row" style="padding-top:14px"><a class="btn gh" href="#map"><span>Back to map</span></a></div>`;
+  const el=$('#fb');
+  function go(){
+    const all=[];for(let l=0;l<4;l++)for(let k=0;k<5;k++)all.push([l,k]);
+    const qs=shuffle(all).slice(0,10).map(([l,k])=>mkQ(l,k));
+    el.innerHTML='<div id="fq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#fq'),qs,{time:25,done:async(score,total,box)=>{
+      const before=xpOf();S.final=Math.max(S.final,score);save();const gain=xpOf()-before;MU.mode='menu';
+      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Play again</span></button><a class="btn" href="#map"><span>Back to map</span></a></div></div>`;
+      say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';go()};
+      if(score>=8){sfx.win();burst(150)}else sfx.ok();paintHud();
+    }});
+  }
+  go();
+}
+
+route();
+</script>
