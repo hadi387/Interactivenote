@@ -1,212 +1,285 @@
 <title>System Squad</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rajdhani:wght@500;600;700&display=swap">
 <style>
-/* Layout: a game map of four levels (learn, play, boss) plus a grand challenge and a live class leaderboard. */
+/* Concept: arcade HUD. Dark neon world, chamfered panels and skewed buttons, binary rain behind, music and motion on every action. Deliberately one dark look. */
 :root{
-  --bg:#EDF2FF;--surface:#FFFFFF;--surface2:#E1E9FF;--fg:#101B3B;--muted:#4C5A84;--line:#C9D5F5;
-  --blue:#3B6CFF;--blue-d:#2347C7;--blue-ink:#FFFFFF;--sun:#FFC21A;--sun-d:#C98F00;--sun-ink:#2B2000;
-  --good:#0E9F5A;--good-d:#0A7442;--good-bg:#D7F5E5;--bad:#D92D20;--bad-d:#A11E14;--bad-bg:#FDE3E0;--violet:#6D4AE8;
-  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--f-body:'Inter','Segoe UI',system-ui,sans-serif;--f-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --void:#0B0720;--panel:#16103F;--panel2:#221858;--line:#3D2F98;--text:#F4F0FF;--muted:#B5AAEA;
+  --cyan:#19D3FF;--mag:#FF2E88;--gold:#FFC700;--lime:#3CFF8F;--red:#FF4757;--violet:#8A5CFF;--ink:#1B1200;
+  --f-display:'Russo One','Arial Black',Impact,sans-serif;--f-body:'Rajdhani','Segoe UI',system-ui,sans-serif;
+  --cut:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  --cut-s:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0C1330;--surface:#162049;--surface2:#1F2B5E;--fg:#EEF2FF;--muted:#A5B3E3;--line:#2B3A75;
-  --blue:#6F94FF;--blue-d:#4467D6;--blue-ink:#0A1233;--sun:#FFC21A;--sun-d:#B98400;--sun-ink:#2B2000;
-  --good:#3DD68C;--good-d:#1E9A5F;--good-bg:#0F3A28;--bad:#FF7B6E;--bad-d:#C2453A;--bad-bg:#44201F;--violet:#A28BFF;color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0C1330;--surface:#162049;--surface2:#1F2B5E;--fg:#EEF2FF;--muted:#A5B3E3;--line:#2B3A75;
-  --blue:#6F94FF;--blue-d:#4467D6;--blue-ink:#0A1233;--sun:#FFC21A;--sun-d:#B98400;--sun-ink:#2B2000;
-  --good:#3DD68C;--good-d:#1E9A5F;--good-bg:#0F3A28;--bad:#FF7B6E;--bad-d:#C2453A;--bad-bg:#44201F;--violet:#A28BFF;color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:17px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 80px}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
-.wrap{max-width:820px;margin:0 auto}
-h1,h2,h3,h4{font-family:var(--f-display);line-height:1.1;margin:0;text-wrap:balance}
+html{background:var(--void)}
+body{margin:0;background:radial-gradient(120% 70% at 50% -10%,#2A1B7A 0%,var(--void) 60%) fixed;color:var(--text);font:600 18px/1.4 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--void)}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5}
+.wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:400;line-height:1.05;margin:0;text-transform:uppercase;letter-spacing:.02em}
 button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 a{color:inherit}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--blue);color:var(--blue-ink);border:0;border-bottom:5px solid var(--blue-d);border-radius:14px;padding:12px 22px;font-weight:700;font-size:17px;text-decoration:none;min-height:50px}
-.btn:active{transform:translateY(3px);border-bottom-width:2px}
-.btn.sun{background:var(--sun);color:var(--sun-ink);border-bottom-color:var(--sun-d)}
-.btn.ghost{background:var(--surface);color:var(--fg);border:2px solid var(--line);border-bottom-width:5px}
-.btn[disabled]{opacity:.5;pointer-events:none}
+.skew{display:inline-block;transform:skewX(-8deg)}
+.eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--cyan)}
 .ic{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 
-/* top bar */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:2px solid var(--line)}
-.bar .wrap{display:flex;align-items:center;gap:10px}
-.brand{font-family:var(--f-display);font-weight:800;font-size:20px;background:none;border:0;padding:0;text-align:left;flex:none}
-.me{display:flex;align-items:center;gap:8px;min-width:0;flex:1;justify-content:flex-end}
-.av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;color:#fff;font-size:16px}
-.xpw{display:grid;gap:2px;min-width:0;flex:0 1 150px}
-.xpw .t{display:flex;justify-content:space-between;font-size:12px;font-weight:700;gap:6px}
-.xpw .t span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.meter{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
-.meter i{display:block;height:100%;background:var(--sun);border-radius:99px;transition:width .5s}
-.nav{display:flex;gap:6px}
-.nav button{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:6px 10px;font-weight:700;display:flex;align-items:center;gap:6px;font-size:14px}
-.nav button[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+/* buttons: skewed slabs */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--gold);color:var(--ink);font-family:var(--f-display);text-transform:uppercase;font-size:18px;letter-spacing:.04em;padding:14px 28px;min-height:54px;text-decoration:none;transform:skewX(-10deg);box-shadow:5px 5px 0 #8E6A00;transition:transform .08s,box-shadow .08s}
+.btn>*{transform:skewX(10deg)}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:skewX(-10deg) translate(4px,4px);box-shadow:1px 1px 0 #8E6A00}
+.btn.cy{background:var(--cyan);box-shadow:5px 5px 0 #0A6F8C}
+.btn.mg{background:var(--mag);color:#fff;box-shadow:5px 5px 0 #8F1450}
+.btn.gh{background:transparent;color:var(--text);box-shadow:none;border:2px solid var(--line)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* chamfered panels */
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:18px 20px 18px 24px;min-width:0}
+.panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc,var(--cyan))}
+.panel.sm{clip-path:var(--cut-s);padding:12px 16px 12px 20px}
+
+/* HUD */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(180deg,rgba(11,7,32,.96),rgba(11,7,32,.85));border-bottom:3px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--f-display);text-transform:uppercase;font-size:20px;letter-spacing:.03em;background:none;border:0;padding:0;color:var(--text);flex:none}
+.logo b{color:var(--gold);font-weight:400}
+.hud{display:flex;align-items:center;gap:10px;flex:1;min-width:0;justify-content:flex-end}
+.chip{display:flex;align-items:center;gap:8px;min-width:0}
+.av{flex:none;width:38px;height:38px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-family:var(--f-display);color:#fff;font-size:17px}
+.xpbox{display:grid;gap:3px;min-width:0;flex:0 1 170px}
+.xpbox .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.xpbox .t span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xpbar{height:12px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FF9D00);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.nv{display:flex;gap:6px}
+.nv button{background:var(--panel);border:2px solid var(--line);transform:skewX(-10deg);padding:6px 10px;display:flex;align-items:center;gap:6px;font-family:var(--f-display);text-transform:uppercase;font-size:13px}
+.nv button>*{transform:skewX(10deg)}
+.nv button[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:#001A22}
+.nv button.off{opacity:.5}
+
+/* reveal motion */
+@keyframes up{from{opacity:0;transform:translateY(28px) skewY(2deg)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) skewX(-8deg);filter:blur(10px)}60%{opacity:1;transform:scale(.94) skewX(-8deg);filter:none}100%{opacity:1;transform:scale(1) skewX(-8deg)}}
+@keyframes shake{10%,50%,90%{transform:translateX(-8px)}30%,70%{transform:translateX(8px)}}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(255,199,0,.0),0 0 28px 4px rgba(255,199,0,.6)}}
+@keyframes floatUp{to{opacity:0;transform:translateY(-70px) scale(1.4)}}
+@keyframes sweep{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(220%) skewX(-20deg)}}
+@keyframes dash{to{background-position:0 -40px}}
+@keyframes flash{from{opacity:.75}to{opacity:0}}
+@keyframes drop{0%{opacity:0;transform:translateY(-60px) rotate(-4deg) scale(.9)}70%{transform:translateY(6px) rotate(1deg)}100%{opacity:1;transform:none}}
+.rv{animation:up .6s cubic-bezier(.2,.8,.2,1) both}
+.pre{opacity:0;transform:translateY(28px)}
+.shake{animation:shake .4s}
+body.shk .wrap{animation:shake .35s}
 
 /* welcome */
-.welcome{display:grid;gap:18px;padding-block:36px;justify-items:start}
-.welcome h1{font-size:clamp(40px,10vw,68px);font-weight:800}
-.welcome p{margin:0;max-width:46ch;font-size:19px;color:var(--muted)}
-.field{display:grid;gap:6px;width:100%;max-width:420px}
-.field label{font-weight:700}
-input[type=text]{font:inherit;color:var(--fg);background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:12px 14px;width:100%;font-size:19px}
-.colors{display:flex;gap:10px;flex-wrap:wrap}
-.colors button{width:46px;height:46px;border-radius:50%;border:4px solid transparent;padding:0}
-.colors button[aria-pressed="true"]{border-color:var(--fg)}
+.start{min-height:calc(100dvh - 90px);display:grid;align-content:center;gap:22px;padding-block:30px;justify-items:start}
+.start h1{font-size:clamp(54px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 var(--mag),10px 10px 0 var(--violet)}
+.start h1 span{display:inline-block;opacity:0;animation:slam .55s cubic-bezier(.2,.8,.2,1) forwards}
+.start .tag{max-width:46ch;font-size:21px;color:var(--muted)}
+.press{font-family:var(--f-display);font-size:22px;letter-spacing:.2em;color:var(--gold);animation:pulse 1.1s infinite;text-transform:uppercase}
+.field{display:grid;gap:8px;width:100%;max-width:430px}
+.field label{font-family:var(--f-display);text-transform:uppercase;font-size:14px;letter-spacing:.1em;color:var(--cyan)}
+input[type=text]{font:700 24px var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);clip-path:var(--cut-s);padding:12px 16px;width:100%;text-transform:uppercase;letter-spacing:.05em}
+.hexes{display:flex;gap:10px;flex-wrap:wrap}
+.hexes button{width:54px;height:54px;border:0;padding:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);position:relative}
+.hexes button[aria-pressed="true"]::after{content:"";position:absolute;inset:14px;background:#fff;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 
 /* map */
-.hero{display:flex;gap:16px;align-items:center;padding-block:22px 6px}
-.hero h1{font-size:clamp(30px,7vw,46px);font-weight:800}
-.hero p{margin:4px 0 0;color:var(--muted)}
-.path{display:grid;gap:14px;padding-block:14px}
-.node{display:flex;align-items:center;gap:14px;background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:20px;padding:14px 16px;text-align:left;width:100%;min-width:0}
-.node:not([disabled]):hover{border-color:var(--blue)}
-.node[disabled]{opacity:.55;cursor:not-allowed}
-.node .num{flex:none;width:58px;height:58px;border-radius:50%;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:26px;border-bottom:4px solid var(--blue-d)}
-.node.done .num{background:var(--good);border-bottom-color:var(--good-d);color:#fff}
-.node.final .num{background:var(--violet);border-bottom-color:#4B2FB5;color:#fff}
-.node .tx{flex:1;min-width:0}
-.node h3{font-size:22px}
-.node .tx small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
-.stars{display:flex;gap:2px;color:var(--line)}
-.stars .on{color:var(--sun)}
-.stars .ic{width:26px;height:26px;fill:currentColor;stroke:none}
-.badges{display:flex;gap:10px;flex-wrap:wrap}
-.badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px}
-.badge .ic{width:22px;height:22px}
-.badge.off{opacity:.45;filter:grayscale(1)}
-.badge.on{border-color:var(--sun)}
-.badge.on .ic{color:var(--sun-d)}
+.hero{padding-block:26px 8px;display:grid;gap:6px}
+.hero h1{font-size:clamp(30px,7vw,50px)}
+.hero p{margin:0;color:var(--muted);font-size:20px}
+.path{display:grid;gap:0;padding-block:16px;position:relative}
+.step{position:relative;display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:center}
+.step+.step{margin-top:26px}
+.step+.step::before{content:"";position:absolute;left:37px;top:-26px;height:26px;width:4px;background:repeating-linear-gradient(180deg,var(--line) 0 8px,transparent 8px 14px);background-size:4px 40px;animation:dash 1.2s linear infinite}
+.step.go+.step::before{background:repeating-linear-gradient(180deg,var(--gold) 0 8px,transparent 8px 14px)}
+.hex{width:76px;height:84px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:34px;color:#fff;position:relative}
+.step.cur .hex{background:var(--gold);color:var(--ink);animation:pulse 1.2s infinite}
+.step.go .hex{background:var(--lime);color:#00331A}
+.step.fin .hex{background:var(--violet)}
+.node{display:block;width:100%;text-align:left;border:0;background:none;padding:0;min-width:0;color:inherit}
+.node .panel{--acc:var(--line);transition:transform .12s}
+.step.cur .panel{--acc:var(--gold)}.step.go .panel{--acc:var(--lime)}.step.fin .panel{--acc:var(--violet)}
+.node:not([disabled]):hover .panel{transform:translateX(8px)}
+.node[disabled]{cursor:not-allowed;opacity:.5}
+.node h3{font-size:clamp(20px,4.6vw,28px)}
+.node small{display:block;color:var(--muted);font-size:16px;font-weight:600;margin-top:2px}
+.node .row2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stars{display:flex;gap:2px;flex:none}
+.stars .ic{width:28px;height:28px;fill:#2C2370;stroke:none}
+.stars .on .ic{fill:var(--gold);filter:drop-shadow(0 0 6px rgba(255,199,0,.8))}
+.sec-t{font-size:22px;padding-top:22px;color:var(--gold)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;padding-top:10px}
+.bdg{display:flex;align-items:center;gap:8px;background:var(--panel);clip-path:var(--cut-s);padding:8px 16px 8px 12px;font-family:var(--f-display);font-size:14px;text-transform:uppercase}
+.bdg .ic{width:24px;height:24px}
+.bdg.off{opacity:.35;filter:grayscale(1)}.bdg.on{color:var(--gold)}.bdg.on .ic{filter:drop-shadow(0 0 6px var(--gold))}
 
 /* level */
-.lh{padding-block:22px 4px;display:grid;gap:8px}
-.lh h1{font-size:clamp(32px,7vw,52px);font-weight:800}
-.lh .sub{color:var(--muted)}
-.chips{display:flex;gap:8px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:15;background:var(--bg);padding-block:10px}
-.chips a{flex:1;text-align:center;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);border-radius:12px;padding:8px;font-weight:700;text-decoration:none}
-section{padding-block:18px;display:grid;gap:14px;scroll-margin-top:130px}
-section>h2{font-size:28px}
-.mission{background:var(--sun);color:var(--sun-ink);border-radius:16px;padding:14px 16px;font-weight:600}
-.mission b{font-family:var(--f-display);font-size:18px;display:block}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
-.flip{perspective:900px;background:none;border:0;padding:0;text-align:left;min-height:230px}
-.flip .in{display:grid;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.lh{padding-block:26px 8px;display:grid;gap:8px}
+.lh h1{font-size:clamp(36px,9vw,72px);color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.stage{display:flex;gap:6px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:40;padding-block:10px;background:linear-gradient(180deg,var(--void) 70%,transparent)}
+.stage a{flex:1;text-align:center;text-decoration:none;background:var(--panel);border:2px solid var(--line);transform:skewX(-12deg);padding:8px 4px;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.stage a>*{display:inline-block;transform:skewX(12deg)}
+.stage a:hover{border-color:var(--gold)}
+.quest{--acc:var(--gold)}
+.quest b{font-family:var(--f-display);text-transform:uppercase;color:var(--gold);display:block;font-size:15px;letter-spacing:.1em}
+.quest span{font-size:21px}
+section{padding-block:22px 6px;display:grid;gap:14px;scroll-margin-top:130px}
+section>h2{font-size:30px;display:flex;align-items:baseline;gap:12px}
+section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);letter-spacing:.16em}
+.cprog{font-weight:700;color:var(--muted);letter-spacing:.05em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.flip{perspective:1000px;background:none;border:0;padding:0;text-align:left;color:inherit}
+.flip .in{display:grid;width:100%;height:100%;transition:transform .6s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
 .flip[aria-pressed="true"] .in{transform:rotateY(180deg)}
-.face{grid-area:1/1;min-height:250px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;border:3px solid var(--line);border-bottom-width:6px;}
-.face.f{background:var(--surface);align-items:flex-start;justify-content:space-between}
-.face.f .ic{width:44px;height:44px;color:var(--blue)}
-.face.f h3{font-size:24px}
-.face.f .tap{font-size:13px;font-weight:700;color:var(--muted)}
-.face.b{background:var(--blue);color:var(--blue-ink);border-color:var(--blue-d);transform:rotateY(180deg);font-size:15.5px;line-height:1.45}
-.face.b b{font-family:var(--f-display);font-size:19px}
-.face.b .like{background:rgba(255,255,255,.18);border-radius:10px;padding:8px 10px;font-weight:600}
-.cprog{font-weight:700;color:var(--muted)}
+.face{grid-area:1/1;min-height:270px;backface-visibility:hidden;-webkit-backface-visibility:hidden;clip-path:var(--cut);padding:18px 18px 18px 22px;display:flex;flex-direction:column;gap:8px}
+.face.f{background:repeating-linear-gradient(135deg,#1C1450 0 14px,#241A66 14px 28px);justify-content:space-between;position:relative}
+.face.f::after{content:"";position:absolute;top:0;left:0;height:100%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);animation:sweep 3.2s infinite;pointer-events:none}
+.face.f .q{font-family:var(--f-display);font-size:72px;color:var(--cyan);line-height:1;text-shadow:0 0 22px rgba(25,211,255,.7)}
+.face.f h3{font-size:22px}
+.face.f .tap{font-size:14px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.face.b{background:linear-gradient(160deg,#1E5BFF,#6A2BE0);transform:rotateY(180deg);font-size:17.5px;line-height:1.3;overflow:hidden}
+.face.b h4{font-size:20px;color:var(--gold)}
+.face.b .ph{margin:-18px -18px 0 -22px;height:128px;background:#0B0720;display:grid;place-items:center}
+.face.b .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.face.b .ph .ic{width:56px;height:56px;color:var(--cyan)}
+.face.b .like{background:rgba(11,7,32,.45);padding:8px 12px;font-weight:700}
+.face.b .like em{font-style:normal;color:var(--gold);font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;display:block}
 
-.w{background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:20px;padding:16px;display:grid;gap:14px;min-width:0}
-.w h3{font-size:24px}
-.w .hint{margin:0;color:var(--muted)}
-.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.big{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,5.5vw,34px);text-align:center;padding:26px 14px;background:var(--surface2);border-radius:16px;min-height:104px;display:grid;place-items:center;overflow-wrap:anywhere}
-.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
-.opt{background:var(--surface);border:3px solid var(--line);border-bottom-width:6px;border-radius:14px;padding:12px 14px;text-align:left;font-weight:600;display:flex;gap:10px;align-items:center;min-height:56px}
-.opt:hover:not([disabled]){border-color:var(--blue)}
-.opt:active:not([disabled]){transform:translateY(3px);border-bottom-width:3px}
-.opt.ok{background:var(--good-bg);border-color:var(--good);color:var(--fg)}
-.opt.no{background:var(--bad-bg);border-color:var(--bad);animation:shake .35s}
-.opt .m{margin-left:auto;font-weight:800;font-size:20px}
-.opt.ok .m{color:var(--good)}.opt.no .m{color:var(--bad)}
-.cats{display:flex;flex-wrap:wrap;gap:10px}
-.cats .opt{flex:1 1 150px;justify-content:center;text-align:center}
-@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.qtext{font-size:22px;font-weight:700;line-height:1.35;margin:0;font-family:var(--f-display)}
-.blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--sun);text-align:center;margin-inline:2px}
-.blank.f{color:var(--good);border-color:var(--good)}
-.dots{display:flex;gap:5px}
-.dots i{width:14px;height:14px;border-radius:50%;background:var(--surface2);display:block}
-.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}.dots i.cur{outline:3px solid var(--sun)}
-.combo{display:inline-flex;align-items:center;gap:6px;font-weight:800;background:var(--sun);color:var(--sun-ink);border-radius:99px;padding:3px 12px;font-size:15px;visibility:hidden}
-.combo.on{visibility:visible;animation:pop .3s}
-@keyframes pop{50%{transform:scale(1.2)}}
-.pts{font-family:var(--f-mono);font-weight:700}
-.timer{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
-.timer i{display:block;height:100%;background:var(--violet);width:100%}
-.byte{display:flex;gap:10px;align-items:flex-start;min-height:64px}
-.byte svg{flex:none;width:58px;height:58px}
-.bubble{position:relative;background:var(--surface2);border-radius:14px;padding:10px 14px;font-weight:600;flex:1;min-width:0}
-.bubble::before{content:"";position:absolute;left:-8px;top:18px;border:8px solid transparent;border-left:0;border-right-color:var(--surface2)}
-.bubble.ok{background:var(--good-bg)}.bubble.ok::before{border-right-color:var(--good-bg)}
-.bubble.no{background:var(--bad-bg)}.bubble.no::before{border-right-color:var(--bad-bg)}
-.result{display:grid;gap:12px;justify-items:start}
-.score{font-family:var(--f-display);font-weight:800;font-size:64px;line-height:1}
+.w{--acc:var(--cyan);position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:20px 22px 22px 26px;display:grid;gap:14px;min-width:0}
+.w::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc)}
+.w h3{font-size:26px}
+.hint{margin:0;color:var(--muted)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.target{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(24px,5.5vw,36px);text-align:center;padding:30px 16px;min-height:120px;display:grid;place-items:center;background:linear-gradient(180deg,#0B0720,#150E3D);clip-path:var(--cut);overflow-wrap:anywhere;animation:drop .45s cubic-bezier(.2,1.2,.4,1) both;line-height:1.15}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.opt{position:relative;background:var(--panel);border:0;border-left:8px solid var(--c,var(--line));padding:14px 16px;text-align:left;font-family:var(--f-body);font-weight:700;font-size:19px;display:flex;gap:10px;align-items:center;min-height:60px;clip-path:var(--cut-s);transition:transform .1s,background .15s;animation:slideR .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+.opt:hover:not([disabled]){background:var(--panel2);transform:translateX(6px)}
+.opt:active:not([disabled]){transform:scale(.97)}
+.opt.ok{background:#0E5B37;border-left-color:var(--lime)}
+.opt.no{background:#6A1730;border-left-color:var(--red);animation:shake .4s}
+.opt .m{margin-left:auto;font-family:var(--f-display);font-size:22px}
+.opt.ok .m{color:var(--lime)}.opt.no .m{color:var(--red)}
+.cats{display:flex;flex-wrap:wrap;gap:12px}
+.cats .opt{flex:1 1 160px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:17px}
+.qtext{font-family:var(--f-display);font-size:clamp(20px,4.4vw,28px);line-height:1.25;margin:0;text-transform:none;animation:slideL .45s cubic-bezier(.2,.8,.2,1) both}
+.blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--gold);text-align:center;margin-inline:2px;color:var(--gold)}
+.blank.f{color:var(--lime);border-color:var(--lime)}
+.pips{display:flex;gap:6px}
+.pips i{width:22px;height:10px;transform:skewX(-20deg);background:#2C2370;display:block}
+.pips i.ok{background:var(--lime)}.pips i.no{background:var(--red)}.pips i.cur{background:var(--gold);animation:pulse 1s infinite}
+.hud2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.score{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);color:var(--gold)}
+.meter{height:12px;width:140px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mag),var(--gold));transition:width .25s}
+.combo{font-family:var(--f-display);text-transform:uppercase;color:var(--mag);font-size:20px;min-width:110px;display:flex;align-items:center;gap:6px}
+.combo.on{animation:pulse .35s}
+.timer{height:10px;background:#0B0720;transform:skewX(-20deg);overflow:hidden}
+.timer i{display:block;height:100%;width:100%;background:var(--violet)}
+.byte{display:flex;gap:12px;align-items:flex-start;min-height:64px}
+.byte svg{flex:none;width:62px;height:62px}
+.bubble{position:relative;background:#0B0720;padding:10px 16px;flex:1;min-width:0;border-left:5px solid var(--cyan);font-size:18px;line-height:1.3;animation:slideR .3s both}
+.bubble.ok{border-color:var(--lime)}.bubble.no{border-color:var(--red)}
+.result{display:grid;gap:14px;justify-items:start}
+.big{font-family:var(--f-display);font-size:72px;line-height:1;color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.xpg{display:inline-block;background:var(--gold);color:var(--ink);font-family:var(--f-display);padding:4px 16px;transform:skewX(-10deg);animation:slam .5s both}
 .miss{display:grid;gap:6px;width:100%}
-.miss div{background:var(--bad-bg);border-radius:10px;padding:8px 12px;font-size:15px}
-.xpgain{background:var(--sun);color:var(--sun-ink);font-weight:800;border-radius:99px;padding:4px 14px;display:inline-block}
+.miss div{background:#3A1330;border-left:5px solid var(--red);padding:6px 12px;font-size:17px}
 
-/* stack, flow, boot, compress */
+/* boss arena */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;background:linear-gradient(180deg,#0B0720,#1A0F4A);clip-path:var(--cut);padding:14px 18px}
+.fighter{display:grid;gap:6px;justify-items:center;min-width:0}
+.fighter .nm{font-family:var(--f-display);font-size:14px;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.vs{font-family:var(--f-display);font-size:34px;color:var(--mag);text-shadow:3px 3px 0 #4A0A28}
+.hearts{display:flex;gap:4px}
+.hearts svg{width:26px;height:26px}
+.hp{display:flex;gap:4px;width:100%;max-width:200px}
+.hp i{flex:1;height:14px;background:var(--red);transform:skewX(-20deg);transition:background .2s,transform .3s}
+.hp i.lost{background:#2C1730;transform:skewX(-20deg) scaleY(.5)}
+.bossw{width:92px;height:92px}
+.hit{animation:shake .4s}
+.flashfx{position:fixed;inset:0;z-index:70;pointer-events:none;animation:flash .4s forwards}
+.fl{position:fixed;z-index:80;pointer-events:none;font-family:var(--f-display);font-size:34px;color:var(--gold);text-shadow:3px 3px 0 #000;animation:floatUp .9s forwards}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:90;display:grid;place-items:center;overflow:hidden;background:rgba(11,7,32,.0)}
+.ov .p1,.ov .p2{position:absolute;top:-10%;bottom:-10%;width:60%;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+.ov .p1{left:-10%;background:var(--mag);transform:translateX(-130%) skewX(-14deg)}
+.ov .p2{right:-10%;background:var(--violet);transform:translateX(130%) skewX(-14deg)}
+.ov.in .p1,.ov.in .p2{transform:translateX(0) skewX(-14deg)}
+.ov .tx{position:relative;text-align:center;display:grid;gap:10px;padding:20px}
+.ov .tx .a{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);letter-spacing:.3em;color:var(--gold);opacity:0;animation:slideL .4s .3s forwards}
+.ov .tx .b{font-family:var(--f-display);font-size:clamp(44px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 #000;opacity:0;animation:slam .5s .45s both;text-transform:uppercase}
+.ov .tx .c{font-size:22px;max-width:30ch;margin:0 auto;opacity:0;animation:up .5s .8s forwards}
+.ov.out{opacity:0;transition:opacity .35s}
+.ov.win .p1{background:var(--lime)}.ov.win .p2{background:var(--cyan)}.ov.win .tx .b{color:#fff}
+.ov.lose .p1{background:var(--red)}.ov.lose .p2{background:#6A1730}
+
 .stack{display:grid;gap:8px}
-.layer{border-radius:14px;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;border:3px dashed var(--line);min-height:56px;color:var(--muted)}
-.layer.placed{border-style:solid;color:#fff;border-color:transparent}
-.layer.l3{background:#7A5AF8}.layer.l2{background:#3B6CFF}.layer.l1{background:#0E9F5A}.layer.l0{background:#E8590C}
-.layer.act{outline:4px solid var(--sun);transform:scale(1.02)}
-.layer small{font-weight:500;opacity:.9}
-.pool{display:flex;gap:8px;flex-wrap:wrap}
-.pool .opt{flex:1 1 200px}
-.flowtext{background:var(--surface2);border-radius:14px;padding:14px 16px;font-weight:600;min-height:76px}
-.boot{background:#0A0F24;color:#7CFFB2;border-radius:14px;padding:14px 16px;font-family:var(--f-mono);font-size:14px;min-height:150px;line-height:1.7;overflow-wrap:anywhere}
-.boot .e{color:#FF8B7E}
+.layer{padding:14px 18px;font-family:var(--f-display);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:58px;border:3px dashed var(--line);color:var(--muted);clip-path:var(--cut-s);font-size:17px}
+.layer small{font-family:var(--f-body);font-size:15px;text-transform:none;font-weight:600}
+.layer.placed{border-style:solid;border-color:transparent;color:#fff;animation:drop .45s both}
+.layer.l3{background:#7B4DFF}.layer.l2{background:#1E6BFF}.layer.l1{background:#0E9A55}.layer.l0{background:#E8590C}
+.layer.act{outline:4px solid var(--gold);transform:scale(1.03);animation:glow 1s infinite}
+.pool{display:flex;gap:10px;flex-wrap:wrap}.pool .opt{flex:1 1 200px}
+.flowtext{background:#0B0720;border-left:5px solid var(--gold);padding:14px 18px;min-height:78px}
+.boot{background:#04020E;color:#6BFFAE;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:15px;padding:14px 16px;min-height:150px;line-height:1.7;overflow-wrap:anywhere;border:2px solid var(--line)}
+.boot .e{color:#FF7B8A}
 .apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.apps button{background:var(--surface2);border:3px solid var(--line);border-radius:16px;padding:12px 4px;display:grid;gap:4px;justify-items:center;font-weight:700;font-size:13px}
-.apps button .ic{width:34px;height:34px}
-.apps button[disabled]{opacity:.35;cursor:not-allowed}
-.sw{display:inline-flex;gap:10px;align-items:center;font-weight:700;background:var(--surface);border:3px solid var(--line);border-radius:99px;padding:6px 16px 6px 8px}
-.sw i{width:42px;height:24px;border-radius:99px;background:var(--bad);position:relative;display:block}
-.sw i::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s}
-.sw[aria-pressed="true"] i{background:var(--good)}.sw[aria-pressed="true"] i::after{left:21px}
+.apps button{background:var(--panel);border:0;clip-path:var(--cut-s);padding:14px 4px;display:grid;gap:4px;justify-items:center;font-family:var(--f-display);font-size:13px;text-transform:uppercase}
+.apps button .ic{width:34px;height:34px;color:var(--cyan)}
+.apps button[disabled]{opacity:.3;cursor:not-allowed}
+.apps button:not([disabled]){animation:drop .4s both}
+.sw{display:inline-flex;gap:10px;align-items:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px;background:var(--panel);border:2px solid var(--line);padding:8px 16px 8px 10px;transform:skewX(-10deg)}
+.sw i{width:42px;height:22px;background:var(--red);position:relative;display:block}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;transition:left .2s}
+.sw[aria-pressed="true"] i{background:var(--lime)}.sw[aria-pressed="true"] i::after{left:23px}
 .files{display:grid;gap:8px}
-.file{display:flex;align-items:center;gap:12px;background:var(--surface2);border-radius:12px;padding:10px 14px;font-weight:600}
-.file .bar2{flex:1;height:14px;background:var(--bg);border-radius:99px;overflow:hidden}
-.file .bar2 i{display:block;height:100%;background:var(--blue);transition:width .6s}
-.file .mb{font-family:var(--f-mono);font-weight:700;min-width:68px;text-align:right}
-.limit{display:flex;justify-content:space-between;font-weight:700;background:var(--bg);border-radius:12px;padding:10px 14px;border:3px solid var(--line)}
-.limit.okk{border-color:var(--good);background:var(--good-bg)}.limit.bad{border-color:var(--bad);background:var(--bad-bg)}
+.file{display:flex;align-items:center;gap:12px;background:#0B0720;padding:10px 14px;font-weight:700}
+.file .b2{flex:1;height:14px;background:#2C2370;transform:skewX(-20deg);overflow:hidden}
+.file .b2 i{display:block;height:100%;background:var(--cyan);transition:width .7s cubic-bezier(.3,1.2,.5,1)}
+.file .mb{font-family:var(--f-display);min-width:78px;text-align:right}
+.limit{display:flex;justify-content:space-between;font-family:var(--f-display);text-transform:uppercase;background:#0B0720;padding:12px 16px;border-left:6px solid var(--line)}
+.limit.okk{border-color:var(--lime);color:var(--lime)}.limit.bad{border-color:var(--red);color:var(--red)}
 
 /* leaderboard */
-.board{display:grid;gap:8px}
-.pl{display:flex;align-items:center;gap:12px;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 14px;min-width:0}
-.pl.me{border-color:var(--blue);background:var(--surface2)}
-.pl .rk{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;background:var(--surface2)}
-.pl:nth-child(1) .rk{background:var(--sun);color:var(--sun-ink)}
-.pl:nth-child(2) .rk{background:#C8D0E6;color:#1B2440}
-.pl:nth-child(3) .rk{background:#E3A26B;color:#2B1500}
-.pl .nm{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pl .nm small{display:block;font-weight:500;color:var(--muted);font-size:13px}
-.pl .xp{font-family:var(--f-mono);font-weight:700}
-.rm{background:none;border:2px solid var(--line);border-radius:8px;padding:2px 8px;font-size:12px}
-.note{background:var(--surface2);border-radius:14px;padding:12px 16px;font-size:15px}
-.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-.tally div{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 14px}
-.tally b{display:block;font-family:var(--f-display);font-size:30px}
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
-@media (max-width:520px){.xpw{display:none}.brand{font-size:17px}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tally div{background:var(--panel);clip-path:var(--cut-s);padding:10px 16px;font-weight:700;color:var(--muted);text-transform:uppercase;font-size:14px;letter-spacing:.06em}
+.tally b{display:block;font-family:var(--f-display);font-size:34px;color:#fff;letter-spacing:0}
+.board{display:grid;gap:10px;padding-top:16px}
+.pl{display:grid;grid-template-columns:54px 40px 1fr auto auto;gap:12px;align-items:center;background:var(--panel);clip-path:var(--cut-s);padding:10px 16px 10px 12px;animation:slideR .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms);min-width:0}
+.pl .rk{font-family:var(--f-display);font-size:34px;text-align:center;color:var(--muted)}
+.pl.r1{background:linear-gradient(90deg,#6B4B00,var(--panel));box-shadow:inset 6px 0 0 var(--gold)}.pl.r1 .rk{color:var(--gold);text-shadow:0 0 14px var(--gold)}
+.pl.r2{box-shadow:inset 6px 0 0 #C8D0E6}.pl.r2 .rk{color:#C8D0E6}
+.pl.r3{box-shadow:inset 6px 0 0 #E3A26B}.pl.r3 .rk{color:#E3A26B}
+.pl.me{outline:3px solid var(--cyan);outline-offset:-3px}
+.pl .nm{min-width:0;font-family:var(--f-display);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:18px}
+.pl .nm small{display:block;font-family:var(--f-body);font-size:14px;color:var(--muted);text-transform:none;font-weight:600}
+.pl .xp{font-family:var(--f-display);color:var(--gold);font-size:20px}
+.rm{background:none;border:2px solid var(--line);padding:2px 8px;font-size:12px;text-transform:uppercase}
+.note{background:#0B0720;border-left:5px solid var(--gold);padding:12px 16px;font-size:17px}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:85}
+@media (max-width:560px){.xpbox{display:none}.logo{font-size:16px}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
 </style>
 
+<canvas id="rain" aria-hidden="true"></canvas>
 <div class="bar"><div class="wrap">
-  <button class="brand" id="brand" type="button">System Squad</button>
-  <div class="me" id="me"></div>
+  <button class="logo" id="logo" type="button">System <b>Squad</b></button>
+  <div class="hud" id="hud"></div>
 </div></div>
 <main class="wrap" id="app"></main>
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <script>
 const MCQ=[[{"q":"Computer software can best be described as _____.","o":["the physical parts of a computer","a set of instructions and programs","the computer's monitor","a type of keyboard"]},{"q":"Which of the following is an example of system software?","o":["Microsoft Word","Windows operating system","A web browser","A calculator app"]},{"q":"Which of the following is an example of application software?","o":["Linux","macOS","Microsoft Excel","Windows"]},{"q":"The main function of system software is to _____.","o":["manage and control computer hardware","type letters only","play music only","print documents only"]},{"q":"Unlike hardware, software cannot be _____.","o":["installed","physically touched","updated","used"]}],[{"q":"Utility programs are mainly used to _____.","o":["entertain users","maintain and optimise the computer system","replace the operating system","design websites only"]},{"q":"A program that detects and removes harmful software is called _____.","o":["an antivirus","a browser","a spreadsheet","a presentation tool"]},{"q":"A utility tool that frees up storage space by removing unnecessary files is called _____.","o":["disk cleanup","word processor","web browser","email client"]},{"q":"File compression tools are mainly used to _____.","o":["reduce the size of files","increase file size","delete files permanently","print files"]},{"q":"Backup software is used to _____.","o":["copy important data to another location for safekeeping","permanently delete old files","design graphics","browse the internet"]}],[{"q":"An operating system is best described as software that _____.","o":["manages computer hardware and software resources","only plays videos","only prints documents","only stores photographs"]},{"q":"Which of the following is a function of an operating system?","o":["Managing memory and the processor","Cooking food","Cleaning the classroom","Teaching lessons"]},{"q":"The operating system provides a _____ through which users interact with the computer.","o":["user interface","keyboard only","printer only","speaker only"]},{"q":"Without an operating system, a computer _____.","o":["can run any software easily","cannot start up or run application software","becomes faster","becomes a calculator only"]},{"q":"Managing files and folders on a computer is a function of the _____.","o":["operating system","printer","scanner","speaker"]}],[{"q":"Which of these is a mobile operating system?","o":["Android","Windows Server","Linux Server","DOS"]},{"q":"An operating system that allows only one user to work at a time is called a _____ operating system.","o":["single-user","multi-user","network","mobile"]},{"q":"Which of the following is an example of a desktop operating system?","o":["iOS","Windows","Android","Symbian"]},{"q":"An operating system that manages several computers connected in a network is called a _____ operating system.","o":["network","single-user","mobile","game"]},{"q":"iOS is the mobile operating system developed mainly for _____ devices.","o":["Apple","Samsung","Tecno","Infinix"]}]];
-/* MCQ[0..3] are the four lessons: W6P1, W6P2, W8P1, W8P2 (5 questions each) */
 const ANS=[[1,1,2,0,1],[1,0,0,0,0],[0,0,0,1,0],[0,0,1,0,0]];
 const WHY=[
  ['Software is the set of instructions and programs. You cannot touch it. The physical parts are hardware.','Windows is an operating system, and an operating system is system software. Word, a browser and a calculator app are application software.','Microsoft Excel is for spreadsheets, a job a user wants done. Linux, macOS and Windows are operating systems.','System software manages and controls the hardware so that application software can run.','You can touch hardware like a keyboard. Software is instructions, so you cannot touch it.'],
@@ -214,54 +287,60 @@ const WHY=[
  ['The operating system manages the computer\'s hardware and software resources.','Managing memory and the processor is one of the main jobs of the operating system.','The user interface is how you talk to the computer: icons, menus and touch. The operating system provides it.','Without an operating system the computer cannot start up or run apps.','Managing files and folders is a job of the operating system.'],
  ['Android is a mobile operating system, made for phones and tablets.','Single-user means only one person can work at a time.','Windows is a desktop operating system. iOS and Android are mobile.','A network operating system manages and coordinates computers connected in a network.','iOS is made by Apple, for iPhones and iPads.']
 ];
+/* img: optional photo at img/<name>.jpg (or .png). Cards fall back to an icon when the photo is missing. */
 const LEVELS=[
- {id:1,name:'Meet the Software',wp:'Week 6 · Period 1',topic:'System Software and Application Software',badge:'Software Spotter',
-  mission:'Find out what software really is, and sort the programs on every computer into the right team.',
+ {id:1,name:'Meet the Software',wp:'Week 6 · Period 1',topic:'System Software and Application Software',badge:'Software Spotter',boss:['The Glitch','#FF2E88'],
+  mission:'Find out what software really is, then sort every program on a computer into the right team.',
   cards:[
-   {t:'Software',ic:'code',d:'A set of instructions, programs and data that tell the hardware what to do and how to do it. You cannot touch it.',like:'Hardware is the pot and the stove. Software is the recipe that tells them what to cook.'},
-   {t:'Hardware vs software',ic:'laptop',d:'Hardware is the physical, touchable part: keyboard, screen, mouse. Software is the instructions inside. Both are needed.',like:'Your phone screen is hardware. WhatsApp is software.'},
-   {t:'System software',ic:'gear',d:'Manages and controls the computer hardware so that application software can run. Operating systems such as Windows, macOS and Linux are system software.',like:'The school manager. Nobody teaches in class, but the school cannot run without the manager.'},
-   {t:'Application software',ic:'tool',d:'Designed to help users do specific tasks. Microsoft Word for documents, Microsoft Excel for spreadsheets, a web browser for the internet.',like:'The tools in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
- {id:2,name:'Tech Clinic',wp:'Week 6 · Period 2',topic:'Utility Programs and Their Functions',badge:'Tech Doctor',
-  mission:'Utility programs keep a computer healthy. Treat the sick computers and pick the right tool.',
+   {t:'Software',ic:'code',img:'word-screen',d:'A set of instructions, programs and data that tell the hardware what to do and how to do it. You cannot touch it.',like:'Hardware is the pot and the stove. Software is the recipe that tells them what to cook.'},
+   {t:'Hardware vs software',ic:'laptop',img:'keyboard',d:'Hardware is the physical, touchable part: keyboard, screen, mouse. Software is the instructions inside. Both are needed.',like:'Your phone screen is hardware. WhatsApp is software.'},
+   {t:'System software',ic:'gear',img:'windows-desktop',d:'Manages and controls the computer hardware so that application software can run. Operating systems such as Windows, macOS and Linux are system software.',like:'The school manager. Nobody teaches in class, but the school cannot run without the manager.'},
+   {t:'Application software',ic:'tool',img:'browser-screen',d:'Designed to help users do specific tasks. Microsoft Word for documents, Microsoft Excel for spreadsheets, a web browser for the internet.',like:'The tools in your school bag. A ruler, a calculator and a pen each do one job for you.'}]},
+ {id:2,name:'Tech Clinic',wp:'Week 6 · Period 2',topic:'Utility Programs and Their Functions',badge:'Tech Doctor',boss:['Virus Lord','#FF4757'],
+  mission:'Utility programs keep a computer healthy. Treat the sick computers and choose the right tool.',
   cards:[
-   {t:'Utility programs',ic:'tool',d:'A category of system software that helps maintain, analyse, configure and optimise a computer so it keeps running smoothly. They work with the operating system.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
-   {t:'Antivirus',ic:'shield',d:'Detects and removes harmful software (viruses and malware).',like:'The security guard at the gate who checks every visitor and removes troublemakers.'},
-   {t:'Disk cleanup',ic:'broom',d:'Removes unnecessary files to free up storage space.',like:'The cleaner who sweeps rubbish out of the classroom so there is space to sit.'},
-   {t:'File compression',ic:'zip',d:'Reduces the size of files so they are easier to store or share.',like:'Packing clothes into a vacuum bag so the same things take up less room in your box.'},
-   {t:'Backup software',ic:'cloud',d:'Copies important data to another location for safekeeping.',like:'A photocopy of your result slip kept at home, in case the original is lost.'}]},
- {id:3,name:'Run the Machine',wp:'Week 8 · Period 1',topic:'Functions of an Operating System',badge:'OS Boss',
-  mission:'You are the operating system today. Handle every request that comes in, and see what happens when the OS is missing.',
+   {t:'Utility programs',ic:'tool',img:'task-manager',d:'A category of system software that helps maintain, analyse, configure and optimise a computer so it keeps running smoothly. They work with the operating system.',like:'The school caretakers, cleaners and security. They keep the school in good shape.'},
+   {t:'Antivirus',ic:'shield',img:'antivirus-scan',d:'Detects and removes harmful software (viruses and malware).',like:'The security guard at the gate who checks every visitor and removes troublemakers.'},
+   {t:'Disk cleanup',ic:'broom',img:'disk-cleanup',d:'Removes unnecessary files to free up storage space.',like:'The cleaner who sweeps rubbish out of the classroom so there is space to sit.'},
+   {t:'File compression',ic:'zip',img:'zip-files',d:'Reduces the size of files so they are easier to store or share.',like:'Packing clothes into a vacuum bag so the same things take up less room in your box.'},
+   {t:'Backup software',ic:'cloud',img:'cloud-backup',d:'Copies important data to another location for safekeeping.',like:'A photocopy of your result slip kept at home, in case the original is lost.'}]},
+ {id:3,name:'Run the Machine',wp:'Week 8 · Period 1',topic:'Functions of an Operating System',badge:'OS Boss',boss:['Kernel Panic','#FFC700'],
+  mission:'You are the operating system today. Handle every request, then see what happens when the OS is missing.',
   cards:[
-   {t:'Operating system',ic:'gear',d:'System software that manages computer hardware and software resources and provides common services so application programs can run.',like:'The principal of a school. Everyone and everything goes through the principal\'s office.'},
-   {t:'Memory and processor',ic:'chip',d:'The OS decides which program gets how much memory and when the processor works on it.',like:'The timetable officer deciding which class uses which room, and when.'},
-   {t:'Input and output devices',ic:'plug',d:'The OS controls devices like the keyboard, mouse, screen and printer.',like:'The prefect directing traffic so everyone moves in the right direction.'},
-   {t:'Files and folders',ic:'folder',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
-   {t:'User interface',ic:'screen',d:'The OS gives you a way to talk to the computer: icons, menus, windows or touch.',like:'The front desk. It is where you speak to the school.'},
-   {t:'Security',ic:'lock',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
- {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',
+   {t:'Operating system',ic:'gear',img:'windows-desktop',d:'System software that manages computer hardware and software resources and provides common services so application programs can run.',like:'The principal of a school. Everyone and everything goes through the principal\'s office.'},
+   {t:'Memory and processor',ic:'chip',img:'task-manager',d:'The OS decides which program gets how much memory and when the processor works on it.',like:'The timetable officer deciding which class uses which room, and when.'},
+   {t:'Input and output devices',ic:'plug',img:'printer',d:'The OS controls devices like the keyboard, mouse, screen and printer.',like:'The prefect directing traffic so everyone moves in the right direction.'},
+   {t:'Files and folders',ic:'folder',img:'file-explorer',d:'The OS stores, names, finds and organises your files and folders.',like:'The school registry and its filing cabinets.'},
+   {t:'User interface',ic:'screen',img:'windows-desktop',d:'The OS gives you a way to talk to the computer: icons, menus, windows or touch.',like:'The front desk. It is where you speak to the school.'},
+   {t:'Security',ic:'lock',img:'login-screen',d:'The OS controls who can access the system, for example with a password.',like:'The gateman who asks, "Who are you?" before opening the gate.'}]},
+ {id:4,name:'OS Worlds',wp:'Week 8 · Period 2',topic:'Types and Examples of Operating Systems',badge:'OS Navigator',boss:['The Crash','#8A5CFF'],
   mission:'Operating systems come in different types. Learn which one lives where, and who it is built for.',
   cards:[
-   {t:'Single-user',ic:'user',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
-   {t:'Multi-user',ic:'users',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
-   {t:'Mobile',ic:'phone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
-   {t:'Network',ic:'network',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
-   {t:'Common examples',ic:'list',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
+   {t:'Single-user',ic:'user',img:'laptop-windows',d:'Allows only one user to work on the computer at a time, such as Windows on a personal computer.',like:'A private car. One owner drives it at a time.'},
+   {t:'Multi-user',ic:'users',img:'server-room',d:'Allows several users to use the computer\'s resources at the same time. Common on large servers.',like:'A danfo bus. Many passengers ride the same bus together.'},
+   {t:'Mobile',ic:'phone',img:'android-phone',d:'Designed for smartphones and tablets. Examples: Android and iOS (made by Apple).',like:'The brain of your phone, built to work with touch and small screens.'},
+   {t:'Network',ic:'network',img:'school-network-lab',d:'Manages and coordinates computers that are connected together in a network.',like:'The traffic warden at a busy junction, keeping every vehicle moving.'},
+   {t:'Common examples',ic:'list',img:'iphone',d:'Microsoft Windows, macOS, Linux, Android and iOS.',like:'Windows, macOS and Linux are mostly for computers. Android and iOS are for phones and tablets.'}]}
 ];
 
+function imgFail(i){if(!i.dataset.t){i.dataset.t=1;i.src=i.getAttribute("src").replace(".jpg",".png")}else i.remove()}
 /* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const IC={
- code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9zM17 9l4 6M21 9l-4 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>',lockc:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',check:'<path d="M5 12l5 5 9-10"/>'
+ code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',music:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>'
 };
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
-const COLS=['#E8590C','#0E9F5A','#3B6CFF','#7A5AF8','#D6336C','#0C8599'];
+const COLS=['#FF2E88','#19D3FF','#3CFF8F','#FFC700','#8A5CFF','#FF7A1A'];
+const CATC=['#19D3FF','#FF2E88','#FFC700','#3CFF8F','#8A5CFF'];
 
 /* ---------- state ---------- */
 let S={};try{S=JSON.parse(localStorage.getItem('dt-squad')||'{}')}catch(e){}
-S.cards=S.cards||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.sound=S.sound!==false;S.best=S.best||0;
+S.cards=S.cards||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.best=S.best||0;
+if(S.music===undefined)S.music=true;if(S.sfx===undefined)S.sfx=S.sound!==false;
 const save=()=>{try{localStorage.setItem('dt-squad',JSON.stringify(S))}catch(e){}};
 function xpOf(){
   let x=0;
@@ -282,151 +361,271 @@ function badges(){
   return b;
 }
 
-/* ---------- sound & confetti ---------- */
-let AC=null;
-function tone(f,t,d,type='sine',v=.12){
-  if(!S.sound)return;
-  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}
+/* ---------- audio: sfx + chiptune music ---------- */
+let AC=null,MG=null,NB=null;
+function actx(){
+  if(AC)return AC;
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=1;MG.connect(AC.destination);
+    NB=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(e){AC=null}
+  return AC;
 }
-const sfx={ok(){tone(660,0,.12);tone(880,.1,.18)},no(){tone(180,0,.25,'sawtooth',.07)},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.25))}};
-const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-function burst(n=70){
+function tone(f,t,d,type='square',v=.08,dest){
+  const c=actx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);o.connect(g);g.connect(dest||MG);o.start(t);o.stop(t+d+.02);
+}
+function noise(t,d,v,hp){
+  const c=actx();if(!c)return;const s=c.createBufferSource();s.buffer=NB;const g=c.createGain(),f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp;
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+d);
+}
+const now=()=>AC?AC.currentTime:0;
+const sfx={
+  ok(){if(!S.sfx||!actx())return;const t=now();tone(659,t,.1);tone(880,t+.09,.1);tone(1175,t+.18,.2)},
+  no(){if(!S.sfx||!actx())return;const t=now();tone(220,t,.2,'sawtooth',.09);tone(150,t+.12,.3,'sawtooth',.09)},
+  tap(){if(!S.sfx||!actx())return;tone(520,now(),.06,'square',.05)},
+  flip(){if(!S.sfx||!actx())return;const t=now();tone(330,t,.08);tone(660,t+.07,.12)},
+  hit(){if(!S.sfx||!actx())return;const t=now();noise(t,.18,.25,300);tone(110,t,.2,'sawtooth',.12)},
+  win(){if(!S.sfx||!actx())return;const t=now();[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.3,'square',.08))},
+  lose(){if(!S.sfx||!actx())return;const t=now();[392,330,262,196].forEach((f,i)=>tone(f,t+i*.18,.35,'sawtooth',.08))},
+  whoosh(){if(!S.sfx||!actx())return;noise(now(),.35,.12,1500)},
+  up(){if(!S.sfx||!actx())return;const t=now();[392,523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,'triangle',.1))}
+};
+/* music: 16-step bar, Am F C G. "menu" is relaxed, "battle" adds drums and runs faster. */
+const MU={mode:'menu',step:0,next:0,timer:null,on:false};
+const ROOTS=[110,87.31,130.81,98],TRI=[[1,1.2,1.5],[1,1.25,1.5],[1,1.25,1.5],[1,1.25,1.5]];
+const MEL=[0,4,2,4, 5,4,2,0, 4,5,7,5, 4,2,0,2];
+const PENT=[440,523.25,587.33,659.25,783.99,880,1046.5,1174.66];
+function schedule(){
+  const c=actx();if(!c)return;const bpm=MU.mode==='battle'?142:112,sd=60/bpm/4;
+  while(MU.next<c.currentTime+.18){
+    const s=MU.step%64,bar=(s>>4)&3,p=s&15,t=MU.next,r=ROOTS[bar],v=MU.mode==='battle'?1:.7;
+    if(p%2===0)tone(r*2*(TRI[bar][(p/2|0)%3]),t,sd*1.6,'square',.025*v);
+    if(p%4===0||(MU.mode==='battle'&&p%4===2))tone(r,t,sd*1.8,'triangle',.11*v);
+    if(p%2===0&&(bar%2===1||MU.mode==='battle'))tone(PENT[MEL[p]%8],t,sd*1.4,'square',.03*v);
+    if(MU.mode==='battle'){if(p%4===0){tone(120,t,.1,'sine',.18);noise(t,.04,.06,5000)}if(p===4||p===12)noise(t,.12,.14,1200);if(p%2===1)noise(t,.03,.04,7000)}
+    else if(p%4===0)noise(t,.03,.03,6000);
+    MU.next+=sd;MU.step++;
+  }
+}
+function musicSet(mode){
+  MU.mode=mode;if(!S.music||MU.on)return;const c=actx();if(!c)return;
+  if(c.state==='suspended')c.resume();MU.on=true;MU.next=c.currentTime+.05;MU.timer=setInterval(schedule,40);
+}
+function musicStop(){clearInterval(MU.timer);MU.on=false}
+function musicSync(){if(S.music)musicSet(MU.mode);else musicStop()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)musicStop();else musicSync()});
+
+/* ---------- visuals: rain, particles, floaters, overlays ---------- */
+(function rain(){
+  const cv=$('#rain'),cx=cv.getContext('2d');let cols=[],W=0,H=0,last=0;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;cols=Array.from({length:Math.ceil(W/26)},()=>({y:Math.random()*H,s:2+Math.random()*3}))}
+  size();addEventListener('resize',size);
+  function draw(t){
+    if(!document.hidden&&t-last>60){last=t;cx.clearRect(0,0,W,H);cx.font='700 16px monospace';
+      cols.forEach((c,i)=>{c.y+=c.s;if(c.y>H+20){c.y=-20;c.s=2+Math.random()*3}
+        for(let k=0;k<6;k++){cx.fillStyle=`rgba(25,211,255,${.5-k*.08})`;cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}
+    if(!RM)requestAnimationFrame(draw)}
+  if(RM){size();cx.font='700 16px monospace';cols.forEach((c,i)=>{for(let k=0;k<4;k++){cx.fillStyle='rgba(25,211,255,.2)';cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}else requestAnimationFrame(draw);
+})();
+function burst(n=80,x,y){
   if(RM)return;const cv=$('#fx'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
-  const cs=['#FFC21A','#3B6CFF','#0E9F5A','#E8590C','#7A5AF8','#D6336C'];
-  const ps=Array.from({length:n},()=>({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*14,vy:-Math.random()*13-3,r:4+Math.random()*5,c:cs[Math.random()*6|0],a:Math.random()*6}));
-  let f=0;(function step(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.4;p.a+=.2;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,p.r,p.r*1.6)});if(++f<80)requestAnimationFrame(step);else cx.clearRect(0,0,cv.width,cv.height)})();
+  const cs=['#FFC700','#19D3FF','#3CFF8F','#FF2E88','#8A5CFF','#fff'];x=x??innerWidth/2;y=y??innerHeight*.45;
+  const ps=Array.from({length:n},()=>({x,y,vx:(Math.random()-.5)*16,vy:-Math.random()*14-2,r:4+Math.random()*7,c:cs[Math.random()*6|0],a:Math.random()*6}));
+  let f=0;(function st(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.a+=.3;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);cx.restore()});if(++f<90)requestAnimationFrame(st);else cx.clearRect(0,0,cv.width,cv.height)})();
+}
+function floatTxt(txt,el,color){
+  const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};
+  const d=document.createElement('div');d.className='fl';d.textContent=txt;d.style.left=(r.left+r.width/2-30)+'px';d.style.top=(r.top-6)+'px';if(color)d.style.color=color;
+  document.body.appendChild(d);setTimeout(()=>d.remove(),950);
+}
+function flashFx(color){const d=document.createElement('div');d.className='flashfx';d.style.background=color;document.body.appendChild(d);setTimeout(()=>d.remove(),450)}
+function shakeScreen(){document.body.classList.add('shk');setTimeout(()=>document.body.classList.remove('shk'),380)}
+function overlay(kind,a,b,c,ms=2200){
+  return new Promise(res=>{
+    const o=document.createElement('div');o.className='ov '+(kind||'');o.innerHTML=`<div class="p1"></div><div class="p2"></div><div class="tx"><div class="a">${esc(a)}</div><div class="b">${esc(b)}</div>${c?`<div class="c">${esc(c)}</div>`:''}</div>`;
+    document.body.appendChild(o);sfx.whoosh();requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('in')));
+    let closed=false;const close=()=>{if(closed)return;closed=true;o.classList.add('out');setTimeout(()=>{o.remove();res()},350)};
+    o.onclick=close;setTimeout(close,ms);
+  });
+}
+function revealOnScroll(root){
+  if(!('IntersectionObserver'in window)||RM)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove('pre');e.target.classList.add('rv');io.unobserve(e.target)}}),{threshold:.08});
+  root.querySelectorAll('[data-rv]').forEach(el=>{const r=el.getBoundingClientRect();if(r.top>innerHeight){el.classList.add('pre');io.observe(el)}});
+  setTimeout(()=>root.querySelectorAll('.pre').forEach(el=>{el.classList.remove('pre')}),20000);
 }
 
 /* ---------- Byte the mascot ---------- */
 function byteSVG(m){
-  const mouth=m==='no'?'<path d="M20 43q6-5 12 0" />':m==='ok'?'<path d="M19 40q7 8 14 0"/>':'<path d="M21 41h10"/>';
+  const mouth=m==='no'?'<path d="M20 43q6-5 12 0"/>':m==='ok'?'<path d="M19 40q7 8 14 0"/>':'<path d="M21 41h10"/>';
   const eyes=m==='ok'?'<path d="M18 29q3-4 6 0M30 29q3-4 6 0"/>':'<circle cx="21" cy="29" r="3" fill="currentColor"/><circle cx="33" cy="29" r="3" fill="currentColor"/>';
-  return `<svg viewBox="0 0 54 58" aria-hidden="true"><path d="M27 4v8" stroke="var(--fg)" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="4" r="3.5" fill="var(--sun)"/><rect x="6" y="12" width="42" height="36" rx="12" fill="var(--blue)" stroke="var(--blue-d)" stroke-width="3"/><rect x="12" y="19" width="30" height="26" rx="8" fill="#fff"/><g style="color:#101B3B" stroke="#101B3B" stroke-width="2.5" fill="none" stroke-linecap="round">${eyes}${mouth}</g><rect x="1" y="26" width="5" height="10" rx="2.5" fill="var(--sun)"/><rect x="48" y="26" width="5" height="10" rx="2.5" fill="var(--sun)"/></svg>`;
+  return `<svg viewBox="0 0 54 58" aria-hidden="true"><path d="M27 4v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="4" r="3.5" fill="#FFC700"/><path d="M10 12h34l4 8v22l-6 6H12l-6-6V20z" fill="#19D3FF" stroke="#0A6F8C" stroke-width="3"/><rect x="12" y="19" width="30" height="26" fill="#fff"/><g style="color:#101B3B" stroke="#101B3B" stroke-width="2.5" fill="none" stroke-linecap="round">${eyes}${mouth}</g><rect x="1" y="26" width="5" height="10" fill="#FFC700"/><rect x="48" y="26" width="5" height="10" fill="#FFC700"/></svg>`;
 }
 const say=(el,mood,txt)=>{el.innerHTML=`${byteSVG(mood)}<div class="bubble ${mood==='idle'?'':mood}">${esc(txt)}</div>`};
-const CHEER=['Ehen! You sabi this one.','Correct! Keep going.','Nice one, champ.','Sharp! That is how it is done.','Yes! Byte is proud of you.'];
-const OOPS=['Oops. No wahala, now you know.','Not this time. Read the reason and try the next one.','Close. Learn from this one.','That one is tricky. Next one is yours.'];
+const CHEER=['Ehen! You sabi this one.','Correct! Keep going.','Sharp! That is how it is done.','Yes! Byte is proud of you.','Oya, na you be that!'];
+const OOPS=['Oops. No wahala, now you know.','Not this time. Read the reason.','Close. Learn from this one.','Tricky one. The next one is yours.'];
 const pick=a=>a[Math.random()*a.length|0];
+function bossSVG(color,mood){
+  const eye=mood==='dead'?'<path d="M30 40l12 12M42 40L30 52M62 40l12 12M74 40L62 52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>':`<path d="M28 44l18 6-18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/><path d="M76 44L58 50l18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/>`;
+  return `<svg class="bossw" viewBox="0 0 104 104" aria-hidden="true"><path d="M20 22L10 4l24 10zM84 22l10-18-24 10z" fill="${color}"/><path d="M14 30l12-12h52l12 12v44l-12 14H26L14 74z" fill="${color}" stroke="#000" stroke-opacity=".35" stroke-width="3"/><path d="M26 34h52v36H26z" fill="#0B0720"/>${eye}<path d="M32 70l6-8 6 8 6-8 6 8 6-8 6 8" stroke="#fff" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>`;
+}
+const heart=on=>`<svg viewBox="0 0 24 24"><path d="M12 21l-8-8a5 5 0 0 1 8-6 5 5 0 0 1 8 6z" fill="${on?'#FF2E88':'#2C2370'}"/></svg>`;
 
-/* ---------- XP bar & router ---------- */
-function paintMe(){
+/* ---------- HUD + router ---------- */
+let lastLv=null;
+function paintHud(){
   const x=xpOf(),lv=lvlOf(x);
-  $('#me').innerHTML=S.name?`<div class="xpw"><div class="t"><span>${esc(titleOf(x))}</span><span class="pts">LV ${lv}</span></div><div class="meter"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="pts" style="font-size:14px">${x} XP</span>
-  <div class="nav"><button id="nm" aria-pressed="${route.cur==='map'}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="ns" aria-label="Sound" aria-pressed="${S.sound}">${ic(S.sound?'sound':'mute')}</button></div>
-  <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`:'';
-  if(S.name){$('#nm').onclick=()=>location.hash='map';$('#nb').onclick=()=>location.hash='board';$('#ns').onclick=()=>{S.sound=!S.sound;save();paintMe()}}
-  syncSoon();
+  if(S.name){
+    $('#hud').innerHTML=`<div class="xpbox"><div class="t"><span>${esc(titleOf(x))}</span><span>LV ${lv}</span></div><div class="xpbar"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="score" style="font-size:18px">${x} XP</span>
+    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nb" aria-pressed="${route.cur==='board'}">${ic('trophy')}<span class="lab">Board</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button></div>
+    <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`;
+    $('#nm').onclick=()=>location.hash='map';$('#nb').onclick=()=>location.hash='board';
+    $('#nmu').onclick=()=>{S.music=!S.music;save();musicSync();paintHud()};$('#nsx').onclick=()=>{S.sfx=!S.sfx;save();sfx.tap();paintHud()};
+  }else $('#hud').innerHTML='';
+  if(lastLv!==null&&lv>lastLv){sfx.up();burst(120);overlay('win','LEVEL UP',`LV ${lv}`,`You are now a ${titleOf(x)}`,2000)}
+  lastLv=lv;syncSoon();
 }
 const app=$('#app');
 function route(){
   const h=location.hash.slice(1)||'map';route.cur=h;
-  if(!S.name){welcome();paintMe();return}
+  if(!S.name||!route.started){start();return}
   const m=h.match(/^l([1-4])$/);
   if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='board')leaderboard();else mapView();
-  window.scrollTo(0,0);paintMe();
+  window.scrollTo(0,0);paintHud();
 }
-addEventListener('hashchange',route);
-$('#brand').onclick=()=>{location.hash='map'};
+addEventListener('hashchange',()=>{if(route.started)route()});
+$('#logo').onclick=()=>{if(route.started)location.hash='map'};
 
-/* ---------- welcome ---------- */
-function welcome(){
-  let color=COLS[2];
-  app.innerHTML=`<div class="welcome"><div class="byte" id="by" style="width:100%"></div><h1>System Squad</h1>
-  <p>Learn how computers really work. Beat the levels, win points, climb the class leaderboard.</p>
-  <div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="Example: CodeKing"></div>
-  <div class="field"><label>Pick your colour</label><div class="colors" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
-  <button class="btn sun" id="go">Start playing</button></div>`;
-  say($('#by'),'idle','Hi! I am Byte. I will help you understand software and operating systems. Pick a nickname (not your full name) and let us begin.');
-  app.querySelectorAll('#cl button').forEach(b=>b.onclick=()=>{color=b.dataset.c;app.querySelectorAll('#cl button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
-  $('#go').onclick=()=>{const n=$('#nick').value.trim();if(!n){say($('#by'),'no','Type a nickname first.');return}S.name=n;S.color=color;save();sfx.win();burst();location.hash='map';route()};
+/* ---------- start screen ---------- */
+function start(){
+  paintHud();
+  let color=S.color||COLS[1];
+  const title='SYSTEM SQUAD'.split(' ');
+  app.innerHTML=`<div class="start"><h1 aria-label="System Squad">${title.map((w,wi)=>`<div>${[...w].map((ch,i)=>`<span style="animation-delay:${(wi*6+i)*70}ms">${ch}</span>`).join('')}</div>`).join('')}</h1>
+  <p class="tag">Beat the levels. Defeat the bosses. Climb the class leaderboard. Learn how computers really work.</p>
+  ${S.name?`<div class="press">Welcome back, ${esc(S.name)}</div><button class="btn" id="go"><span>Press start</span></button>`:`<div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="EXAMPLE: CODEKING"></div>
+  <div class="field"><label>Pick your colour</label><div class="hexes" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
+  <button class="btn" id="go"><span>Press start</span></button>`}
+  <div class="byte" id="by" style="max-width:520px"></div></div>`;
+  say($('#by'),'idle',S.name?'Sound is on. Tap the music buttons at the top if you want it quiet.':'I am Byte. Use a nickname, not your full name. Turn your sound on for the full game.');
+  app.querySelectorAll('#cl button').forEach(b=>b.onclick=()=>{color=b.dataset.c;sfx.tap();app.querySelectorAll('#cl button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+  $('#go').onclick=async()=>{
+    if(!S.name){const n=$('#nick').value.trim();if(!n){say($('#by'),'no','Type a nickname first.');$('#nick').focus();return}S.name=n;S.color=color;save()}
+    actx();if(AC&&AC.state==='suspended')AC.resume();musicSet('menu');sfx.win();burst(90);
+    route.started=true;lastLv=lvlOf(xpOf());
+    await overlay('', 'Welcome', S.name, 'Four levels. Four bosses. One champion.',1900);
+    location.hash==='#map'?route():location.hash='map';
+  };
 }
 
 /* ---------- map ---------- */
-function done(l){return (S.boss[l]||0)>=3}
-function stars(n){return `<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`}
+const done=l=>(S.boss[l]||0)>=3;
 const starsFor=l=>{const b=S.boss[l]||0;return b>=5?3:b>=4?2:b>=3?1:0};
+const stars=n=>`<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`;
 function mapView(){
-  const x=xpOf();
-  app.innerHTML=`<div class="hero"><div><h1>Welcome, ${esc(S.name)}</h1><p>${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP. Finish each level to unlock the next one.</p></div></div>
-  <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);return `<button class="node ${done(l.id)?'done':''}" data-l="${l.id}" ${locked?'disabled':''}><span class="num">${locked?ic('lock'):l.id}</span><span class="tx"><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></span>${stars(starsFor(l.id))}</button>`}).join('')}
-  <button class="node final" id="fin" ${LEVELS.every(l=>done(l.id))?'':'disabled'}><span class="num">${LEVELS.every(l=>done(l.id))?ic('trophy'):ic('lock')}</span><span class="tx"><h3>Grand Challenge</h3><small>10 mixed questions against the clock. Unlocks when you pass all four levels. Best: ${S.final}/10</small></span></button></div>
-  <h2 style="font-size:24px;padding-top:8px">Your badges</h2><div class="badges">${badges().map(b=>`<span class="badge ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
-  app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>location.hash='l'+b.dataset.l);
-  $('#fin').onclick=()=>location.hash='final';
+  musicSet('menu');MU.mode='menu';document.title='System Squad';
+  const x=xpOf();const allDone=LEVELS.every(l=>done(l.id));
+  const cur=LEVELS.findIndex(l=>!done(l.id));
+  app.innerHTML=`<div class="hero rv"><div class="eyebrow">${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP</div><h1><span class="skew">Choose your mission, ${esc(S.name)}</span></h1><p>Clear a level to unlock the next one.</p></div>
+  <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);const cls=done(l.id)?'go':i===cur?'cur':'';
+    return `<div class="step ${cls} rv" style="animation-delay:${i*120}ms"><div class="hex">${locked?ic('lock'):l.id}</div><button class="node" data-l="${l.id}" ${locked?'disabled':''}><div class="panel"><div class="row2"><div><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></div>${stars(starsFor(l.id))}</div></div></button></div>`}).join('')}
+  <div class="step fin ${allDone?'cur':''} rv" style="animation-delay:520ms"><div class="hex">${allDone?ic('trophy'):ic('lock')}</div><button class="node" id="fin" ${allDone?'':'disabled'}><div class="panel"><h3>Grand Challenge</h3><small>10 mixed questions, 25 seconds each. Unlocks after all four bosses. Best: ${S.final}/10</small></div></button></div></div>
+  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
+  app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>{sfx.tap();location.hash='l'+b.dataset.l});
+  $('#fin').onclick=()=>{sfx.tap();location.hash='final'};
 }
 
 /* ---------- level ---------- */
-function level(n){
+async function level(n){
   const L=LEVELS[n-1];document.title=L.name+' · System Squad';
   S.cards[n]=S.cards[n]||L.cards.map(()=>false);
+  app.innerHTML='';window.scrollTo(0,0);
+  musicSet('menu');MU.mode='menu';
+  paintHud();
+  await overlay('',`Level ${n}`,L.name,L.mission,2400);
+  if(location.hash!=='#l'+n)return;
   const W=widgetsFor(n);
-  app.innerHTML=`<div class="lh"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1>${esc(L.name)}</h1></div>
-  <nav class="chips"><a href="#" data-s="learn">1 Learn</a><a href="#" data-s="play">2 Play</a><a href="#" data-s="boss">3 Boss</a></nav>
-  <div class="mission"><b>Your mission</b>${esc(L.mission)}</div>
-  <section id="s-learn"><h2>1 · Learn</h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to flip."><div class="in"><div class="face f">${ic(c.ic)}<h3>${esc(c.t)}</h3><span class="tap">Tap to flip. +5 XP</span></div><div class="face b"><b>${esc(c.t)}</b><span>${esc(c.d)}</span><span class="like">Think of it like this: ${esc(c.like)}</span></div></div></button>`).join('')}</div></section>
-  <section id="s-play"><h2>2 · Play</h2><div id="ws" style="display:grid;gap:16px"></div></section>
-  <section id="s-boss"><h2>3 · Boss Quiz</h2><div class="w" id="bossbox"></div></section>
-  <div class="row" style="padding-top:10px">${n>1?`<a class="btn ghost" href="#l${n-1}">Back</a>`:'<span></span>'}<a class="btn" href="#map">Back to map</a></div>`;
-  app.querySelectorAll('.chips a').forEach(a=>a.onclick=e=>{e.preventDefault();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
-  const cp=()=>{$('#cp').textContent=`Cards flipped: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
-  app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);if(!open&&!S.cards[n][i]){S.cards[n][i]=true;sfx.ok();save();cp();paintMe()}});
-  const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';ws.appendChild(d);fn(d,n,gi)});
+  app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
+  <nav class="stage"><a href="#" data-s="learn"><span>1 Learn</span></a><a href="#" data-s="play"><span>2 Play</span></a><a href="#" data-s="boss"><span>3 Boss</span></a></nav>
+  <div class="panel quest rv"><b>Your mission</b><span>${esc(L.mission)}</span></div>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph"><img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like"><em>Think of it like</em>${esc(c.like)}</span></div></div></button>`).join('')}</div></section>
+  <section id="s-play"><h2 data-rv><span class="skew">Stage 2</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
+  <section id="s-boss"><h2 data-rv><span class="skew">Stage 3</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
+  <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
+  app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
+  const cp=()=>{$('#cp').textContent=`Cards revealed: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
+  app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);sfx.flip();
+    if(!open&&!S.cards[n][i]){S.cards[n][i]=true;save();cp();floatTxt('+5 XP',b,'#FFC700');burst(25,b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+60);paintHud()}});
+  const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';d.dataset.rv='';d.style.setProperty('--acc',CATC[gi%5]);ws.appendChild(d);fn(d,n,gi)});
   boss($('#bossbox'),n);
+  revealOnScroll(app);
 }
 
-/* ---------- MCQ runner (boss + final) ---------- */
+/* ---------- MCQ runner: used by boss battles and the grand challenge ---------- */
 function mcqRun(el,qs,opt){
-  let i=0,score=0,hist=[],timer=null,left=0;
-  const dots=()=>`<div class="dots">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`;
+  let i=0,score=0,hearts=3,hist=[],timer=null;
+  const bs=opt.boss;
+  function pips(){return `<div class="pips">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`}
+  function arena(mood){
+    if(!bs)return '';
+    return `<div class="arena"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span><div class="hearts" id="ht">${[0,1,2].map(k=>heart(k<hearts)).join('')}</div></div><div class="vs">VS</div><div class="fighter" id="bf">${bossSVG(bs[1],mood||'idle')}<span class="nm" style="color:${bs[1]}">${esc(bs[0])}</span><div class="hp" aria-label="Boss health">${qs.map((_,k)=>`<i class="${k<score?'lost':''}" style="background:${k<score?'':bs[1]}"></i>`).join('')}</div></div></div>`;
+  }
   function draw(){
     clearInterval(timer);
-    if(i>=qs.length)return opt.done(score,qs.length,el);
+    if(i>=qs.length||hearts<=0)return opt.done(score,qs.length,el,hearts<=0);
     const q=qs[i];
-    el.innerHTML=`<div class="row"><span class="eyebrow">Question ${i+1} of ${qs.length}</span>${dots()}</div>${opt.time?'<div class="timer" aria-hidden="true"><i id="tm"></i></div>':''}
-    <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;</span>')}</p>
-    <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
+    el.innerHTML=`${arena()}<div class="hud2"><span class="eyebrow">${bs?'Round':'Question'} ${i+1} of ${qs.length}</span>${pips()}</div>${opt.time?'<div class="timer" aria-hidden="true"><i id="tm"></i></div>':''}
+    <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</p>
+    <div class="opts">${q.opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
     <div class="byte" id="by"></div><div id="nx"></div>`;
-    say($('#by',el),'idle',opt.time?'Be quick, but think!':'Take your time. Think about what you learned.');
-    const lock=pickedOk=>{
+    say($('#by',el),'idle',opt.time?'Be quick, but think!':bs?'Answer right to hit the boss. Three wrong answers and you lose.':'Take your time.');
+    const lock=(good,btn)=>{
       clearInterval(timer);
       el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(q.opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});
       const right=q.opts.find(x=>x.ok).t;$('#qt',el).innerHTML=esc(q.q).replace(/_{3,}/,`<span class="blank f">${esc(right)}</span>`);
-      hist[i]=pickedOk;if(pickedOk){score++;sfx.ok()}else sfx.no();
-      say($('#by',el),pickedOk?'ok':'no',(pickedOk?pick(CHEER):pick(OOPS))+' '+q.why);
-      $('#nx',el).innerHTML=`<button class="btn" id="n">${i===qs.length-1?'See my result':'Next question'}</button>`;
-      const n=$('#n',el);n.onclick=()=>{i++;draw()};n.focus({preventScroll:true});
+      hist[i]=good;
+      if(good){score++;sfx.ok();if(bs){sfx.hit();const f=$('#bf',el);f&&(f.innerHTML=bossSVG(bs[1],'hit')+f.innerHTML.slice(f.innerHTML.indexOf('</svg>')+6));f&&f.classList.add('hit');floatTxt('HIT!',f,'#3CFF8F');flashFx('rgba(60,255,143,.25)');
+        const seg=el.querySelectorAll('.hp i')[score-1];seg&&(seg.classList.add('lost'),seg.style.background='')}else{floatTxt('+1',btn,'#3CFF8F')}}
+      else{hearts--;sfx.no();shakeScreen();flashFx('rgba(255,71,87,.3)');if(bs){const h=$('#ht',el);h&&(h.innerHTML=[0,1,2].map(k=>heart(k<hearts)).join(''))}}
+      say($('#by',el),good?'ok':'no',(good?pick(CHEER):pick(OOPS))+' '+q.why);
+      const last=i===qs.length-1||hearts<=0;
+      $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${last?'See result':'Next'}</span></button>`;
+      const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
     };
-    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok)b.classList.add('no'),b.querySelector('.m').textContent='✗';lock(o.ok)});
-    if(opt.time){left=opt.time;const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok){b.classList.add('no');b.querySelector('.m').textContent='✗'}lock(o.ok,b)});
+    if(opt.time){const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
   }
   draw();
 }
-function mkQ(l,k){const m=MCQ[l].mcq?MCQ[l].mcq[k]:MCQ[l][k];return {q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[l][k]}))),why:WHY[l][k]}}
+function mkQ(l,k){const m=MCQ[l][k];return {q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[l][k]}))),why:WHY[l][k]}}
 
 function boss(el,n){
-  const l=n-1;
-  function start(){
-    el.className='w';
+  const l=n-1,L=LEVELS[l];
+  function intro(){
+    el.innerHTML=`<div class="arena" style="margin-bottom:6px"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span></div><div class="vs">VS</div><div class="fighter">${bossSVG(L.boss[1],'idle')}<span class="nm" style="color:${L.boss[1]}">${esc(L.boss[0])}</span></div></div>
+    <p class="hint">5 rounds. Each right answer hits the boss. You have 3 lives. Land 3 hits to win, 5 hits for three stars.</p>
+    <div><button class="btn mg" id="fight"><span>Fight!</span></button></div>`;
+    $('#fight',el).onclick=async()=>{actx();await overlay('lose','Boss battle',L.boss[0],'Answer right to hit. Three wrong answers and you lose.',1700);musicSet('battle');MU.mode='battle';fight()};
+  }
+  function fight(){
     const qs=shuffle([0,1,2,3,4]).map(k=>mkQ(l,k));
-    el.innerHTML=`<div id="bq"></div>`;
-    mcqRun($('#bq',el),qs,{done:(score,total,box)=>{
-      const prev=S.boss[n]||0,first=!done(n);
-      const before=xpOf();S.boss[n]=Math.max(prev,score);save();paintMe();
-      const gain=xpOf()-before;
-      if(score>=3&&first){sfx.win();burst(110)}else if(score===5){sfx.win();burst(80)}
-      const ok=score>=3;
-      box.innerHTML=`<div class="result"><div class="eyebrow">Boss result</div><div class="score">${score}<span style="font-size:30px;color:var(--muted)"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}
-      ${gain>0?`<span class="xpgain">+${gain} XP</span>`:''}
-      <div class="byte" id="by2" style="width:100%"></div>
-      <div class="row"><button class="btn ${ok?'ghost':''}" id="re">Try again</button>${ok&&n<4?`<a class="btn sun" href="#l${n+1}">Next level</a>`:''}${ok&&n===4?`<a class="btn sun" href="#final">Grand Challenge</a>`:''}</div></div>`;
-      say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! Nobody beats that. Go and tell your friends.':ok?'Boss defeated! Level cleared. Next level is now open. Try again for more stars if you like.':'The boss survived this time. Flip the cards again, play the games, and come back. You can do it.');
-      $('#re',box).onclick=start;
+    el.innerHTML='<div id="bq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#bq',el),qs,{boss:L.boss,done:async(score,total,box,dead)=>{
+      MU.mode='menu';
+      const prev=S.boss[n]||0,first=!done(n);const before=xpOf();S.boss[n]=Math.max(prev,score);save();
+      const gain=xpOf()-before,ok=score>=3;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Battle report</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Rematch</span></button>${ok&&n<4?`<a class="btn" href="#l${n+1}"><span>Next level</span></a>`:''}${ok&&n===4?`<a class="btn" href="#final"><span>Grand Challenge</span></a>`:''}</div></div>`;
+      say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! The boss never had a chance.':ok?'Boss defeated! Next level unlocked. Fight again for more stars.':'You were beaten this time. Reveal the cards again, play the games and come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';intro()};
+      if(ok){sfx.win();burst(130)}else sfx.lose();
+      paintHud();
+      await overlay(ok?'win':'lose',ok?'Victory':'Defeated',ok?'Boss down':'Try again',ok?`${L.boss[0]} is gone`:'',1800);
+      musicSet('menu');
     }});
   }
-  start();
+  intro();
 }
 
-/* ---------- sort game engine ---------- */
+/* ---------- sort game ---------- */
 function sortGame(def){
   return (el,n,gi)=>{
     let deck,i,pts,ok,combo,miss,best;const key=n+'.'+gi;
@@ -434,29 +633,29 @@ function sortGame(def){
     function draw(){
       if(i>=deck.length)return finish();
       const it=deck[i];
-      el.innerHTML=`<h3>${esc(def.title)}</h3><p class="hint">${esc(def.intro)}</p>
-      <div class="row"><span class="eyebrow">${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${ic('flame')} Combo x${combo}</span><span class="pts">${pts} pts</span></div>
-      <div class="big">${esc(it.t)}</div>
-      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Target ${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${combo>=2?ic('flame')+' Combo x'+combo:''}</span><div class="meter" aria-hidden="true"><i style="width:${Math.min(combo,5)*20}%"></i></div><span class="score">${pts}</span></div>
+      <div class="target" aria-live="polite">${esc(it.t)}</div>
+      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
       <div class="byte" id="by"></div><div id="nx"></div>`;
-      say($('#by',el),'idle',def.prompt||'Which one is it? Tap your answer.');
-      el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      say($('#by',el),'idle',def.prompt||'Pick the right team. Fast answers in a row build your combo.');
+      el.querySelectorAll('.cats .opt').forEach(b=>b.onclick=()=>{
         const k=+b.dataset.k,right=k===it.c;
-        el.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===it.c)x.classList.add('ok')});
-        if(right){combo++;best=Math.max(best,combo);ok++;pts+=10+Math.min(combo-1,5)*2;sfx.ok();if(combo&&combo%5===0)burst(40)}else{b.classList.add('no');combo=0;miss.push(it);sfx.no()}
+        el.querySelectorAll('.cats .opt').forEach((x,j)=>{x.disabled=true;if(j===it.c)x.classList.add('ok')});
+        if(right){combo++;best=Math.max(best,combo);ok++;const g=10+Math.min(combo-1,5)*2;pts+=g;sfx.ok();floatTxt('+'+g,b,'#FFC700');if(combo===3||combo===5||combo===8)burst(50,innerWidth/2,innerHeight/2)}
+        else{b.classList.add('no');combo=0;miss.push(it);sfx.no();shakeScreen()}
         say($('#by',el),right?'ok':'no',(right?pick(CHEER):pick(OOPS))+' '+def.cats[it.c].n+': '+def.cats[it.c].info);
-        $('#nx',el).innerHTML=`<button class="btn" id="n">${i===deck.length-1?'Finish':'Next'}</button>`;
-        const nb=$('#n',el);nb.onclick=()=>{i++;draw()};nb.focus({preventScroll:true});
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===deck.length-1?'Finish':'Next'}</span></button>`;
+        const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
       });
     }
     function finish(){
-      const prev=S.games[key]||0;const gain=Math.max(0,pts-prev);
-      S.games[key]=Math.max(prev,pts);S.best=Math.max(S.best,best);save();paintMe();
-      if(ok===deck.length){sfx.win();burst(80)}
-      el.innerHTML=`<h3>${esc(def.title)}</h3><div class="result"><div class="eyebrow">Result</div><div class="score">${ok}<span style="font-size:30px;color:var(--muted)"> / ${deck.length}</span></div><span class="pts">${pts} points · best combo x${best}</span>${gain>0?`<span class="xpgain">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}
-      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} belongs with <b>${esc(def.cats[m.c].n)}</b></div>`).join('')}</div>`:''}
-      <button class="btn" id="re">Play again</button></div>`;
-      $('#re',el).onclick=start;
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);S.best=Math.max(S.best,best);save();
+      if(ok===deck.length){sfx.win();burst(90)}else if(ok>=deck.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${deck.length}</span></div><span class="score">${pts} points · best combo x${best}</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}
+      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} belongs with <b>${esc(def.cats[m.c].n)}</b></div>`).join('')}</div>`:'<p style="margin:0;font-weight:700;color:var(--lime)">Flawless run.</p>'}
+      <button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
     }
     start();
   };
@@ -466,16 +665,15 @@ function sortGame(def){
 function stackGame(el,n,gi){
   const layers=[['Hardware','The touchable parts: screen, keyboard, processor','l0'],['Operating system','System software that runs the hardware','l1'],['Application software','Word, Excel, browsers','l2'],['You, the user','Tapping, typing and clicking','l3']];
   let placed=0,mistakes=0;
-  function draw(finished){
+  function draw(fin){
     const pool=layers.map((l,i)=>[l,i]).filter(([,i])=>i>=placed);
-    el.innerHTML=`<h3>Build the computer stack</h3><p class="hint">A computer works in layers. Tap the layers one at a time, starting from the very bottom.</p>
+    el.innerHTML=`<h3><span class="skew">Build the stack</span></h3><p class="hint">A computer works in layers. Tap the layers one at a time, starting from the very bottom.</p>
     <div class="stack">${layers.slice().reverse().map((l,ri)=>{const i=3-ri;return `<div class="layer ${i<placed?'placed '+l[2]:''}"><span>${i<placed?l[0]:'Empty slot'}</span><small>${i<placed?l[1]:'Layer '+(i+1)+' from the bottom'}</small></div>`}).join('')}</div>
-    ${finished?'':`<div class="pool">${shuffle(pool).map(([l,i])=>`<button class="opt" data-i="${i}">${l[0]}</button>`).join('')}</div>`}
-    <div class="byte" id="by"></div>`;
-    say($('#by',el),finished?'ok':'idle',finished?'Perfect stack! You talk to apps, apps talk to the operating system, and the operating system controls the hardware.':'Think: what must exist first before anything else can run?');
+    ${fin?'':`<div class="pool">${shuffle(pool).map(([l,i])=>`<button class="opt" style="--c:${CATC[i]}" data-i="${i}">${l[0]}</button>`).join('')}</div>`}<div class="byte" id="by"></div>`;
+    say($('#by',el),fin?'ok':'idle',fin?'Perfect stack! You talk to apps, apps talk to the operating system, and the operating system controls the hardware.':'Think: what must exist first before anything else can run?');
     el.querySelectorAll('.pool .opt').forEach(b=>b.onclick=()=>{
-      if(+b.dataset.i===placed){placed++;sfx.ok();if(placed===4){const pts=Math.max(10,40-mistakes*10);const prev=S.games[n+'.'+gi]||0;S.games[n+'.'+gi]=Math.max(prev,pts);save();paintMe();burst(60);sfx.win();draw(true);return}draw(false)}
-      else{mistakes++;b.classList.add('no');sfx.no();say($('#by',el),'no','Not yet. Which layer sits underneath everything else?')}
+      if(+b.dataset.i===placed){placed++;sfx.ok();if(placed===4){const pts=Math.max(10,40-mistakes*10),prev=S.games[n+'.'+gi]||0;S.games[n+'.'+gi]=Math.max(prev,pts);save();burst(70);sfx.win();draw(true);paintHud();return}draw(false)}
+      else{mistakes++;b.classList.add('no');sfx.no();shakeScreen();say($('#by',el),'no','Not yet. Which layer sits underneath everything else?')}
     });
   }
   draw(false);
@@ -485,28 +683,26 @@ function flowGame(el,n,gi){
   let k=0;
   function draw(){
     const act=steps[k][0];
-    el.innerHTML=`<h3>Follow a tap</h3><p class="hint">What happens inside the computer when you open Word? Step through it.</p>
+    el.innerHTML=`<h3><span class="skew">Follow a tap</span></h3><p class="hint">What happens inside the computer when you open Word? Step through it.</p>
     <div class="stack">${[3,2,1,0].map(i=>{const L=[['Hardware','l0'],['Operating system','l1'],['Application software','l2'],['You','l3']][i];return `<div class="layer placed ${L[1]} ${i===act?'act':''}"><span>${L[0]}</span></div>`}).join('')}</div>
     <div class="flowtext" aria-live="polite">Step ${k+1} of ${steps.length}. ${steps[k][1]}</div>
-    <div class="row"><button class="btn ghost" id="pv" ${k?'':'disabled'}>Back</button><button class="btn" id="nx">${k<steps.length-1?'Next step':'Start again'}</button></div>`;
-    $('#pv',el).onclick=()=>{k--;draw()};
-    $('#nx',el).onclick=()=>{if(k<steps.length-1){k++;sfx.ok();if(k===steps.length-1){const prev=S.games[n+'.'+gi]||0;if(!prev){S.games[n+'.'+gi]=15;save();paintMe()}}}else k=0;draw()};
+    <div class="row"><button class="btn gh" id="pv" ${k?'':'disabled'}><span>Back</span></button><button class="btn" id="nx"><span>${k<steps.length-1?'Next step':'Start again'}</span></button></div>`;
+    $('#pv',el).onclick=()=>{sfx.tap();k--;draw()};
+    $('#nx',el).onclick=()=>{sfx.tap();if(k<steps.length-1){k++;if(k===steps.length-1&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=15;save();floatTxt('+15 XP',$('#nx',el),'#FFC700');burst(40);paintHud()}}else k=0;draw()};
   }
   draw();
 }
 function compressGame(el,n,gi){
   const F=[['Class photos',18],['Project video',30],['Notes (Word)',4]];let comp=false;const sel=[true,true,true];
   function draw(){
-    const size=f=>comp?f*0.45:f;
-    const tot=F.reduce((a,f,i)=>a+(sel[i]?size(f[1]):0),0);const ok=tot<=25&&sel.some(Boolean);
-    el.innerHTML=`<h3>Squeeze the files</h3><p class="hint">You must email your project, but the email limit is 25 MB. Tick the files, then press Compress.</p>
-    <div class="files">${F.map((f,i)=>`<label class="file"><input type="checkbox" data-i="${i}" ${sel[i]?'checked':''} style="width:22px;height:22px"><span style="flex:0 0 120px">${f[0]}</span><span class="bar2"><i style="width:${size(f[1])/30*100}%"></i></span><span class="mb">${size(f[1]).toFixed(1)} MB</span></label>`).join('')}</div>
-    <div class="limit ${comp?(ok?'okk':'bad'):''}"><span>Total: ${tot.toFixed(1)} MB</span><span>Limit: 25 MB</span></div>
-    <div class="row"><button class="btn" id="cz">${comp?'Un-compress':'Compress'}</button></div>
-    <div class="byte" id="by"></div>`;
-    say($('#by',el),comp?(ok?'ok':'no'):'idle',comp?(ok?'It fits! File compression reduces size so files are easier to store or share. (Real results vary by file type.)':'Still too big. Un-tick a file, or ask yourself what else could be removed.'):'Right now the total is too big. Which utility program helps?');
-    el.querySelectorAll('input').forEach(c=>c.onchange=()=>{sel[+c.dataset.i]=c.checked;draw()});
-    $('#cz',el).onclick=()=>{comp=!comp;draw();const t=F.reduce((a,f,i)=>a+(sel[i]?f[1]*.45:0),0);if(comp&&t<=25&&sel.every(Boolean)){const prev=S.games[n+'.'+gi]||0;if(!prev){S.games[n+'.'+gi]=20;save();paintMe();burst(50);sfx.win()}}};
+    const size=f=>comp?f*0.45:f;const tot=F.reduce((a,f,i)=>a+(sel[i]?size(f[1]):0),0);const ok=tot<=25&&sel.some(Boolean);
+    el.innerHTML=`<h3><span class="skew">Squeeze the files</span></h3><p class="hint">You must email your project, but the email limit is 25 MB. Keep all three files ticked, then press Compress.</p>
+    <div class="files">${F.map((f,i)=>`<label class="file"><input type="checkbox" data-i="${i}" ${sel[i]?'checked':''} style="width:22px;height:22px;accent-color:#19D3FF"><span style="flex:0 0 130px">${f[0]}</span><span class="b2"><i style="width:${size(f[1])/30*100}%"></i></span><span class="mb">${size(f[1]).toFixed(1)} MB</span></label>`).join('')}</div>
+    <div class="limit ${comp?(ok?'okk':'bad'):''}"><span>Total ${tot.toFixed(1)} MB</span><span>Limit 25 MB</span></div>
+    <div class="row" style="justify-content:flex-start"><button class="btn cy" id="cz"><span>${comp?'Un-compress':'Compress'}</span></button></div><div class="byte" id="by"></div>`;
+    say($('#by',el),comp?(ok?'ok':'no'):'idle',comp?(ok?'It fits! File compression reduces size so files are easier to store or share. (Real results vary by file type.)':'Still too big. Tick all your files, then compress.'):'Right now the total is too big. Which utility program helps?');
+    el.querySelectorAll('input').forEach(c=>c.onchange=()=>{sel[+c.dataset.i]=c.checked;sfx.tap();draw()});
+    $('#cz',el).onclick=()=>{comp=!comp;sfx.flip();draw();const t=F.reduce((a,f)=>a+f[1]*.45,0);if(comp&&t<=25&&sel.every(Boolean)&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();burst(60);sfx.win();paintHud()}};
   }
   draw();
 }
@@ -514,23 +710,22 @@ function bootGame(el,n,gi){
   let os=true,state='off',timers=[];
   const logs=[['BIOS check ... OK',0],['Loading operating system ...',500],['Memory ready ... OK',1000],['Keyboard and mouse found ... OK',1500],['Screen ready ... OK',2000],['Welcome! Your desktop is ready.',2500]];
   function draw(lines){
-    el.innerHTML=`<h3>Switch on, with and without an OS</h3><p class="hint">Turn the operating system off, press power, and see what happens to the apps.</p>
-    <div class="row"><button class="sw" id="os" aria-pressed="${os}"><i></i>Operating system installed</button><button class="btn" id="pw">Press power</button></div>
+    el.innerHTML=`<h3><span class="skew">Power on</span></h3><p class="hint">Turn the operating system off, press power, and see what happens to the apps.</p>
+    <div class="row"><button class="sw" id="os" aria-pressed="${os}"><i></i>Operating system installed</button><button class="btn" id="pw"><span>Press power</span></button></div>
     <div class="boot" id="bt" aria-live="polite">${lines||'Computer is off.'}</div>
-    <div class="apps">${[['doc','Word'],['globe','Browser'],['calc','Calculator'],['camera','Camera']].map(a=>`<button data-a="${a[1]}" ${state==='on'?'':'disabled'}>${ic(a[0])}${a[1]}</button>`).join('')}</div>
-    <div class="byte" id="by"></div>`;
+    <div class="apps">${[['doc','Word'],['globe','Browser'],['calc','Calculator'],['camera','Camera']].map(a=>`<button data-a="${a[1]}" ${state==='on'?'':'disabled'}>${ic(a[0])}${a[1]}</button>`).join('')}</div><div class="byte" id="by"></div>`;
     say($('#by',el),state==='err'?'no':state==='on'?'ok':'idle',state==='err'?'Without an operating system, the computer cannot start up or run any application. The hardware is fine, but nothing manages it.':state==='on'?'The operating system started everything: memory, keyboard, screen and apps.':'Try it both ways.');
-    $('#os',el).onclick=()=>{os=!os;state='off';timers.forEach(clearTimeout);draw()};
+    $('#os',el).onclick=()=>{os=!os;state='off';timers.forEach(clearTimeout);sfx.tap();draw()};
     $('#pw',el).onclick=run;
-    el.querySelectorAll('.apps button').forEach(b=>b.onclick=()=>{say($('#by',el),'ok',b.dataset.a+' is open. The OS gave it memory and let it use the screen.')});
+    el.querySelectorAll('.apps button').forEach(b=>b.onclick=()=>{sfx.ok();say($('#by',el),'ok',b.dataset.a+' is open. The OS gave it memory and let it use the screen.')});
   }
   function run(){
-    timers.forEach(clearTimeout);state='boot';
-    if(!os){draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');state='err';draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');mark();return}
-    let acc=[];draw('Power on ...');
-    logs.forEach(([t,d],k)=>timers.push(setTimeout(()=>{acc.push(t);$('#bt',el)&&($('#bt',el).innerHTML='Power on ...<br>'+acc.join('<br>'));if(k===logs.length-1){state='on';draw('Power on ...<br>'+acc.join('<br>'));mark()}},d+200)));
+    timers.forEach(clearTimeout);state='boot';sfx.whoosh();
+    if(!os){state='err';sfx.no();shakeScreen();draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');mark();return}
+    const acc=[];draw('Power on ...');
+    logs.forEach(([t,d],k)=>timers.push(setTimeout(()=>{acc.push(t);sfx.tap();$('#bt',el)&&($('#bt',el).innerHTML='Power on ...<br>'+acc.join('<br>'));if(k===logs.length-1){state='on';sfx.ok();draw('Power on ...<br>'+acc.join('<br>'));mark()}},d+200)));
   }
-  function mark(){S.bootSeen=S.bootSeen||{};S.bootSeen[os?'on':'off']=true;if(S.bootSeen.on&&S.bootSeen.off&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();paintMe();burst(50);sfx.win()}}
+  function mark(){S.bootSeen=S.bootSeen||{};S.bootSeen[os?'on':'off']=true;if(S.bootSeen.on&&S.bootSeen.off&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();paintHud();burst(60);sfx.win()}}
   draw();
 }
 
@@ -539,37 +734,39 @@ const C=(n,info)=>({n,info});
 const I=(arr,c)=>arr.map(t=>({t,c}));
 const G=(title,intro,cats,items,n,prompt)=>sortGame({title,intro,cats,items,n,prompt});
 function widgetsFor(n){
-  const W={
-  1:[stackGame,flowGame,G('Hardware, system or application?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
-  2:[G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Your computer shows strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so you copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
+  return {
+  1:[stackGame,flowGame,G('Hardware, system or app?','Sort each item. Build a combo by getting answers right in a row.',[C('Hardware','the physical parts you can touch.'),C('System software','manages and controls the hardware so apps can run.'),C('Application software','helps a user do a specific task.')],[...I(['Keyboard','Computer screen','Mouse','Printer'],0),...I(['Windows','macOS','Linux'],1),...I(['Microsoft Word','Microsoft Excel','A web browser','Calculator app'],2)],9)],
+  2:[G('Tech Doctor','Each patient has a problem. Choose the utility program that fixes it.',[C('Antivirus','detects and removes harmful software.'),C('Disk cleanup','removes unnecessary files to free up space.'),C('File compression','makes files smaller to store or share.'),C('Backup software','copies important data to another place for safekeeping.')],[...I(['A virus has infected your flash drive','Strange pop-ups from harmful software','You must find and remove malware'],0),...I(['Phone storage is full of junk files','The computer is slow because it is full of unnecessary files','You need to free up storage space'],1),...I(['The folder is too large to email','You want to share photos on a slow network','Make a file smaller to store it'],2),...I(['Your laptop may get lost, so copy results elsewhere','Save a second copy of your project to a flash drive','Protect your important data from loss'],3)],8,'Which utility program is the right treatment?'),compressGame],
   3:[G('Run the school','You are the operating system. A request just arrived. Which OS job handles it?',[C('Memory and processor','the OS decides how much memory and processing time each program gets.'),C('Devices','the OS controls input and output devices.'),C('Files and folders','the OS stores and organises files.'),C('User interface','the OS gives you icons, menus and screens to talk to.'),C('Security','the OS controls who is allowed to use the system.')],[...I(['Two programs need memory at the same time','Decide which program the processor works on next'],0),...I(['Press Print and the printer starts','Plug in a keyboard and it works','Show the picture on the monitor'],1),...I(['Save your assignment in a folder','Find a file by its name'],2),...I(['Tap an icon to open an app','Open a menu with a mouse click'],3),...I(['Ask for a password before opening','Stop a stranger from using the computer'],4)],10,'Which operating system job is this?'),bootGame],
   4:[G('Which type of OS?','Match each description to a type of operating system.',[C('Single-user','only one person can work at a time.'),C('Multi-user','several users share the computer\'s resources at the same time.'),C('Mobile','designed for smartphones and tablets.'),C('Network','manages and coordinates connected computers.')],[...I(['Windows on one student laptop','Only one person can work at a time'],0),...I(['A large server used by many people at once','Common on big servers'],1),...I(['Android on a phone','iOS on an iPhone','Runs on tablets and smartphones'],2),...I(['Coordinates the computers in a school network','Manages computers that are connected together'],3)],9),G('Name that OS','Is it a mobile operating system or one for desktop and laptop computers?',[C('Mobile OS','designed for phones and tablets.'),C('Desktop OS','runs on desktop and laptop computers.')],[...I(['Android','iOS'],0),...I(['Windows','macOS','Linux'],1)],5)]
-  };
-  return W[n];
+  }[n];
 }
 
 /* ---------- grand challenge ---------- */
-function finalRound(){
-  document.title='Grand Challenge · System Squad';
-  app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1>Grand Challenge</h1></div><div class="mission"><b>10 questions. 25 seconds each.</b>Mixed questions from all four levels. Get 8 or more for the Grand Champion badge.</div><div class="w" id="fb" style="margin-top:14px"></div><div class="row" style="padding-top:12px"><a class="btn ghost" href="#map">Back to map</a></div>`;
+async function finalRound(){
+  document.title='Grand Challenge · System Squad';paintHud();
+  app.innerHTML='';await overlay('lose','Final round','Grand Challenge','10 questions. 25 seconds each.',2000);
+  if(location.hash!=='#final')return;
+  musicSet('battle');MU.mode='battle';
+  app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1><span class="skew">Grand Challenge</span></h1></div><div class="panel quest"><b>Beat the clock</b><span>10 mixed questions. Get 8 or more for the Grand Champion badge.</span></div><div class="w" id="fb" style="margin-top:16px;--acc:var(--violet)"></div><div class="row" style="padding-top:14px"><a class="btn gh" href="#map"><span>Back to map</span></a></div>`;
   const el=$('#fb');
-  function start(){
+  function go(){
     const all=[];for(let l=0;l<4;l++)for(let k=0;k<5;k++)all.push([l,k]);
     const qs=shuffle(all).slice(0,10).map(([l,k])=>mkQ(l,k));
-    el.innerHTML='<div id="fq"></div>';
-    mcqRun($('#fq'),qs,{time:25,done:(score,total,box)=>{
-      const before=xpOf();S.final=Math.max(S.final,score);save();paintMe();const gain=xpOf()-before;
-      if(score>=8){sfx.win();burst(120)}
-      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="score">${score}<span style="font-size:30px;color:var(--muted)"> / ${total}</span></div>${gain>0?`<span class="xpgain">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row"><button class="btn" id="re">Play again</button><a class="btn sun" href="#board">See the leaderboard</a></div></div>`;
-      say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check where you are on the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
-      $('#re',box).onclick=start;
+    el.innerHTML='<div id="fq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#fq'),qs,{time:25,done:async(score,total,box)=>{
+      const before=xpOf();S.final=Math.max(S.final,score);save();const gain=xpOf()-before;MU.mode='menu';
+      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Play again</span></button><a class="btn" href="#board"><span>Leaderboard</span></a></div></div>`;
+      say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';go()};
+      if(score>=8){sfx.win();burst(150)}else sfx.ok();paintHud();
     }});
   }
-  start();
+  go();
 }
 
 /* ---------- leaderboard (shared db) ---------- */
-let DB=null,USER=null,UID=null,lastSent='',syncT=null,live=null,players=[],dbState='loading',IS_OWNER=false;
+let DB=null,USER=null,UID=null,lastSent='',syncT=null,players=[],dbState='loading',IS_OWNER=false;
 async function initDB(){
   try{
     const c=window.claude;if(!c||!c.use){dbState='off';return}
@@ -578,29 +775,32 @@ async function initDB(){
     UID=await USER.id();IS_OWNER=await USER.isOwner();
     if(!UID){dbState='off';return}
     dbState='on';
-    live=DB.collection('players').orderBy('xp','desc').limit(60).onSnapshot(s=>{players=s.docs.map(d=>({id:d.id,...d.data()}));if(route.cur==='board')leaderboard(true)},()=>{dbState='err';if(route.cur==='board')leaderboard(true)});
+    DB.collection('players').orderBy('xp','desc').limit(60).onSnapshot(s=>{players=s.docs.map(d=>({id:d.id,...d.data()}));if(route.cur==='board')leaderboard(true)},()=>{dbState='err';if(route.cur==='board')leaderboard(true)});
     syncSoon();
   }catch(e){dbState='off'}
   if(route.cur==='board')leaderboard(true);
 }
 function syncSoon(){
-  if(dbState!=='on'||!S.name)return;
+  if(dbState!=='on'||!S.name||!route.started)return;
   clearTimeout(syncT);syncT=setTimeout(async()=>{
     const x=xpOf();const doc={name:S.name,color:S.color,xp:x,lv:lvlOf(x),badges:badges().filter(b=>b.on).length,stars:LEVELS.reduce((a,l)=>a+starsFor(l.id),0),t:Date.now()};
     const sig=[doc.name,doc.color,doc.xp,doc.badges].join('|');if(sig===lastSent)return;
     try{await DB.doc('players/'+UID).set(doc);lastSent=sig}catch(e){if(e&&e.code==='invalid_argument')dbState='readonly'}
   },1500);
 }
+let boardDrawn=false;
 function leaderboard(soft){
-  document.title='Leaderboard · System Squad';
-  const mine=players.find(p=>p.id===UID);
-  const list=dbState==='on'||dbState==='readonly'?players:[{id:'me',name:S.name,color:S.color,xp:xpOf(),lv:lvlOf(xpOf()),badges:badges().filter(b=>b.on).length}];
+  document.title='Leaderboard · System Squad';musicSet('menu');
+  const x=xpOf();
+  const list=dbState==='on'||dbState==='readonly'?players:[{id:'me',name:S.name,color:S.color,xp:x,lv:lvlOf(x),badges:badges().filter(b=>b.on).length}];
   const total=list.reduce((a,p)=>a+(p.xp||0),0);
   const msg={off:'The class leaderboard is not connected. Your points are still saved on this tablet. Ask your teacher to share this page with "Contributor" access.',readonly:'You can see the leaderboard, but your score cannot be saved. Ask your teacher for "Contributor" access.',err:'The leaderboard could not load. Your points are still saved on this tablet.',loading:'Loading the leaderboard ...',on:''}[dbState];
-  app.innerHTML=`<div class="lh"><div class="eyebrow">Live for the whole class</div><h1>Leaderboard</h1></div>
-  <div class="tally"><div><b>${list.length}</b>players</div><div><b>${total}</b>class XP together</div><div><b>${xpOf()}</b>your XP</div></div>
-  ${msg?`<div class="note">${esc(msg)}</div>`:''}
-  <div class="board" style="padding-top:14px">${list.length?[...list].sort((a,b)=>(b.xp||0)-(a.xp||0)).map((p,i)=>`<div class="pl ${p.id===UID||p.id==='me'?'me':''}"><span class="rk">${i+1}</span><span class="av" style="background:${esc(p.color||'#3B6CFF')}">${esc((p.name||'?')[0].toUpperCase())}</span><span class="nm">${esc(p.name||'Player')}${p.id===UID||p.id==='me'?' (you)':''}<small>Level ${p.lv||1} · ${p.badges||0} badges</small></span><span class="xp">${p.xp||0} XP</span>${IS_OWNER&&p.id!==UID&&p.id!=='me'?`<button class="rm" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">Remove</button>`:''}</div>`).join(''):'<div class="note">No players yet. Earn some XP and you will appear here.</div>'}</div>`;
+  const sorted=[...list].sort((a,b)=>(b.xp||0)-(a.xp||0));
+  app.innerHTML=`<div class="lh"><div class="eyebrow">Live for the whole class</div><h1><span class="skew">Leaderboard</span></h1></div>
+  <div class="tally"><div><b>${list.length}</b>players</div><div><b>${total}</b>class XP</div><div><b>${x}</b>your XP</div></div>
+  ${msg?`<div class="note" style="margin-top:12px">${esc(msg)}</div>`:''}
+  <div class="board">${sorted.length?sorted.map((p,i)=>{const me=p.id===UID||p.id==='me';return `<div class="pl r${i+1} ${me?'me':''}" style="--i:${boardDrawn&&soft?0:i}"><span class="rk">${i+1}</span><span class="av" style="background:${esc(p.color||'#19D3FF')};width:38px;height:38px">${esc((p.name||'?')[0].toUpperCase())}</span><span class="nm">${esc(p.name||'Player')}${me?' (you)':''}<small>Level ${p.lv||1} · ${p.badges||0} badges</small></span><span class="xp">${p.xp||0} XP</span>${IS_OWNER&&!me?`<button class="rm" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">Remove</button>`:''}</div>`}).join(''):'<div class="note">No players yet. Earn some XP and you will appear here.</div>'}</div>`;
+  boardDrawn=true;
   app.querySelectorAll('.rm').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await DB.doc('players/'+b.dataset.id).delete()}catch(e){b.disabled=false}});
   if(!soft)window.scrollTo(0,0);
 }
