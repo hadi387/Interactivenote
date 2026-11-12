@@ -260,6 +260,9 @@ body.lite .face.f::after{display:none}
 body.lite .bgboss svg,body.lite .brief .bz svg,body.lite .step.cur .hex{animation:none}
 body.lite *{filter:none!important}
 #errb{position:fixed;left:0;right:0;bottom:0;z-index:999;background:#FF4757;color:#fff;font:700 16px/1.3 Arial,sans-serif;padding:10px 14px}
+[hidden]{display:none!important}
+.stage a.on{background:var(--cyan);border-color:var(--cyan);color:#001A22}
+.stnav{padding-top:12px}
 #fx{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:85}
 .target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
 .target.pic{padding:10px}
@@ -463,6 +466,13 @@ function briefing(n){
     o.onclick=e=>{if(e.target.id==='sk')return finish();if(typing){clearInterval(timer);p.textContent=lines[li];typing=false;return}li++;if(li>=lines.length)finish();else{sfx.tap();startLine()}};
     startLine();
   });
+}
+let goStage=null;
+function toTopOf(el){
+  var t=(el&&el.closest&&el.closest('.w'))||el;if(!t)return;
+  var r=t.getBoundingClientRect();if(r.top>=135&&r.top<window.innerHeight*.5)return;
+  var y=Math.max(0,r.top+(window.pageYOffset||0)-135);
+  try{window.scrollTo({top:y,behavior:RM?'auto':'smooth'})}catch(e){window.scrollTo(0,y)}
 }
 /* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -711,7 +721,6 @@ async function level(n){
     <button class="tick" data-t="a" aria-pressed="${S.task[n].a}"><span class="bx2"></span><span><b>Assignment.</b> ${esc(HW[n-1].asg)}</span></button>
     <button class="tick" data-t="p" aria-pressed="${S.task[n].p}"><span class="bx2"></span><span><b>Project.</b> ${esc(HW[n-1].prj)}</span></button></section>
   <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
-  app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
   const cp=()=>{$('#cp').textContent=`Cards revealed: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
   app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);sfx.flip();
     if(!open&&!S.cards[n][i]){S.cards[n][i]=true;save();cp();floatTxt('+5 XP',b,'#FFC700');burst(25,b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+60);paintHud()}});
@@ -721,6 +730,28 @@ async function level(n){
   const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';d.dataset.rv='';d.style.setProperty('--acc',CATC[gi%5]);ws.appendChild(d);fn(d,n,gi)});
   boss($('#bossbox'),n);
   revealOnScroll(app);
+  setupStages();
+}
+function setupStages(){
+  const names=['learn','cards','play','boss','home'];
+  const label={learn:'Learn',cards:'Cards',play:'Play',boss:'Boss',home:'Home'};
+  const quest=$('.quest',app),lh=$('.lh',app);
+  names.forEach((nm,i)=>{
+    const sec=$('#s-'+nm),nav=document.createElement('div');nav.className='row stnav';
+    nav.innerHTML=(i?`<button class="btn gh" data-go="${names[i-1]}"><span>← ${label[names[i-1]]}</span></button>`:'<span></span>')+(i<names.length-1?`<button class="btn" data-go="${names[i+1]}"><span>Next: ${label[names[i+1]]} →</span></button>`:'<a class="btn" href="#map"><span>Back to map</span></a>');
+    sec.appendChild(nav);
+  });
+  function show(nm,first){
+    names.forEach(x=>{$('#s-'+x).hidden=(x!==nm)});
+    if(quest)quest.hidden=(nm!=='learn');
+    app.querySelectorAll('.stage a').forEach(a=>{a.classList.toggle('on',a.dataset.s===nm)});
+    const sec=$('#s-'+nm);sec.classList.remove('rv');void sec.offsetWidth;sec.classList.add('rv');
+    if(!first){const y=Math.max(0,lh.getBoundingClientRect().bottom+(window.pageYOffset||0)-70);window.scrollTo(0,y)}
+  }
+  goStage=nm=>show(nm,false);
+  app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();show(a.dataset.s,false)});
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{sfx.tap();show(b.dataset.go,false)});
+  show('learn',true);
 }
 
 /* ---------- MCQ runner: used by boss battles and the grand challenge ---------- */
@@ -752,7 +783,7 @@ function mcqRun(el,qs,opt){
       say($('#by',el),good?'ok':'no',(good?pick(CHEER):pick(OOPS))+' '+q.why);
       const last=i===qs.length-1||hearts<=0;
       $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${last?'See result':'Next'}</span></button>`;
-      const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+      const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw();toTopOf(el)};nb.focus({preventScroll:true});
     };
     el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok){b.classList.add('no');b.querySelector('.m').textContent='✗'}lock(o.ok,b)});
     if(opt.time){const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
@@ -809,7 +840,7 @@ function sortGame(def){
         else{b.classList.add('no');combo=0;miss.push(it);sfx.no();shakeScreen()}
         say($('#by',el),right?'ok':'no',(right?pick(CHEER):pick(OOPS))+' '+def.cats[it.c].n+': '+def.cats[it.c].info);
         $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===deck.length-1?'Finish':'Next'}</span></button>`;
-        const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+        const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw();toTopOf(el)};nb.focus({preventScroll:true});
       });
     }
     function finish(){
@@ -914,8 +945,8 @@ function teachPlayer(el,n){
       else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Read the points again and try another answer.');
         if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');$('#nx',el).disabled=false}}
     });
-    $('#pv',el).onclick=()=>{sfx.tap();i--;draw();el.scrollIntoView({block:'nearest'})};
-    $('#nx',el).onclick=()=>{sfx.tap();i++;draw();el.scrollIntoView({block:'nearest'})};
+    $('#pv',el).onclick=()=>{sfx.tap();i--;draw();toTopOf(el)};
+    $('#nx',el).onclick=()=>{sfx.tap();i++;draw();toTopOf(el)};
   }
   function recap(){
     const got=S.teach[n].filter(Boolean).length;
@@ -923,7 +954,7 @@ function teachPlayer(el,n){
     el.innerHTML=`<div class="eyebrow">Lesson complete</div><h3><span class="skew">What you learned</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
     <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Flip the cards</span></button></div>`;
     say($('#by',el),'ok',`You got ${got} of ${T.length} quick checks right on the first try. Now flip the review cards, then play the games.`);
-    $('#again',el).onclick=()=>{i=0;draw()};$('#go2',el).onclick=()=>{sfx.tap();$('#s-cards').scrollIntoView({behavior:RM?'auto':'smooth'})};
+    $('#again',el).onclick=()=>{i=0;draw();toTopOf(el)};$('#go2',el).onclick=()=>{sfx.tap();if(goStage)goStage('cards')};
   }
   draw();
 }
@@ -941,7 +972,7 @@ function hotGame(def){
       const sh=$('#sh',el),im=$('img',sh);
       const mark=(cls)=>t.rects.forEach(r=>{const d=document.createElement('div');d.className='tgt '+cls;d.style.cssText=`left:${r[0]}%;top:${r[1]}%;width:${r[2]-r[0]}%;height:${r[3]-r[1]}%`;sh.appendChild(d)});
       const end=(good)=>{solved=true;
-        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===q.length-1?'Finish':'Next'}</span></button>`;const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true})};
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===q.length-1?'Finish':'Next'}</span></button>`;const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw();toTopOf(el)};nb.focus({preventScroll:true})};
       sh.onclick=e=>{
         if(solved)return;const r=im.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
         const hit=t.rects.some(a=>x>=a[0]&&x<=a[2]&&y>=a[1]&&y<=a[3]);
