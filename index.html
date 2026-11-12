@@ -332,6 +332,20 @@ body.lite *{filter:none!important}
 .tm{flex:1 1 130px;background:var(--panel);border-top:6px solid var(--c);padding:8px 12px;font-family:var(--f-display);text-transform:uppercase}
 .tm b{display:block;font-size:34px;color:#fff}
 .tm.lead{outline:3px solid var(--gold)}
+.bt{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.bti{display:flex;align-items:center;gap:12px;background:var(--c);color:#0B0720;border:0;border-bottom:6px solid rgba(0,0,0,.35);padding:14px 16px;font:700 clamp(17px,3vw,22px) var(--f-body);text-align:left;min-height:84px;clip-path:var(--cut-s)}
+.bti svg{flex:none;fill:#0B0720}
+.bti:active{transform:translateY(3px)}
+.bti.right{outline:5px solid #fff}
+.bti.dim{opacity:.3}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:10px;min-height:230px;padding-top:10px}
+.pod>div{flex:1 1 0;max-width:180px;text-align:center;font-family:var(--f-display);text-transform:uppercase;display:grid;align-content:end;gap:4px}
+.pod .st{display:grid;place-items:center;background:var(--panel2);color:#fff;font-size:34px;animation:up .8s both}
+.pod .p1 .st{height:150px;background:linear-gradient(180deg,#FFC700,#8E6A00);color:#1B1200}
+.pod .p2 .st{height:105px;background:linear-gradient(180deg,#C8D0E6,#5C6584);color:#101B3B}
+.pod .p3 .st{height:75px;background:linear-gradient(180deg,#E3A26B,#7A4A1E);color:#2B1500}
+.pod .nm2{font-size:15px;overflow-wrap:anywhere}
+.codebox{font:700 clamp(20px,5vw,34px) ui-monospace,Consolas,monospace;letter-spacing:.06em;background:#0B0720;border:3px dashed var(--gold);padding:14px 18px;color:var(--gold);word-break:break-all;text-transform:none}
 #fx{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:85}
 .target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
 .target.pic{padding:10px}
@@ -683,7 +697,7 @@ function route(){
   const h=location.hash.slice(1)||'map';route.cur=h;
   if(!S.name||!route.started){start();return}
   const m=h.match(/^l([1-4])$/);
-  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='class'&&typeof classMode==='function')classMode();else mapView();
+  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='battle'&&typeof battleMode==='function')battleMode();else if(h==='board'&&typeof teacherBoard==='function')teacherBoard();else mapView();
   window.scrollTo(0,0);paintHud();
 }
 addEventListener('hashchange',()=>{if(route.started)route()});
@@ -723,10 +737,11 @@ function mapView(){
   <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);const cls=done(l.id)?'go':i===cur?'cur':'';
     return `<div class="step ${cls} rv" style="animation-delay:${i*120}ms"><div class="hex">${locked?ic('lock'):l.id}</div><button class="node" data-l="${l.id}" ${locked?'disabled':''}><div class="panel"><div class="row2"><div><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></div>${stars(starsFor(l.id))}</div></div></button></div>`}).join('')}
   <div class="step fin ${allDone?'cur':''} rv" style="animation-delay:520ms"><div class="hex">${allDone?ic('trophy'):ic('lock')}</div><button class="node" id="fin" ${allDone?'':'disabled'}><div class="panel"><h3>Grand Challenge</h3><small>10 mixed questions, 25 seconds each. Unlocks after all four bosses. Best: ${S.final}/10</small></div></button></div></div>
-  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>${typeof classMode==='function'?'<div style="padding-top:20px"><button class="btn cy" id="cls"><span>Class mode (teacher)</span></button></div>':''}`;
+  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>${typeof battleMode==='function'?'<div class="row" style="justify-content:flex-start;padding-top:20px"><button class="btn mg" id="bat"><span>Quiz battle</span></button><button class="btn gh" id="tbd"><span>Teacher board</span></button></div>':''}`;
   app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>{sfx.tap();location.hash='l'+b.dataset.l});
   $('#fin').onclick=()=>{sfx.tap();location.hash='final'};
-  const cls=$('#cls');if(cls)cls.onclick=()=>{sfx.tap();location.hash='class'};
+  const bat=$('#bat');if(bat)bat.onclick=()=>{sfx.tap();location.hash='battle'};
+  const tbd=$('#tbd');if(tbd)tbd.onclick=()=>{sfx.tap();location.hash='board'};
 }
 
 /* ---------- level ---------- */
@@ -958,33 +973,22 @@ function bootGame(el,n,gi){
   draw();
 }
 
-function scramble(node,plain,html,done){
-  if(RM){node.innerHTML=html;done&&done();return}
-  node.className='tx scr';node.hidden=false;
-  const L=plain.length,step=Math.max(1,Math.ceil(L/22));let k=0;
-  const iv=setInterval(()=>{
-    k+=step;
-    if(k>=L||!document.contains(node)){clearInterval(iv);node.className='tx';node.innerHTML=html;done&&done();return}
-    let out=plain.slice(0,k)+plain.slice(k).replace(/[A-Za-z0-9]/g,()=>Math.random()<.5?'0':'1');
-    node.textContent=out;if((k/step)%2===0)sfx.tick();
-  },32);
-}
 function teachPlayer(el,n){
   const T=TEACH[n];let i=0,tries=0,answered=false,fin=false;
   const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   function draw(){
     if(i>=T.length)return recap();
     const t=T[i];tries=0;answered=false;fin=false;
-    const hasQ=!!t.q,N=t.lines.length;let shown=0,busy=false,ended=false;
+    const hasQ=!!t.q,N=t.lines.length;let shown=1,busy=false,ended=false;
     const opts=hasQ?shuffle(t.o.map((x,j)=>({x,ok:j===0}))):[];
     const V=(typeof VILL!=='undefined'&&VILL[n])||null,BOSS=LEVELS[n-1].boss;
     const power=()=>Math.round(100*(T.length-S.teach[n].filter(Boolean).length)/T.length);
     const villHtml=()=>`<div class="vill"><span class="vsv" id="vsv">${bossSVG(BOSS[1],'idle')}</span><div class="vb"><b style="color:${BOSS[1]}">${esc(BOSS[0])}</b><span id="vt"></span></div><div class="vpw" title="Villain power"><span>VILLAIN POWER</span><i><b id="vpb" style="width:${power()}%"></b></i></div></div>`;
     el.innerHTML=`<div class="hud2"><span class="eyebrow">${t.kind?esc(t.kind)+' · ':''}${LEVELS[n-1].case?'Clue':'Lesson'} ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>${V?villHtml():''}
-    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li class="enc" data-k="${k}"><span class="red" aria-hidden="true"><i style="width:${38+((l.length*7)%52)}%"></i></span><span class="tx" hidden></span></li>`).join('')}</ul>
-      <div class="dec"><button class="btn mg pulse" id="dc"><span></span></button><button class="lnk" id="all">Show all</button></div>
+    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li class="enc${k?'':' open'}" data-k="${k}"${k?' hidden':''}><span class="tx">${md(l)}</span></li>`).join('')}</ul>
+      <div class="dec"><button class="btn mg" id="dc"><span></span></button><button class="lnk" id="all">Show all</button></div>
       <div id="more" hidden>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div></div>
-    ${(t.img||t.svg)?`<figure class="slp" id="fg" hidden>${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    ${(t.img||t.svg)?`<figure class="slp" id="fg">${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
     <div id="sx" hidden></div>
     ${hasQ?`<div class="qc" id="qc" hidden><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
     <div class="tease" id="ts" hidden></div>
@@ -994,8 +998,8 @@ function teachPlayer(el,n){
     const lis=el.querySelectorAll('.pts2 li');
     const vsay=(txt,mood)=>{if(!V)return;const vt=$('#vt',el),sv=$('#vsv',el);if(!vt)return;vt.textContent=txt;sv.innerHTML=bossSVG(BOSS[1],mood||'idle');if(mood==='hit'){sv.classList.remove('hit');void sv.offsetWidth;sv.classList.add('hit')}};
     if(V)vsay(t.taunt||V.start[i%V.start.length],'idle');
-    const label=()=>{$('#dc span',el).textContent=shown<N?'Decrypt clue '+(shown+1)+' of '+N:'All clues decrypted'};
-    label();say($('#by',el),'idle','Tap the button to decrypt the first clue.');
+    const label=()=>{$('#dc span',el).textContent=shown<N?'Next clue ('+(shown+1)+' of '+N+')':'Done'};
+    label();say($('#by',el),'idle',N>1?'Tap the button for the next clue.':'Read the clue.');
     const complete=(perfect)=>{
       if(fin)return;fin=true;
       if(perfect&&!S.teach[n][i]){S.teach[n][i]=true;save();floatTxt('+5 XP',$('#nx',el),'#FFC700');paintHud();const pb=$('#vpb',el);if(pb)pb.style.width=power()+'%'}
@@ -1012,22 +1016,17 @@ function teachPlayer(el,n){
       const fg=$('#fg',el);if(fg){fg.hidden=false}
       const sx=$('#sx',el);if(typeof slideExtra==='function'&&t.type){sx.hidden=false;sx.className='rv';slideExtra(t,sx,ctx)}
       const qc=$('#qc',el);if(qc){qc.hidden=false;qc.className='qc rv'}
-      say($('#by',el),'idle',hasQ?'You decrypted everything. Now answer the quick check.':'You decrypted everything. Now do the activity above.');
+      say($('#by',el),'idle',hasQ?'You have all the clues. Now answer the quick check.':'You have all the clues. Now do the activity above.');
       if(!hasQ&&!t.type)ctx.done(true);
     };
     const revealOne=()=>{
-      if(busy||shown>=N)return;busy=true;
-      const li=lis[shown],k=shown,tx=li.querySelector('.tx'),red=li.querySelector('.red');
-      red.hidden=true;sfx.flip();
-      scramble(tx,t.lines[k].replace(/\*\*/g,''),md(t.lines[k]),()=>{
-        li.classList.add('open');shown++;busy=false;label();
-        if(shown===1){const fg=$('#fg',el);if(fg){fg.hidden=false;fg.className='slp rv'}}
-        if(shown>=N)finishText();else say($('#by',el),'idle','Clue '+shown+' decrypted. Tap for the next one.');
-      });
+      if(shown>=N)return;
+      const li=lis[shown];li.hidden=false;li.classList.add('open');sfx.flip();shown++;label();
+      if(shown>=N)finishText();else say($('#by',el),'idle','Clue '+shown+' of '+N+'. Tap for the next one.');
     };
     $('#dc',el).onclick=revealOne;
-    lis.forEach(li=>li.onclick=()=>{if(+li.dataset.k===shown)revealOne()});
-    $('#all',el).onclick=()=>{if(busy)return;lis.forEach((li,k)=>{if(k>=shown){li.querySelector('.red').hidden=true;const tx=li.querySelector('.tx');tx.hidden=false;tx.innerHTML=md(t.lines[k]);li.classList.add('open')}});shown=N;const fg=$('#fg',el);if(fg){fg.hidden=false;fg.className='slp'}finishText()};
+    $('#all',el).onclick=()=>{lis.forEach(li=>{li.hidden=false;li.classList.add('open')});shown=N;finishText()};
+    if(N<=1)finishText();
     el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
       if(answered)return;const o=opts[+b.dataset.k];
       if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
