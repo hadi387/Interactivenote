@@ -313,6 +313,25 @@ body.lite *{filter:none!important}
 .dec{display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap}
 .btn.pulse{animation:pulse 1.2s infinite}
 .lnk{background:none;border:0;color:var(--muted);text-decoration:underline;font:600 16px var(--f-body);padding:8px 4px}
+.vill{display:flex;align-items:center;gap:12px;background:rgba(255,71,87,.1);border-left:5px solid #FF4757;padding:8px 14px;margin-top:10px;flex-wrap:wrap}
+.vsv svg{width:54px;height:54px;display:block}
+.vsv.hit{animation:shake .4s}
+.vb{flex:1 1 220px;min-width:0;display:grid;gap:2px;font-size:clamp(16px,3.2vw,19px);line-height:1.3}
+.vb b{font-family:var(--f-display);font-size:14px;letter-spacing:.1em;text-transform:uppercase}
+.vpw{flex:0 0 140px;display:grid;gap:3px;font-family:var(--f-display);font-size:11px;letter-spacing:.1em;color:#FF4757}
+.vpw i{display:block;height:10px;background:#2A0F2A;transform:skewX(-20deg);overflow:hidden}
+.vpw b{display:block;height:100%;background:#FF4757;transition:width .6s}
+.joke{background:rgba(60,255,143,.1);border-left:5px solid var(--lime);padding:8px 14px;font-size:clamp(16px,3.2vw,19px);animation:slideR .4s both}
+.cmq{font-family:var(--f-display);font-size:clamp(24px,4.6vw,44px);line-height:1.2;text-transform:none}
+.cmo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.cmo div{background:var(--panel);padding:16px 18px;font-family:var(--f-display);font-size:clamp(18px,3vw,28px);border-left:8px solid var(--c);text-transform:none;line-height:1.2}
+.cmo div.right{background:#0E5B37;border-left-color:var(--lime)}
+.cmo div.dim{opacity:.35}
+.cmo b{color:var(--c);margin-right:10px}
+.score-row{display:flex;gap:10px;flex-wrap:wrap}
+.tm{flex:1 1 130px;background:var(--panel);border-top:6px solid var(--c);padding:8px 12px;font-family:var(--f-display);text-transform:uppercase}
+.tm b{display:block;font-size:34px;color:#fff}
+.tm.lead{outline:3px solid var(--gold)}
 .mdtabs{display:flex;gap:8px;flex-wrap:wrap}
 .mdtabs .opt{flex:1 1 140px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
 .mdtabs .opt[aria-pressed="true"]{background:var(--cyan);color:#001A22;border-left-color:#fff}
@@ -549,6 +568,13 @@ const STORY={
  4:['The last network is a ring. Computers pass data around a circle.','Loop Lord has trapped the data in an endless loop.','Learn how the ring works. Break the loop and save the lab.']
 };
 const EPI={1:'The Tangle is untied. The cables are sorted.',2:'Bus Breaker is beaten. The bus line is back.',3:'Hub Crasher is gone. The hub is safe.',4:'Loop Lord is broken. The whole lab is connected again.'};
+const VILL={
+ 1:{start:['Hehehe! I tied every cable in knots. You will never untangle them!','A network? You cannot even join two computers, little detective.','Every cable in this lab belongs to me now. Bring it on!'],right:['Hmph! Lucky guess.','Grr! You are smarter than you look.','My knots are coming loose... but not for long!'],wrong:['HA! Wrong! My knots just got tighter!','Hehe, even the cables are laughing at you.','Ah ah! Try again, if you dare.']},
+ 2:{start:['Snip snip! One cut and your whole bus line is dead!','I love long cables. They are so easy to cut.','Go ahead and study the bus. I will still find its weak spot.'],right:['Hmph! You noticed my favourite weakness.','Impossible! Who taught you that?','Ouch! That one hurt my pride.'],wrong:['Ha ha! You fell for my trap!','Wrong! The main cable is mine.','Snip snip! One more mistake and I win.']},
+ 3:{start:['Everything passes through my hub. Switch it off and you are finished!','You cannot protect the centre, little detective.','Click! Lights out in the star room. Or will they?'],right:['Argh! You spotted my trick.','Hmph. The star has more secrets than I thought.','You are getting on my nerves!'],wrong:['Hee hee! Wrong again! Blackout!','My hub laughs at your answer.','Wrong! Everything is going dark...']},
+ 4:{start:['Round and round it goes! Nobody escapes my circle.','One broken link and the whole ring is mine!','Pass the parcel? I will keep the parcel for ever!'],right:['Nooo! The loop is wobbling!','Hmph. You understand rings better than I expected.','My circle is cracking...'],wrong:['HA! Round and round you go, wrong again!','You are going in circles, detective!','Wrong! The parcel stays with me.']}
+};
+const JOKES=['Why did the computer go to school? To improve its byte-size!','What did the bus topology say to the cable? "I could not do it without your backbone."','Why was the star network so proud? Everything revolved around it.','Why did the ring network never get lost? It always came back to where it started.','Why did the hub feel stressed? Everyone depended on it!','Why was the switch so smart? It only talked to the people who needed to hear it.','Why did the terminator get a medal? It stopped the echo.','What is a computer\'s favourite snack? Microchips!','Why did the computer sit in the sun? To get a better byte of Wi-Fi.'];
 
 function briefing(n){
   return new Promise(res=>{
@@ -748,7 +774,7 @@ function route(){
   const h=location.hash.slice(1)||'map';route.cur=h;
   if(!S.name||!route.started){start();return}
   const m=h.match(/^l([1-4])$/);
-  if(m)level(+m[1]);else if(h==='final')finalRound();else mapView();
+  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='class'&&typeof classMode==='function')classMode();else mapView();
   window.scrollTo(0,0);paintHud();
 }
 addEventListener('hashchange',()=>{if(route.started)route()});
@@ -788,9 +814,10 @@ function mapView(){
   <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);const cls=done(l.id)?'go':i===cur?'cur':'';
     return `<div class="step ${cls} rv" style="animation-delay:${i*120}ms"><div class="hex">${locked?ic('lock'):l.id}</div><button class="node" data-l="${l.id}" ${locked?'disabled':''}><div class="panel"><div class="row2"><div><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></div>${stars(starsFor(l.id))}</div></div></button></div>`}).join('')}
   <div class="step fin ${allDone?'cur':''} rv" style="animation-delay:520ms"><div class="hex">${allDone?ic('trophy'):ic('lock')}</div><button class="node" id="fin" ${allDone?'':'disabled'}><div class="panel"><h3>Grand Challenge</h3><small>10 mixed questions, 25 seconds each. Unlocks after all four bosses. Best: ${S.final}/10</small></div></button></div></div>
-  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
+  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>${typeof classMode==='function'?'<div style="padding-top:20px"><button class="btn cy" id="cls"><span>Class mode (teacher)</span></button></div>':''}`;
   app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>{sfx.tap();location.hash='l'+b.dataset.l});
   $('#fin').onclick=()=>{sfx.tap();location.hash='final'};
+  const cls=$('#cls');if(cls)cls.onclick=()=>{sfx.tap();location.hash='class'};
 }
 
 /* ---------- level ---------- */
@@ -1041,7 +1068,10 @@ function teachPlayer(el,n){
     const t=T[i];tries=0;answered=false;fin=false;
     const hasQ=!!t.q,N=t.lines.length;let shown=0,busy=false,ended=false;
     const opts=hasQ?shuffle(t.o.map((x,j)=>({x,ok:j===0}))):[];
-    el.innerHTML=`<div class="hud2"><span class="eyebrow">${t.kind?esc(t.kind)+' · ':''}${LEVELS[n-1].case?'Clue':'Lesson'} ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
+    const V=(typeof VILL!=='undefined'&&VILL[n])||null,BOSS=LEVELS[n-1].boss;
+    const power=()=>Math.round(100*(T.length-S.teach[n].filter(Boolean).length)/T.length);
+    const villHtml=()=>`<div class="vill"><span class="vsv" id="vsv">${bossSVG(BOSS[1],'idle')}</span><div class="vb"><b style="color:${BOSS[1]}">${esc(BOSS[0])}</b><span id="vt"></span></div><div class="vpw" title="Villain power"><span>VILLAIN POWER</span><i><b id="vpb" style="width:${power()}%"></b></i></div></div>`;
+    el.innerHTML=`<div class="hud2"><span class="eyebrow">${t.kind?esc(t.kind)+' · ':''}${LEVELS[n-1].case?'Clue':'Lesson'} ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>${V?villHtml():''}
     <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li class="enc" data-k="${k}"><span class="red" aria-hidden="true"><i style="width:${38+((l.length*7)%52)}%"></i></span><span class="tx" hidden></span></li>`).join('')}</ul>
       <div class="dec"><button class="btn mg pulse" id="dc"><span></span></button><button class="lnk" id="all">Show all</button></div>
       <div id="more" hidden>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div></div>
@@ -1050,13 +1080,18 @@ function teachPlayer(el,n){
     ${hasQ?`<div class="qc" id="qc" hidden><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
     <div class="tease" id="ts" hidden></div>
     <div class="byte" id="by"></div>
+    <div class="joke" id="jk" hidden></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
     const lis=el.querySelectorAll('.pts2 li');
+    const vsay=(txt,mood)=>{if(!V)return;const vt=$('#vt',el),sv=$('#vsv',el);if(!vt)return;vt.textContent=txt;sv.innerHTML=bossSVG(BOSS[1],mood||'idle');if(mood==='hit'){sv.classList.remove('hit');void sv.offsetWidth;sv.classList.add('hit')}};
+    if(V)vsay(t.taunt||V.start[i%V.start.length],'idle');
     const label=()=>{$('#dc span',el).textContent=shown<N?'Decrypt clue '+(shown+1)+' of '+N:'All clues decrypted'};
     label();say($('#by',el),'idle','Tap the button to decrypt the first clue.');
     const complete=(perfect)=>{
       if(fin)return;fin=true;
-      if(perfect&&!S.teach[n][i]){S.teach[n][i]=true;save();floatTxt('+5 XP',$('#nx',el),'#FFC700');paintHud()}
+      if(perfect&&!S.teach[n][i]){S.teach[n][i]=true;save();floatTxt('+5 XP',$('#nx',el),'#FFC700');paintHud();const pb=$('#vpb',el);if(pb)pb.style.width=power()+'%'}
+      if(V)vsay(perfect?pick(V.right):pick(V.wrong),perfect?'hit':'idle');
+      if(typeof JOKES!=='undefined'&&i%3===2){const jk=$('#jk',el);jk.textContent='Byte\'s joke: '+JOKES[(n*3+i)%JOKES.length];jk.hidden=false}
       $('#nx',el).disabled=false;
       if(t.tease){const ts=$('#ts',el);ts.textContent=t.tease;ts.hidden=false}
     };
@@ -1552,6 +1587,130 @@ function slideExtra(t,box,ctx){
   }
 }
 
+/* ---------- rescue: fix the faults before the clock runs out ---------- */
+function rescueGame(type){
+  return (el,n,gi)=>{
+    const T=TOPO(type);
+    const cuts=T.edges.map(e=>e.id),pcs=T.nodes.filter(x=>x.k==='pc').map(x=>x.id);
+    const DUR=30,TIP={bus:'In a bus network one cut on the main cable can cut off many computers, so fix those first.',star:'In a star network most faults only cut off one computer. If the hub fails, everyone is cut off, so fix the hub first!',ring:'In a ring, any break stops the ring, so every fault matters.'};
+    let phase='ready',cut={},off={},score=0,combo=0,fixed=0,left=DUR,tm=null,running=false,msg='';
+    const best=()=>S.games[n+'.'+gi]||0;
+    const count=()=>Object.keys(cut).filter(k=>cut[k]).length+Object.keys(off).filter(k=>off[k]).length;
+    function addFault(){
+      if(count()>=2)return;
+      for(let k=0;k<30;k++){
+        const r=Math.random();
+        if(r<.55){const id=cuts[Math.random()*cuts.length|0];if(!cut[id]){cut[id]=true;return}}
+        else if(r<.9||type!=='star'){const id=pcs[Math.random()*pcs.length|0];if(!off[id]){off[id]=true;return}}
+        else if(!off.hub){off.hub=true;return}
+      }
+    }
+    const head='<h3><span class="skew">Rescue the '+type+' lab</span></h3>';
+    function view(){
+      el.className='w';
+      if(phase!=='play'){
+        el.innerHTML=head+`<p class="hint">Faults pop up on the network. Tap each broken (red) cable or switched-off computer to fix it. You have ${DUR} seconds. Tapping something that is not broken costs you 2 seconds!</p>
+        ${phase==='over'?`<div class="result"><div class="big">${score}<span style="font-size:30px"> pts</span></div><span class="score">${fixed} faults fixed · best ${best()}</span>${stars(score>=150?3:score>=90?2:score>=40?1:0)}<p class="hint">${esc(TIP[type])}</p></div>`:''}
+        <div class="row" style="justify-content:flex-start"><button class="btn mg" id="st"><span>${phase==='over'?'Try again':'Start rescue!'}</span></button></div>`;
+        $('#st',el).onclick=begin;return;
+      }
+      el.innerHTML=head+`<div class="hud2"><span class="eyebrow">Fix them fast!</span><span class="combo ${combo>=2?'on':''}">${combo>=2?'Combo x'+combo:''}</span><span class="score" id="sc">${score}</span></div>
+      <div class="timer" aria-hidden="true"><i id="tb" style="width:${left/DUR*100}%"></i></div>
+      <div class="topo"><svg viewBox="0 0 320 230" id="sv" role="img" aria-label="Tap the broken parts">${drawTopo(type,{hit:true,cut,off})}</svg></div>
+      <div class="xinfo" id="rm">${msg||'Tap the broken parts!'}</div>`;
+      $('#sv',el).onclick=e=>{
+        if(!running)return;
+        const hit=e.target.closest('.hit'),nd=e.target.closest('.nd');
+        if(!hit&&!nd)return;
+        if(hit&&cut[hit.dataset.e]){cut[hit.dataset.e]=false;good(hit)}
+        else if(nd&&off[nd.dataset.n]){off[nd.dataset.n]=false;good(nd)}
+        else{combo=0;left=Math.max(0,left-2);sfx.no();shakeScreen();msg='That one is not broken! -2 seconds.';view()}
+      };
+    }
+    function good(node){
+      const g=10+Math.min(combo,5)*3;score+=g;combo++;fixed++;sfx.ok();floatTxt('+'+g,node,'#FFC700');msg='Fixed!';
+      addFault();if(count()===0)addFault();view();
+    }
+    function begin(){
+      cut={};off={};score=0;combo=0;fixed=0;left=DUR;msg='';running=false;
+      addFault();phase='play';view();
+      suspense($('.topo',el),1800,()=>{
+        running=true;
+        tm=setInterval(()=>{
+          if(!document.contains(el)){clearInterval(tm);return}
+          left=Math.max(0,left-.1);const tb=$('#tb',el);if(tb)tb.style.width=(left/DUR*100)+'%';
+          if(left<=0)end();
+        },100);
+      });
+    }
+    function end(){
+      clearInterval(tm);running=false;phase='over';
+      const prev=best();if(score>prev){S.games[n+'.'+gi]=score;save();paintHud()}
+      if(score>=90){sfx.win();burst(90)}else sfx.ok();
+      view();
+    }
+    view();
+  };
+}
+
+/* ---------- class mode: a teacher-run team game for the projector ---------- */
+const CLASSQ=[
+ {topo:'bus',fault:{cut:['b1']},q:'The saboteur cuts the main cable of a bus network in the middle. What happens?',o:['The network splits in two','Only PC3 loses contact','Nothing happens'],a:0,why:'There is only one path, so one cut splits the network in two.'},
+ {topo:'star',fault:{cut:['s3']},q:'The saboteur cuts PC3\'s cable in a star network. What happens?',o:['Only PC3 is cut off','The whole network stops','PC3 and PC4 are cut off'],a:0,why:'Each computer has its own cable. A cut cable only cuts off its own computer.'},
+ {topo:'star',fault:{off:['hub']},q:'The saboteur switches off the hub of a star network. What happens?',o:['Only PC1 loses contact','Nobody can talk to anybody','Only the computers on the left stop'],a:1,why:'Every message passes through the hub. When it fails, the whole network stops.'},
+ {topo:'ring',fault:{off:['pc3']},q:'PC3 is switched off in a ring network. Messages from PC1 can no longer reach...',o:['Nobody. Everything is fine','PC4, PC5 and PC6','Only PC2'],a:1,why:'Data must pass through every computer on the way round. PC3 is off, so PC4, PC5 and PC6 cannot be reached.'},
+ {topo:'bus',fault:{cut:['d4']},q:'The saboteur cuts the short cable of PC4 in a bus network. What happens?',o:['The whole network stops','Only PC4 is cut off','Half the network is cut off'],a:1,why:'A drop cable only joins one computer to the main cable. The main cable is fine.'},
+ {topo:'ring',fault:{cut:['r1']},q:'The cable from PC1 to PC2 is cut in a ring. What happens?',o:['PC1 cannot send to any computer','Only PC2 is cut off','Nothing happens'],a:0,why:'PC1 passes everything to PC2, so with that link cut, PC1 cannot reach anyone.'},
+ {topo:'star',fault:{cut:['s1','s2']},q:'Two cables are cut in a star network. What happens?',o:['The whole network stops','Four computers are cut off','Only two computers are cut off'],a:2,why:'Each cut cable only cuts off one computer. The other four still work.'},
+ {topo:'bus',fault:{cut:['b0']},q:'The saboteur cuts the left part of the main cable of a bus network. What happens?',o:['PC1 and PC4 are cut off from the rest','Nothing happens','Only PC6 is cut off'],a:0,why:'The cut splits the network in two. PC1 and PC4 are on one side, and the other computers are on the other side.'}
+];
+function classMode(){
+  document.title='Class mode · Network Squad';musicSet('menu');MU.mode='menu';
+  const TEAMS=[['Team Bus','#FFC700'],['Team Star','#19D3FF'],['Team Ring','#3CFF8F'],['Team Hub','#FF2E88']];
+  let teams=[],qs=[],qi=0,phase='setup',awarded={},busy=false;
+  const board=()=>`<div class="score-row">${teams.map(t=>{const lead=teams.every(o=>o.score<=t.score)&&t.score>0;return `<div class="tm ${lead?'lead':''}" style="--c:${t.c}">${esc(t.n)}<b>${t.score}</b></div>`}).join('')}</div>`;
+  function setup(){
+    app.innerHTML=`<div class="lh"><div class="eyebrow">For the teacher</div><h1><span class="skew">Class mode</span></h1></div>
+    <div class="w" style="--acc:var(--gold)"><p class="qtext" style="animation:none">Project this screen. Read each question aloud. Students vote with their hands. Press Reveal and watch the saboteur strike. Award points to the teams that got it right.</p>
+    <div class="eyebrow">How many teams?</div><div class="mdtabs" id="tc">${[2,3,4].map(k=>`<button class="opt" data-k="${k}" aria-pressed="${k===3}">${k} teams</button>`).join('')}</div>
+    <div class="row" style="justify-content:flex-start"><button class="btn mg" id="go"><span>Start the game</span></button><a class="btn gh" href="#map"><span>Back to map</span></a></div></div>`;
+    let k=3;app.querySelectorAll('#tc .opt').forEach(b=>b.onclick=()=>{k=+b.dataset.k;sfx.tap();app.querySelectorAll('#tc .opt').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+    $('#go').onclick=()=>{teams=TEAMS.slice(0,k).map(t=>({n:t[0],c:t[1],score:0}));qs=shuffle(CLASSQ);qi=0;awarded={};phase='ask';sfx.win();ask()};
+  }
+  function netSvg(q,applied){
+    const T=TOPO(q.topo),N={};T.nodes.forEach(x=>N[x.id]=x);
+    const cut={},off={};(q.fault.cut||[]).forEach(e=>cut[e]=true);(q.fault.off||[]).forEach(e=>off[e]=true);
+    let warn='';
+    if(!applied){(q.fault.cut||[]).forEach(id=>{const e=T.edges.find(x=>x.id===id),a=N[e.a],b=N[e.b];warn+=`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="14" fill="none" stroke="#FF4757" stroke-width="3"><animate attributeName="r" values="9;19;9" dur="1s" repeatCount="indefinite"/></circle>`});(q.fault.off||[]).forEach(id=>{const x=N[id];warn+=`<circle cx="${x.x}" cy="${x.y}" r="26" fill="none" stroke="#FF4757" stroke-width="3"><animate attributeName="r" values="22;33;22" dur="1s" repeatCount="indefinite"/></circle>`})}
+    return `<svg viewBox="0 0 320 230" role="img" aria-label="${q.topo} network">${drawTopo(q.topo,{cut:applied?cut:{},off:applied?off:{}})}${warn}</svg>`;
+  }
+  function ask(){
+    const q=qs[qi],C=['#19D3FF','#FF2E88','#FFC700'];
+    app.innerHTML=`<div class="lh"><div class="eyebrow">Question ${qi+1} of ${Math.min(qs.length,8)} · ${esc(q.topo)} network</div></div>${board()}
+    <div class="w" style="--acc:var(--mag);margin-top:14px"><p class="cmq">${esc(q.q)}</p>
+    <div class="topo" id="tp">${netSvg(q,false)}</div>
+    <div class="cmo" id="co">${q.o.map((o,k)=>`<div style="--c:${C[k]}" data-k="${k}"><b>${'ABC'[k]}</b>${esc(o)}</div>`).join('')}</div>
+    <div class="xinfo" id="xi">Students vote now. Raise your hand for A, B or C!</div>
+    <div class="row" style="justify-content:flex-start"><button class="btn mg" id="rv"><span>Reveal the answer!</span></button></div></div>`;
+    $('#rv').onclick=()=>{if(busy)return;busy=true;suspense($('#tp'),2400,()=>{
+      sfx.boom();shakeScreen();$('#tp').innerHTML=netSvg(q,true);
+      $('#co').querySelectorAll('div').forEach((d,k)=>d.classList.add(k===q.a?'right':'dim'));
+      $('#xi').innerHTML='<b>The answer is '+'ABC'[q.a]+'.</b> '+esc(q.why);sfx.win();
+      $('#rv').parentNode.innerHTML=`${teams.map((t,k)=>`<button class="btn gh" data-t="${k}" style="border-color:${t.c}"><span>+10 ${esc(t.n)}</span></button>`).join('')}<button class="btn" id="nx2"><span>${qi>=Math.min(qs.length,8)-1?'Finish':'Next question'}</span></button>`;
+      app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const k=+b.dataset.t,key=qi+'-'+k;if(awarded[key])return;awarded[key]=true;teams[k].score+=10;b.disabled=true;sfx.ok();burst(30);$('.score-row').outerHTML=board()});
+      $('#nx2').onclick=()=>{sfx.tap();qi++;busy=false;if(qi>=Math.min(qs.length,8))end();else ask()};
+    })};
+  }
+  function end(){
+    const sorted=teams.slice().sort((a,b)=>b.score-a.score);sfx.win();burst(160);
+    app.innerHTML=`<div class="lh"><div class="eyebrow">Final result</div><h1><span class="skew">${esc(sorted[0].n)} wins!</span></h1></div>
+    <div class="board" style="display:grid;gap:10px">${sorted.map((t,i)=>`<div class="pl r${i+1}" style="grid-template-columns:54px 1fr auto"><span class="rk">${i+1}</span><span class="nm" style="color:${t.c}">${esc(t.n)}</span><span class="xp">${t.score} pts</span></div>`).join('')}</div>
+    <div class="row" style="justify-content:flex-start;padding-top:16px"><button class="btn mg" id="again"><span>Play again</span></button><a class="btn gh" href="#map"><span>Back to map</span></a></div>`;
+    $('#again').onclick=()=>{phase='setup';setup()};
+  }
+  setup();
+}
+
 /* ---------- games per level ---------- */
 const C=(n,info)=>({n,info});
 const I=(arr,c)=>arr.map(t=>({t,c}));
@@ -1568,16 +1727,16 @@ function widgetsFor(n){
   2:[
    labFor('bus'),
    PROCON('Bus: advantage or disadvantage?','Think about a bus network.',[...I(['It is cheap','It uses less cable','It is easy to set up','Good for a small network'],0),...I(['If the main cable breaks, the whole network can stop','It slows down when many computers send data','Faults are hard to find'],1)]),
-   G('Name the topology','Look at the picture or read the clue.',TOPCATS(),[SV('Bus picture','bus',0),SV('Star picture','star',1),SV('Ring picture','ring',2),...I(['One long main cable','Terminators at both ends','Like a road with bus stops'],0),...I(['A central hub in the middle'],1),...I(['Data goes around in one direction'],2)],8,'Which topology is this?')],
+   G('Name the topology','Look at the picture or read the clue.',TOPCATS(),[SV('Bus picture','bus',0),SV('Star picture','star',1),SV('Ring picture','ring',2),...I(['One long main cable','Terminators at both ends','Like a road with bus stops'],0),...I(['A central hub in the middle'],1),...I(['Data goes around in one direction'],2)],8,'Which topology is this?'),rescueGame('bus')],
   3:[
    labFor('star'),
    PROCON('Star: advantage or disadvantage?','Think about a star network.',[...I(['If one cable breaks, the other computers keep working','Easy to add a new computer','Easy to find faults','Works well with many computers'],0),...I(['If the hub fails, the whole network stops','Needs more cable','The hub costs money'],1)]),
-   G('Bus, star or ring?','Which topology does each clue describe?',TOPCATS(),[...I(['If the hub fails, everything stops','Easy to add a computer and find faults','Needs more cable than a bus','A home Wi-Fi router works like this'],1),...I(['If the main cable breaks, everything stops','Terminators at both ends'],0),...I(['Computers pass data to their neighbours','Fair turns for every computer'],2)],9)],
+   G('Bus, star or ring?','Which topology does each clue describe?',TOPCATS(),[...I(['If the hub fails, everything stops','Easy to add a computer and find faults','Needs more cable than a bus','A home Wi-Fi router works like this'],1),...I(['If the main cable breaks, everything stops','Terminators at both ends'],0),...I(['Computers pass data to their neighbours','Fair turns for every computer'],2)],9),rescueGame('star')],
   4:[
    labFor('ring'),
    PROCON('Ring: advantage or disadvantage?','Think about a ring network.',[...I(['Data moves in an orderly way','Every computer gets a fair turn','Works well when the network is busy'],0),...I(['If one computer fails, the whole ring can stop','Faults are hard to find','Adding a computer disturbs the network'],1)]),
    G('Compare all three','Bus, star or ring?',TOPCATS(),[...I(['The cheapest layout','One main cable with terminators','Slows down when many computers send data'],0),...I(['The easiest to fix','A central hub','If the hub fails, all stop'],1),...I(['Every computer gets a fair turn','One break in the circle stops it','Data goes one way around'],2)],10),
-   G('Best choice?','Which topology suits each situation?',TOPCATS(),[...I(['A tiny lab with 3 computers and not much money','The cheapest and simplest network'],0),...I(['An office where faults must be fixed quickly','A school that adds new computers often'],1),...I(['Every computer must get a fair turn','Data must move in order'],2)],6,'Which topology fits best?')]
+   G('Best choice?','Which topology suits each situation?',TOPCATS(),[...I(['A tiny lab with 3 computers and not much money','The cheapest and simplest network'],0),...I(['An office where faults must be fixed quickly','A school that adds new computers often'],1),...I(['Every computer must get a fair turn','Data must move in order'],2)],6,'Which topology fits best?'),rescueGame('ring')]
   }[n];
 }
 
