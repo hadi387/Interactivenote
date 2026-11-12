@@ -296,6 +296,14 @@ body.lite *{filter:none!important}
 .gl.cur{border-left-color:var(--gold)}
 @keyframes flick{0%,100%{opacity:1}20%{opacity:.3}40%{opacity:.9}60%{opacity:.2}80%{opacity:.8}}
 .flick{animation:flick .9s}
+.pts2 li.enc{opacity:1;animation:none;padding-left:18px;min-height:30px;cursor:pointer}
+.pts2 li.enc .red{display:block;height:20px;margin-top:6px;background:repeating-linear-gradient(90deg,#0B0720 0 10px,#1B1450 10px 20px);border:1px solid var(--line)}
+.pts2 li.enc .tx.scr{font-family:ui-monospace,Consolas,monospace;color:var(--cyan);letter-spacing:.03em;word-wrap:break-word;overflow-wrap:anywhere}
+.pts2 li.enc.open{animation:unlock .5s ease-out both}
+@keyframes unlock{0%{opacity:.3;transform:scale(1.05);text-shadow:0 0 18px #19D3FF}100%{opacity:1;transform:none;text-shadow:none}}
+.dec{display:flex;align-items:center;grid-gap:16px;gap:16px;margin-top:14px;flex-wrap:wrap}
+.btn.pulse{animation:pulse 1.2s infinite}
+.lnk{background:none;border:0;color:var(--muted);text-decoration:underline;font:600 16px var(--f-body);padding:8px 4px}
 #fx{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:85}
 .target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
 .target.pic{padding:10px}
@@ -377,6 +385,7 @@ html.no-flexgap .file>*+*{margin-left:12px}
 html.no-flexgap .kws>*{margin:0 8px 8px 0}
 html.no-flexgap .xbar .r>*+*{margin-left:10px}
 html.no-flexgap .gl>*+*{margin-left:10px}
+html.no-flexgap .dec>*{margin:0 16px 16px 0}
 html.no-flexgap .tick>*+*{margin-left:14px}</style></head><body>
 
 <script>(function(){try{var d=document.createElement('div');d.style.cssText='display:flex;flex-direction:column;gap:1px';var x=document.createElement('div'),y=document.createElement('div');x.style.height='1px';y.style.height='1px';d.appendChild(x);d.appendChild(y);document.body.appendChild(d);var ok=d.scrollHeight===3;document.body.removeChild(d);if(!ok)document.documentElement.className+=' no-flexgap'}catch(e){}})();</script>
@@ -751,7 +760,6 @@ async function level(n){
   S.task[n]=S.task[n]||{a:false,p:false};
   app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
   <nav class="stage"><a href="#" data-s="learn"><span>Learn</span></a><a href="#" data-s="cards"><span>Cards</span></a><a href="#" data-s="play"><span>Play</span></a><a href="#" data-s="boss"><span>Boss</span></a><a href="#" data-s="home"><span>Home</span></a></nav>
-  <div class="panel quest rv"><b>By the end you can</b><ul class="can">${HW[n-1].obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
   <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>${esc(L.case||'LEARN WITH BYTE')}</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
   <section id="s-cards"><h2 data-rv><span class="skew">Stage 2</span><small>REVIEW CARDS</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)" onload="this.parentNode.querySelector('.ic').style.display='none'">`:''}${ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
   <section id="s-play"><h2 data-rv><span class="skew">Stage 3</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
@@ -963,23 +971,38 @@ function bootGame(el,n,gi){
   draw();
 }
 
+function scramble(node,plain,html,done){
+  if(RM){node.innerHTML=html;done&&done();return}
+  node.className='tx scr';node.hidden=false;
+  const L=plain.length,step=Math.max(1,Math.ceil(L/22));let k=0;
+  const iv=setInterval(()=>{
+    k+=step;
+    if(k>=L||!document.contains(node)){clearInterval(iv);node.className='tx';node.innerHTML=html;done&&done();return}
+    let out=plain.slice(0,k)+plain.slice(k).replace(/[A-Za-z0-9]/g,()=>Math.random()<.5?'0':'1');
+    node.textContent=out;if((k/step)%2===0)sfx.tick();
+  },32);
+}
 function teachPlayer(el,n){
   const T=TEACH[n];let i=0,tries=0,answered=false,fin=false;
   const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   function draw(){
     if(i>=T.length)return recap();
     const t=T[i];tries=0;answered=false;fin=false;
-    const hasQ=!!t.q;
+    const hasQ=!!t.q,N=t.lines.length;let shown=0,busy=false,ended=false;
     const opts=hasQ?shuffle(t.o.map((x,j)=>({x,ok:j===0}))):[];
     el.innerHTML=`<div class="hud2"><span class="eyebrow">${t.kind?esc(t.kind)+' · ':''}${LEVELS[n-1].case?'Clue':'Lesson'} ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
-    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div>
-    ${(t.img||t.svg)?`<figure class="slp">${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
-    <div id="sx"></div>
-    ${hasQ?`<div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
+    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li class="enc" data-k="${k}"><span class="red" aria-hidden="true"><i style="width:${38+((l.length*7)%52)}%"></i></span><span class="tx" hidden></span></li>`).join('')}</ul>
+      <div class="dec"><button class="btn mg pulse" id="dc"><span></span></button><button class="lnk" id="all">Show all</button></div>
+      <div id="more" hidden>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div></div>
+    ${(t.img||t.svg)?`<figure class="slp" id="fg" hidden>${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div id="sx" hidden></div>
+    ${hasQ?`<div class="qc" id="qc" hidden><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
     <div class="tease" id="ts" hidden></div>
     <div class="byte" id="by"></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
-    say($('#by',el),'idle',hasQ?'Read the points, then answer the quick check.':'Do the activity above. Then you can move on.');
+    const lis=el.querySelectorAll('.pts2 li');
+    const label=()=>{$('#dc span',el).textContent=shown<N?'Decrypt clue '+(shown+1)+' of '+N:'All clues decrypted'};
+    label();say($('#by',el),'idle','Tap the button to decrypt the first clue.');
     const complete=(perfect)=>{
       if(fin)return;fin=true;
       if(perfect&&!S.teach[n][i]){S.teach[n][i]=true;save();floatTxt('+5 XP',$('#nx',el),'#FFC700');paintHud()}
@@ -987,7 +1010,29 @@ function teachPlayer(el,n){
       if(t.tease){const ts=$('#ts',el);ts.textContent=t.tease;ts.hidden=false}
     };
     const ctx={done:(perfect,msg)=>{complete(perfect);if(msg)say($('#by',el),perfect?'ok':'idle',msg)},say:(m,x)=>say($('#by',el),m,x)};
-    if(typeof slideExtra==='function')slideExtra(t,$('#sx',el),ctx);
+    const finishText=()=>{
+      if(ended)return;ended=true;
+      $('.dec',el).hidden=true;
+      const mo=$('#more',el);if(mo.innerHTML.trim()){mo.hidden=false;mo.className='rv'}
+      const fg=$('#fg',el);if(fg){fg.hidden=false}
+      const sx=$('#sx',el);if(typeof slideExtra==='function'&&t.type){sx.hidden=false;sx.className='rv';slideExtra(t,sx,ctx)}
+      const qc=$('#qc',el);if(qc){qc.hidden=false;qc.className='qc rv'}
+      say($('#by',el),'idle',hasQ?'You decrypted everything. Now answer the quick check.':'You decrypted everything. Now do the activity above.');
+      if(!hasQ&&!t.type)ctx.done(true);
+    };
+    const revealOne=()=>{
+      if(busy||shown>=N)return;busy=true;
+      const li=lis[shown],k=shown,tx=li.querySelector('.tx'),red=li.querySelector('.red');
+      red.hidden=true;sfx.flip();
+      scramble(tx,t.lines[k].replace(/\*\*/g,''),md(t.lines[k]),()=>{
+        li.classList.add('open');shown++;busy=false;label();
+        if(shown===1){const fg=$('#fg',el);if(fg){fg.hidden=false;fg.className='slp rv'}}
+        if(shown>=N)finishText();else say($('#by',el),'idle','Clue '+shown+' decrypted. Tap for the next one.');
+      });
+    };
+    $('#dc',el).onclick=revealOne;
+    lis.forEach(li=>li.onclick=()=>{if(+li.dataset.k===shown)revealOne()});
+    $('#all',el).onclick=()=>{if(busy)return;lis.forEach((li,k)=>{if(k>=shown){li.querySelector('.red').hidden=true;const tx=li.querySelector('.tx');tx.hidden=false;tx.innerHTML=md(t.lines[k]);li.classList.add('open')}});shown=N;const fg=$('#fg',el);if(fg){fg.hidden=false;fg.className='slp'}finishText()};
     el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
       if(answered)return;const o=opts[+b.dataset.k];
       if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
