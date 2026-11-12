@@ -263,6 +263,27 @@ body.lite *{filter:none!important}
 [hidden]{display:none!important}
 .stage a.on{background:var(--cyan);border-color:var(--cyan);color:#001A22}
 .stnav{padding-top:12px}
+.why{background:rgba(255,199,0,.12);border-left:5px solid var(--gold);padding:10px 14px;margin-top:12px;font-size:3.4vw;font-size:clamp(17px,3.4vw,20px);line-height:1.35}
+.why em{display:block;font-family:var(--f-display);font-style:normal;color:var(--gold);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.why.ex{background:rgba(25,211,255,.1);border-left-color:var(--cyan)}
+.why.ex em{color:var(--cyan)}
+.why b{color:var(--gold)}
+.kws{display:flex;grid-gap:8px;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kw{background:#0B0720;border:2px solid var(--line);padding:5px 12px;font-size:16px;color:var(--muted)}
+.kw b{color:var(--cyan)}
+.xinfo{background:#0B0720;border-left:5px solid var(--cyan);padding:12px 16px;margin-top:8px;font-size:3.4vw;font-size:clamp(17px,3.4vw,20px);line-height:1.35;min-height:64px}
+.xinfo b{color:var(--gold)}
+.xbar{display:grid;grid-gap:8px;gap:8px;margin-top:8px}
+.xbar .r{display:flex;align-items:center;grid-gap:10px;gap:10px;background:#0B0720;padding:8px 12px}
+.xbar .lab{flex:0 0 92px;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.xbar .bars{flex:1;display:grid;grid-gap:3px;gap:3px;min-width:0}
+.xbar .bars i{display:block;height:9px;background:var(--cyan)}
+.xbar .bars i.m{background:var(--gold)}
+.xbar .num{flex:0 0 76px;text-align:right;font-family:var(--f-display);color:var(--gold)}
+.cmp{width:100%;border-collapse:collapse;font-size:3vw;font-size:clamp(15px,3vw,18px)}
+.cmp th{font-family:var(--f-display);text-transform:uppercase;font-size:13px;letter-spacing:.08em;color:var(--cyan);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
+.cmp td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp td:first-child{font-family:var(--f-display);color:var(--gold);text-transform:uppercase}
 .mdtabs{display:flex;grid-gap:8px;gap:8px;flex-wrap:wrap}
 .mdtabs .opt{flex:1 1 140px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
 .mdtabs .opt[aria-pressed="true"]{background:var(--cyan);color:#001A22;border-left-color:#fff}
@@ -349,6 +370,8 @@ html.no-flexgap .layer>*+*{margin-left:10px}
 html.no-flexgap .pool>*{margin:0 10px 10px 0}
 html.no-flexgap .sw>*+*{margin-left:10px}
 html.no-flexgap .file>*+*{margin-left:12px}
+html.no-flexgap .kws>*{margin:0 8px 8px 0}
+html.no-flexgap .xbar .r>*+*{margin-left:10px}
 html.no-flexgap .mdtabs>*{margin:0 8px 8px 0}
 html.no-flexgap .tick>*+*{margin-left:14px}</style></head><body>
 
@@ -431,39 +454,84 @@ const LEVELS=[
 ];
 const TEACH={
 1:[
- {h:'What is a computer network?',lines:['A **network** is two or more computers **joined together**.','They can share **files**, **printers** and the **internet**.','Example: the computers in your school lab.'],svg:'net',cap:'A small network: computers, a printer and a hub.',q:'A network is two or more computers...',o:['joined together','kept in a box','painted blue','switched off']},
- {h:'Nodes and links',lines:['Each computer, printer or phone on the network is a **node**.','The cables (or wireless signals) that join them are called **links**.','A **hub** or **switch** is a box that joins many cables together.'],svg:'net',cap:'Nodes are the devices. Links are the lines between them.',q:'Each computer in a network is called a...',o:['node','link','hub','bus']},
- {h:'What is a topology?',lines:['**Topology** means the **shape** or **layout** of a network.','It shows how the computers are arranged and how they are joined.','Think of a map of the computers and cables.'],svg:'',cap:'',q:'A network topology is the... of a network.',o:['layout (shape)','price','colour','name']},
- {h:'Three types to learn',lines:['**Bus**: all computers on one main cable.','**Star**: all computers joined to a central hub.','**Ring**: computers joined in a circle.'],svg:'all',cap:'Bus, star and ring.',q:'Which one is a type of network topology?',o:['Ring','Hammer','Pencil','Window']},
- {h:'Why does topology matter?',lines:['The layout changes the **cost** of a network.','It changes how **fast** the network works.','It also changes **what happens when something breaks**.','So people choose the layout that suits them.'],svg:'',cap:'',q:'The layout of a network can change...',o:['its cost and what happens when something breaks','the weather','the colour of the keyboard','your name']}
+ {h:'Why connect computers?',lines:['Picture a school lab with ten computers and only one printer.','Without a network, you must carry a flash drive from computer to computer. And only the computer joined to the printer can print.','With a network, all ten computers can use the same printer and share files.','So a **network** is two or more computers **joined together** so they can share things.'],why:'Sharing saves money (one printer instead of ten), saves time, and lets people work together.',ex:'Your school lab, a bank with many branches, a cyber café.',svg:'net',cap:'Computers and a printer joined through a hub.',q:'Why do schools connect their computers in a network?',o:['So the computers can share files and a printer','So the computers become taller','So the screens turn red','So the computers do not need electricity']},
+ {h:'What can a network share?',lines:['**Files**: save a project on one computer and open it on another.','**Hardware**: one printer or scanner can serve many computers.','**An internet connection**: one internet line can serve the whole lab.','**Messages**: send emails and chats to other computers.'],why:'All of these ideas work because the computers are joined together and can send data to each other.',svg:'',cap:'',q:'Which of these can computers on a network share?',o:['A printer and an internet connection','The weather','A school uniform','A football']},
+ {h:'Nodes: the devices',lines:['Every device on the network is called a **node**.','A node can be a computer, a laptop, a printer, a phone or a scanner.','Think of a street. Each house on the street is a node.','Count every device, not only the computers.'],ex:'A lab with 10 computers and 1 printer on the network has **11 nodes**.',svg:'net',cap:'Three computers and a printer are nodes. The hub joins them.',q:'A lab has 6 computers and 1 printer on the network. How many nodes are there?',o:['7','6','1','2']},
+ {h:'Links: the connections',lines:['The **link** is what joins the nodes together.','A link can be a **cable** (wired) or a **wireless signal** like Wi-Fi.','Data (messages, files) travels along the links, like cars on a road.','Without links, the nodes would be alone.'],kw:[['Wired','uses cables'],['Wireless','uses signals in the air']],svg:'',cap:'',q:'What do we call the cables or signals that join the nodes?',o:['Links','Icons','Folders','Passwords']},
+ {h:'Hub and switch',lines:['A **hub** or **switch** is a box with many sockets.','The cable from each computer plugs into one socket.','The box receives data and passes it on.','Think of a junction where many roads meet.'],kw:[['Hub','passes data to all']],why:'A hub or switch lets many cables meet in one place, so it is easy to connect many computers.',svg:'net',cap:'The hub is in the middle.',q:'A box that joins many cables together is called a...',o:['hub or switch','keyboard','monitor','speaker']},
+ {h:'What is a topology?',lines:['**Topology** means the **layout** of a network.','It answers one question: how are the computers arranged and joined together?','If you draw a dot for each computer and a line for each cable, the picture you draw is the **topology**.','Two labs can have the same computers but a different topology.'],why:'The word comes from Greek. "Topos" means place, and the ending means study. So topology is the study of where things are placed.',svg:'',cap:'',q:'If you draw dots for computers and lines for cables, you have drawn the network\'s...',o:['topology','password','program','keyboard']},
+ {h:'Three common layouts',lines:['**Bus**: all computers hang on one main cable.','**Star**: all computers join a hub in the middle.','**Ring**: the computers join in a circle.','In the next lessons you will learn each one carefully.'],svg:'all',cap:'Bus, star and ring.',q:'Which one is a type of network topology?',o:['Ring','Hammer','Pencil','Window']},
+ {h:'Why does topology matter?',lines:['The layout changes the **cost** of the network.','It changes how **fast** and how **fairly** the network works.','It changes **what happens when something breaks**.','So people choose the layout that suits their needs.'],ex:'A small school lab wants a **cheap** network. A bank wants a network that **keeps working** when one cable breaks. They may choose different topologies.',svg:'',cap:'',q:'The layout of a network can change...',o:['its cost and what happens when something breaks','the weather','the colour of the keyboard','your name']}
 ],
 2:[
- {h:'Bus topology',lines:['All the computers connect to **one main cable**.','The main cable is called the **bus** or **backbone**.','Think of a road with many bus stops. Every stop is on the same road.'],svg:'bus',cap:'Computers hang off one main cable.',q:'In a bus topology, all computers connect to...',o:['one main cable','a hub','a circle','a satellite']},
- {h:'How a bus network works',lines:['A computer sends data onto the main cable.','The data travels along the cable.','Only the right computer takes it.','A **terminator** sits at each end. It stops the signal bouncing back.'],svg:'bus',cap:'The red blocks at each end are terminators.',q:'What does a terminator do?',o:['Stops the signal bouncing back','Adds more computers','Makes the cable longer','Switches on the hub']},
- {h:'Advantages of a bus',lines:['It is **cheap**. It uses less cable.','It is **easy to set up**.','It is good for a **small** network.','It is easy to add one more computer.'],svg:'bus',cap:'Less cable means less money.',q:'Which is an advantage of a bus topology?',o:['It is cheap and uses less cable','It never breaks','It is fastest with a thousand computers','It needs no cable']},
- {h:'Disadvantages of a bus',lines:['If the **main cable breaks**, the whole network can stop.','With many computers, data **slows down**. They all share one cable.','It is **hard to find** where a fault is.'],svg:'bus',cap:'One cut in the middle splits the network.',q:'If the main cable breaks in a bus network...',o:['the whole network can stop','nothing happens','only one computer stops','the computers become faster']},
- {h:'Where is a bus used?',lines:['A bus is the simplest idea, so we learn it first.','It suits a **small network** with few computers.','Big networks use other layouts.'],svg:'',cap:'',q:'A bus topology is best for a...',o:['small network','network of thousands of computers','network with no computers','space station']}
+ {h:'Picture a bus route',lines:['Think of a road with bus stops along it.','The road is one long line. Every bus stop is on that same road.','A **bus topology** works in a similar way.','The road is the main cable. The bus stops are the computers.'],svg:'bus',cap:'Computers hang off one main cable, like bus stops on a road.',q:'In the picture, what is like the road?',o:['The main cable','A computer','A terminator','The printer']},
+ {h:'Parts of a bus network',type:'explore',topo:'bus',lines:['A bus network has a few parts.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+   {x:100,y:34,t:'1. Computer (node)',d:'A computer on the network. In the picture there are six.'},
+   {x:92,y:82,t:'2. Drop cable',d:'A short cable that joins one computer to the main cable.'},
+   {x:122,y:100,t:'3. Main cable (bus or backbone)',d:'The one long cable that every computer connects to. All data travels along it.'},
+   {x:20,y:92,t:'4. Terminator',d:'A block at each end of the main cable. It stops the signal from bouncing back.'}],
+  q:'What is the main cable in a bus network also called?',o:['The backbone','The terminator','The node','The hub']},
+ {h:'Terminators',lines:['At each end of the main cable there is a **terminator**.','Data travels along the cable as an electrical signal.','When the signal reaches the end of the cable, it could bounce back, like an echo.','The terminator **absorbs** the signal so it disappears.'],why:'If the signal bounced back, it would mix with new data and confuse the computers.',svg:'bus',cap:'The red blocks are the terminators.',q:'Why does a bus network need terminators?',o:['To stop the signal bouncing back','To make the cable longer','To add more computers','To switch on the printer']},
+ {h:'Watch: how a message travels',type:'watch',topo:'bus',from:'pc1',to:'pc6',lines:['Follow a message from PC1 to PC6.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+   {at:0,text:'PC1 wants to send a message to PC6. It puts the data on the main cable.'},
+   {at:2,text:'The data travels along the main cable. Every computer on the cable can "hear" it.'},
+   {at:3,text:'The data keeps moving along the cable, towards the right side of the network.'},
+   {at:4,text:'PC6 sees that the message is for it and takes it. The other computers ignore it.'}],
+  q:'In a bus network, which computers can hear a message on the main cable?',o:['All of them, but only the right one takes it','Only the first computer','Only the last computer','None of them']},
+ {h:'Advantage 1: it is cheap',lines:['A bus network uses **less cable** than other layouts.','One main cable is shared by all the computers.','Each computer only needs a short cable to join the main one.','Less cable means less money.'],why:'Every computer shares the same main cable, so you do not need a separate long cable for each computer.',ex:'Six computers need one main cable and six short drop cables.',svg:'bus',cap:'',q:'Why is a bus network cheap?',o:['All the computers share one main cable','It has no computers','It uses gold cable','It does not need electricity']},
+ {h:'Advantage 2: easy to set up',lines:['To build a bus network, lay one main cable and plug the computers in along it.','To add a new computer, join it to the main cable.','This is simple, so it works well for **small networks**.'],ex:'A small lab with 4 to 6 computers, or a small office.',svg:'bus',cap:'',q:'A bus topology is best for a...',o:['small network','network of thousands of computers','network with no computers','space station']},
+ {h:'Disadvantage 1: one break stops everything',lines:['All the computers depend on the **same main cable**.','If the main cable breaks, the network splits in two, or stops completely.','Computers on different sides of the break cannot talk to each other.'],why:'There is only one path for the data. If the path is cut, the data has no other way to go.',svg:'bus-cut',cap:'The cut in the main cable splits the network.',q:'Why does one break in the main cable cause so many problems?',o:['There is only one path for the data','The computers get angry','The cable is heavy','The terminators run away']},
+ {h:'Disadvantage 2: slow when busy',lines:['All computers share one cable.','Only one computer can send data at a time.','If two computers send together, their data **collide** and must be sent again.','More computers means more waiting.'],why:'It is like a one-lane road. When many cars try to use it at once, there is a traffic jam.',svg:'',cap:'',q:'Why does a busy bus network slow down?',o:['All the computers share one cable','The cable is too short','The terminators are tired','The computers are too tall']},
+ {h:'Disadvantage 3: hard to find faults',lines:['If the network stops, the problem could be **anywhere** along the long main cable.','You may have to check the cable piece by piece.','This can take a long time.'],ex:'A technician must walk along the whole cable to find the damaged part.',svg:'',cap:'',q:'Why is it hard to find a fault in a bus network?',o:['The fault could be anywhere along the main cable','There are no cables','Faults hide in the monitor','Terminators hide them']},
+ {h:'Now try it yourself',lines:['In the **Play** stage there is a **Bus network lab**.','Send a message from one computer to another.','Then cut the main cable and send again.','You will see for yourself why one break is a big problem.'],svg:'bus',cap:'',q:'In the lab, you cut the main cable between PC1 and PC3. What happens to a message from PC1 to PC3?',o:['It fails to arrive','It arrives faster','It arrives twice','It turns into an email']}
 ],
 3:[
- {h:'Star topology',lines:['Every computer connects to a **central device**.','The central device is a **hub** or a **switch**.','Think of a village square. Every path leads to the middle.'],svg:'star',cap:'All computers connect to the hub in the middle.',q:'In a star topology, every computer connects to a...',o:['central hub or switch','main bus cable','ring of cables','keyboard']},
- {h:'How a star network works',lines:['A computer sends its data to the hub.','The hub sends it to the right computer.','Each computer has its **own cable** to the hub.'],svg:'star',cap:'One cable for each computer.',q:'In a star network, each computer has...',o:['its own cable to the hub','one shared main cable','two cables to its neighbours','no cable']},
- {h:'Advantages of a star',lines:['If **one cable or computer fails**, the others keep working.','It is easy to **add or remove** a computer.','It is easy to **find faults**.','It works well, even with many computers.'],svg:'star',cap:'One broken spoke cuts off only one computer.',q:'Which is an advantage of a star topology?',o:['It is easy to add a computer and find faults','It uses the least cable','It needs no hub','It costs nothing']},
- {h:'Disadvantages of a star',lines:['If the **hub fails**, the whole network stops.','It needs **more cable** than a bus.','The hub costs money.'],svg:'star',cap:'Everything depends on the hub.',q:'If the hub of a star network fails...',o:['the whole network stops','nothing happens','only one computer stops','the cables get shorter']},
- {h:'Star in real life',lines:['Most school and office networks use a star layout today.','Your home **Wi-Fi router** is like a hub. Every device connects to it.'],svg:'',cap:'',q:'A home Wi-Fi router works like a...',o:['hub in a star network','bus cable','ring','keyboard']}
+ {h:'Picture a village square',lines:['Imagine a village with a square in the middle.','Every path from every house leads to the square.','To visit a neighbour, you walk to the square, then take the neighbour\'s path.','A **star topology** works in a similar way.'],svg:'star',cap:'Every computer has a path to the middle.',q:'In the picture, what is like the village square?',o:['The hub','A computer','The printer','A terminator']},
+ {h:'Parts of a star network',type:'explore',topo:'star',lines:['A star network has three main parts.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+   {x:160,y:86,t:'1. Hub (or switch)',d:'The box in the middle. Every cable from every computer plugs into it.'},
+   {x:218,y:84,t:'2. Cable (the spoke)',d:'Each computer has its own cable going to the hub. Like the spokes of a wheel.'},
+   {x:192,y:22,t:'3. Computer (node)',d:'A computer on the network. In the picture there are six.'}],
+  q:'In a star network, how does each computer connect to the hub?',o:['With its own cable','Through one shared main cable','Through its two neighbours','It does not connect']},
+ {h:'Hub or switch?',lines:['A **hub** receives data and sends it out to **all** the computers.','A **switch** is smarter. It sends the data **only** to the computer it is meant for.','Both sit in the middle of a star network.','Most modern networks use switches.'],kw:[['Hub','sends to everyone'],['Switch','sends to the right computer only']],why:'A switch wastes less of the network, because the other computers are not bothered with data that is not for them.',svg:'star',cap:'',q:'Which one sends data only to the computer it is meant for?',o:['A switch','A hub','Both of them','Neither of them']},
+ {h:'Watch: how a message travels',type:'watch',topo:'star',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+   {at:0,text:'PC1 wants to send a message to PC4. It sends the data along its own cable.'},
+   {at:1,text:'The data reaches the hub. The hub decides where to send it.'},
+   {at:2,text:'The hub sends the data along PC4\'s own cable. PC4 receives the message.'}],
+  q:'In a star network, a message from one computer to another always passes through the...',o:['hub','printer','keyboard','speaker']},
+ {h:'Advantage 1: one failure does not stop the rest',lines:['Each computer has its **own cable** to the hub.','If one cable breaks, only the computer at the end of it is cut off.','All the other computers carry on working.'],why:'The cables do not depend on each other. A break in one spoke does not affect the other spokes.',ex:'If PC3\'s cable breaks, PC1, PC2, PC4, PC5 and PC6 can still talk to each other.',svg:'star-cut',cap:'One cut cable cuts off one computer only.',q:'In a star network, one computer\'s cable breaks. What happens?',o:['Only that computer is cut off','The whole network stops','The hub explodes','Every computer slows down']},
+ {h:'Advantage 2: easy to add or remove computers',lines:['To add a computer, plug a new cable into a free socket on the hub.','To remove one, unplug its cable.','The other computers are not disturbed.'],ex:'A school buys two new computers. The technician plugs two more cables into the switch.',svg:'star',cap:'',q:'How do you add a new computer to a star network?',o:['Plug a new cable into the hub','Cut the main cable','Rebuild the whole network','Turn off every computer for a week']},
+ {h:'Advantage 3: easy to find faults',lines:['If one computer cannot connect, check **its** cable first.','The other computers still work, so you know the hub is fine.','Faults are quick to find and fix.'],why:'Each computer has its own cable, so you can tell exactly which part has the problem.',svg:'',cap:'',q:'Why is it easy to find a fault in a star network?',o:['Each computer has its own cable, so you can check one at a time','There are no faults','The cable is very short','The hub fixes itself']},
+ {h:'Disadvantage 1: if the hub fails, everything stops',lines:['Every message passes through the **hub**.','If the hub breaks or loses power, no computer can talk to another.','The whole network stops.'],why:'The hub is the one part that everything depends on. This is the weakness of a star.',svg:'star-off',cap:'The hub is off. Nothing can get through.',q:'If the hub of a star network fails...',o:['the whole network stops','nothing happens','only one computer stops','the cables get shorter']},
+ {h:'Disadvantage 2: more cable and more money',type:'counter',lines:['Every computer needs its **own cable** all the way to the hub.','A bus network shares one main cable.','Use the buttons to change the number of computers.'],svg:'',cap:'',q:'Why does a star network usually need more cable than a bus network?',o:['Each computer needs its own cable to the hub','Computers are bigger','Hubs eat cable','The cable is shorter']},
+ {h:'Star in real life',lines:['Most school, bank and office networks today use a star layout.','Your home **Wi-Fi router** is like a hub. Every phone and laptop connects to it.','If the router goes off, your devices cannot talk to each other or to the internet.'],ex:'A school lab where all computers are plugged into one switch in the corner.',svg:'',cap:'',q:'A home Wi-Fi router works like a...',o:['hub in a star network','bus cable','ring','keyboard']}
 ],
 4:[
- {h:'Ring topology',lines:['Each computer connects to **two neighbours**.','Together they make a **circle**.','Like children in a circle, passing a parcel.'],svg:'ring',cap:'Each computer joins the next one.',q:'In a ring topology, each computer connects to...',o:['two neighbours','one main cable','a central hub','no other computer']},
- {h:'How a ring network works',lines:['Data travels in **one direction** around the ring.','Each computer passes the data to the next one.','The computer it is meant for keeps it.'],svg:'ring',cap:'The arrows show which way data goes.',q:'In a ring, data travels...',o:['around the circle, one computer to the next','to every computer at once','straight down a main cable','nowhere']},
- {h:'Advantages of a ring',lines:['Data moves in an **orderly** way. Computers do not crash into each other.','Every computer gets a **fair turn**.','It works well even when the network is busy.'],svg:'ring',cap:'Everyone gets a turn.',q:'Which is an advantage of a ring topology?',o:['Every computer gets a fair turn','It uses the most cable','It needs a hub','It never fails']},
- {h:'Disadvantages of a ring',lines:['If **one computer or cable fails**, the whole ring can stop.','It is **hard to find** the fault.','Adding or removing a computer **disturbs** the network.'],svg:'ring',cap:'A break anywhere stops the data.',q:'If one computer in a simple ring fails...',o:['the whole ring can stop','only that computer stops while all others work','nothing happens','the ring becomes a star']},
- {h:'Compare all three',lines:['**Bus**: one main cable. Cheap. One break stops all.','**Star**: central hub. Easy to fix. If the hub fails, all stop.','**Ring**: a circle. Fair turns. One break stops all.'],svg:'all',cap:'Bus, star and ring.',q:'Which topology uses a central hub?',o:['Star','Bus','Ring','All of them']},
- {h:'Choose the best',lines:['Small, cheap lab with few computers: **bus**.','A lab where faults must be easy to fix: **star**.','A network where every computer needs a fair turn: **ring**.'],svg:'',cap:'',q:'A school wants a network that is easy to fix when one cable breaks. Best choice?',o:['Star','Bus','Ring','None of them']}
+ {h:'Picture pass the parcel',lines:['Imagine children sitting in a circle, playing pass the parcel.','Each child hands the parcel to the child next to them.','The parcel goes round and round in one direction.','A **ring topology** works in a similar way.'],svg:'ring',cap:'Each computer passes data to the next one.',q:'In the picture, what is like the parcel?',o:['The data','The computer','The cable','The printer']},
+ {h:'Parts of a ring network',type:'explore',topo:'ring',lines:['A ring network has computers and links.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+   {x:192,y:24,t:'1. Computer (node)',d:'Each computer is joined to exactly two neighbours.'},
+   {x:222,y:50,t:'2. Link',d:'A cable between two neighbouring computers. All the links together make a circle.'},
+   {x:279,y:115,t:'3. Direction arrow',d:'Shows which way the data travels. In a simple ring the data goes one way only.'},
+   {x:192,y:206,t:'4. Neighbours',d:'Every computer has two neighbours. It receives from one and passes to the other.'}],
+  q:'In a ring topology, each computer is connected to...',o:['two neighbours','one main cable','a central hub','no other computer']},
+ {h:'Watch: how a message travels',type:'watch',topo:'ring',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+   {at:0,text:'PC1 wants to send a message to PC4. It passes the data to its neighbour, PC2.'},
+   {at:1,text:'PC2 checks. The message is not for it, so it passes the data on to PC3.'},
+   {at:2,text:'PC3 checks. The message is not for it either, so it passes it on to PC4.'},
+   {at:3,text:'PC4 sees the message is for it and keeps it.'}],
+  q:'In a ring, a message from PC1 to PC4 passes through...',o:['the computers in between, one after the other','a central hub','one main cable','no computer']},
+ {h:'Fair turns: the token idea',lines:['In some rings, a special message called a **token** goes round and round.','Only the computer that holds the token may send data.','When it is finished, it passes the token to the next computer.','So every computer gets a turn.'],kw:[['Token','a pass that lets a computer send']],why:'Because only one computer sends at a time, data does not crash into other data.',svg:'ring',cap:'',q:'In a token ring, which computer may send data?',o:['The one holding the token','All computers at once','Only the first computer','Nobody']},
+ {h:'Advantage 1: orderly data',lines:['Data moves in **one direction**, in order.','Computers do not send at the same time, so data does not **collide**.','This makes the network steady and predictable.'],why:'Everyone follows the same order, like children in a queue.',svg:'ring',cap:'',q:'Why does data not crash in a ring network?',o:['It moves in order, one way round','The cable is magic','There is only one computer','It does not move'] },
+ {h:'Advantage 2: fair turns, even when busy',lines:['Every computer gets a **fair turn** to send data.','No computer is left waiting forever.','A ring keeps working well even when the network is busy.'],ex:'In a busy school lab, every student\'s computer still gets its turn.',svg:'',cap:'',q:'Which is an advantage of a ring topology?',o:['Every computer gets a fair turn','It uses the most cable','It needs a hub','It never fails']},
+ {h:'Disadvantage 1: one break can stop the ring',lines:['The data must pass through **every computer** on the way round.','If one computer or one cable fails, the data cannot get past it.','The whole ring can stop working.'],why:'There is only one way round. If the way is blocked, the data cannot reach the other side.',svg:'ring-cut',cap:'A cut cable breaks the circle.',q:'If one computer in a simple ring fails...',o:['the whole ring can stop','only that computer stops while all others work','nothing happens','the ring becomes a star']},
+ {h:'Disadvantage 2: hard to fix and hard to change',lines:['When the ring stops, it is **hard to find** which computer or cable is the problem.','Adding or removing a computer **disturbs** the whole network.','You may need to switch the network off to change it.'],svg:'',cap:'',q:'Why is it a problem to add a computer to a ring?',o:['It disturbs the whole ring','There are no sockets','Rings do not have computers','The computers are too tall']},
+ {h:'Compare the three',type:'table',lines:['Read the table. It shows all three topologies side by side.'],svg:'',cap:'',q:'Which topology has a central hub or switch?',o:['Star','Bus','Ring','All of them']},
+ {h:'Choosing the best topology',lines:['Small, cheap lab with few computers: **bus**.','A lab where faults must be easy to find and fix: **star**.','A network where every computer needs a fair turn: **ring**.','There is no best topology for everything. It depends on what you need.'],ex:'A school plans to add new computers every year and wants faults fixed fast. A **star** suits it best.',svg:'',cap:'',q:'A school wants a network that is easy to fix when one cable breaks. Best choice?',o:['Star','Bus','Ring','None of them']}
 ]};
 const RECAP={
-1:['A network is two or more computers joined together.','A node is any device on the network. A link is the cable between them.','Topology is the layout of a network.','The three types are bus, star and ring.'],
-2:['Bus: all computers on one main cable, with terminators at the ends.','Advantages: cheap, easy to set up, uses less cable.','Disadvantages: one break can stop everything, slows down when busy, hard to find faults.'],
-3:['Star: every computer has its own cable to a central hub or switch.','Advantages: one failure does not stop the others, easy to add computers and find faults.','Disadvantages: hub failure stops everything, needs more cable.'],
-4:['Ring: computers in a circle, data goes one way.','Advantages: orderly data, fair turns.','Disadvantages: one failure can stop the ring, hard to fix.','Bus is cheap, star is easy to fix, ring is fair.']
+1:['A network is two or more computers joined together to share files, printers and the internet.','A node is any device on the network. A link is the cable or signal that joins nodes.','A hub or switch is a box that joins many cables together.','Topology is the layout of a network. The three types are bus, star and ring.'],
+2:['Bus topology: all computers connect to one main cable (the bus or backbone). Terminators sit at both ends.','Advantages: cheap, uses less cable, easy to set up, good for small networks.','Disadvantages: one break can stop the whole network, it slows down when busy, and faults are hard to find.','Why? All computers share one cable and there is only one path.'],
+3:['Star topology: every computer has its own cable to a central hub or switch.','Advantages: one failure does not stop the others, easy to add computers, easy to find faults.','Disadvantages: if the hub fails the whole network stops, and it needs more cable.','Why? The hub is the centre, and the cables do not depend on each other.'],
+4:['Ring topology: computers joined in a circle. Each has two neighbours and data goes one way.','Advantages: orderly data, fair turns, steady when busy.','Disadvantages: one break can stop the ring, hard to find faults, hard to add computers.','Bus is cheap, star is easy to fix, ring is fair. Choose the one that fits the need.']
 };
 
 const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
@@ -959,12 +1027,14 @@ function teachPlayer(el,n){
     const t=T[i];tries=0;answered=false;
     const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
     el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
-    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul></div>
+    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div>
     ${(t.img||t.svg)?`<figure class="slp">${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div id="sx"></div>
     <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
     <div class="byte" id="by"></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
     say($('#by',el),'idle','Read the points, then answer the quick check.');
+    if(typeof slideExtra==='function')slideExtra(t,$('#sx',el));
     el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
       if(answered)return;const o=opts[+b.dataset.k];
       if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
@@ -1069,9 +1139,12 @@ function drawTopo(type,o){
     const g=n.k==='hub'?hubSvg(n.x,n.y,off,sel):pcSvg(n.x,n.y,o.labels===false?'':n.label,off?'#FF4757':'#19D3FF',sel);
     s+=o.hit?`<g class="nd" data-n="${n.id}" style="cursor:pointer;${off?'opacity:.55':''}">${g}</g>`:g;
   });
+  (o.marks||[]).forEach((m,i)=>{s+=`<g class="mk" data-i="${i}" style="cursor:pointer"><circle cx="${m.x}" cy="${m.y}" r="20" fill="rgba(0,0,0,0.001)"/><circle cx="${m.x}" cy="${m.y}" r="12" fill="#FFC700" stroke="#1B1200" stroke-width="2"/><text x="${m.x}" y="${m.y+5}" text-anchor="middle" font-size="15" fill="#1B1200" ${SVGF}>${i+1}</text></g>`});
   return s;
 }
 function topoSVG(type){
+  const vm=/^(bus|star|ring)-(cut|off)$/.exec(type);
+  if(vm){const base=vm[1],o=vm[2]==='off'?{off:{hub:true}}:{cut:{bus:{b0:true},star:{s3:true},ring:{r1:true}}[base]};return `<svg viewBox="0 0 320 230" role="img" aria-label="${base} topology with a fault">${drawTopo(base,o)}</svg>`}
   if(type==='all'){
     return `<svg viewBox="0 0 480 140" role="img" aria-label="Bus, star and ring topologies">${['bus','star','ring'].map((t,i)=>`<g transform="translate(${i*160+2},0) scale(.49)">${drawTopo(t,{labels:false})}</g><text x="${i*160+80}" y="134" text-anchor="middle" font-size="15" fill="#FFC700" ${SVGF}>${t.toUpperCase()}</text>`).join('')}</svg>`;
   }
@@ -1152,6 +1225,47 @@ function labFor(type){
     }
     render();
   };
+}
+
+
+function slideExtra(t,box){
+  const mdx=x=>esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  if(!t.type){box.innerHTML='';return}
+  if(t.type==='explore'){
+    box.innerHTML=`<div class="topo"><svg viewBox="0 0 320 230" role="img" aria-label="${t.topo} topology with numbered parts">${drawTopo(t.topo,{labels:false,marks:t.parts})}</svg></div><div class="xinfo" id="xi">Tap a gold number on the picture to learn about that part.</div>`;
+    const seen={};
+    box.querySelectorAll('.mk').forEach(g=>g.onclick=()=>{const p=t.parts[+g.dataset.i];seen[g.dataset.i]=1;sfx.tap();$('#xi',box).innerHTML='<b>'+esc(p.t)+'</b><br>'+esc(p.d)+'<br><span style="color:var(--muted);font-size:15px">Parts seen: '+Object.keys(seen).length+' of '+t.parts.length+'</span>'});
+    return;
+  }
+  if(t.type==='watch'){
+    const T=TOPO(t.topo),N={};T.nodes.forEach(n=>N[n.id]=n);const path=findPath(T,t.from,t.to,{},{});let k=0;
+    const draw=()=>{
+      const st=t.steps[k];let hl='';
+      for(let i=1;i<=st.at;i++){const a=N[path[i-1]],b=N[path[i]];hl+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#3CFF8F" stroke-width="7" stroke-linecap="round" opacity=".85"/>`}
+      const c=N[path[st.at]];
+      box.innerHTML=`<div class="topo"><svg viewBox="0 0 320 230" role="img" aria-label="Message travelling in a ${t.topo} network">${drawTopo(t.topo,{})}${hl}<circle cx="${c.x}" cy="${c.y}" r="9" fill="#3CFF8F" stroke="#fff" stroke-width="2"/></svg></div>
+      <div class="xinfo" aria-live="polite"><b>Step ${k+1} of ${t.steps.length}.</b> ${mdx(st.text)}</div>
+      <div class="row" style="margin-top:8px"><button class="btn gh" id="wb" ${k?'':'disabled'}><span>Previous step</span></button><button class="btn cy" id="wn" ${k<t.steps.length-1?'':'disabled'}><span>Next step</span></button></div>`;
+      $('#wb',box).onclick=()=>{k--;sfx.tap();draw()};$('#wn',box).onclick=()=>{k++;sfx.ok();draw()};
+    };
+    draw();return;
+  }
+  if(t.type==='counter'){
+    let n=4;
+    const draw=()=>{
+      const bus=6+n,star=6*n;
+      box.innerHTML=`<div class="row" style="justify-content:flex-start;margin-top:6px"><button class="btn gh" id="cm" ${n>2?'':'disabled'}><span>− computer</span></button><span class="score" style="font-size:24px">${n} computers</span><button class="btn gh" id="cp2" ${n<8?'':'disabled'}><span>+ computer</span></button></div>
+      <div class="xbar"><div class="r"><span class="lab" style="color:var(--gold)">Bus</span><span class="bars"><i class="m" style="width:60%"></i>${Array.from({length:n},()=>'<i style="width:10%"></i>').join('')}</span><span class="num">${bus}</span></div>
+      <div class="r"><span class="lab" style="color:var(--cyan)">Star</span><span class="bars">${Array.from({length:n},()=>'<i style="width:60%"></i>').join('')}</span><span class="num">${star}</span></div></div>
+      <div class="xinfo">Example in units of cable. <b>Bus:</b> 1 main cable (6 units) + ${n} short cables (1 unit each) = <b>${bus}</b>. <b>Star:</b> ${n} cables of 6 units each = <b>${star}</b>. Add more computers and watch the gap grow.</div>`;
+      $('#cm',box).onclick=()=>{n--;sfx.tap();draw()};$('#cp2',box).onclick=()=>{n++;sfx.tap();draw()};
+    };
+    draw();return;
+  }
+  if(t.type==='table'){
+    const rows=[['Bus','One main cable','Cheap. Easy to set up. Uses less cable.','One break can stop all. Slows when busy. Hard to find faults.'],['Star','A central hub or switch','One failure does not stop the rest. Easy to add computers and find faults.','If the hub fails, all stop. Needs more cable.'],['Ring','A circle of computers','Orderly data. Fair turns. Steady when busy.','One break can stop the ring. Hard to fix and to change.']];
+    box.innerHTML=`<div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Topology</th><th>Shape</th><th>Advantages</th><th>Disadvantages</th></tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
 }
 
 /* ---------- games per level ---------- */

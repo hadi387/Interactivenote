@@ -263,6 +263,27 @@ body.lite *{filter:none!important}
 [hidden]{display:none!important}
 .stage a.on{background:var(--cyan);border-color:var(--cyan);color:#001A22}
 .stnav{padding-top:12px}
+.why{background:rgba(255,199,0,.12);border-left:5px solid var(--gold);padding:10px 14px;margin-top:12px;font-size:3.4vw;font-size:clamp(17px,3.4vw,20px);line-height:1.35}
+.why em{display:block;font-family:var(--f-display);font-style:normal;color:var(--gold);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.why.ex{background:rgba(25,211,255,.1);border-left-color:var(--cyan)}
+.why.ex em{color:var(--cyan)}
+.why b{color:var(--gold)}
+.kws{display:flex;grid-gap:8px;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kw{background:#0B0720;border:2px solid var(--line);padding:5px 12px;font-size:16px;color:var(--muted)}
+.kw b{color:var(--cyan)}
+.xinfo{background:#0B0720;border-left:5px solid var(--cyan);padding:12px 16px;margin-top:8px;font-size:3.4vw;font-size:clamp(17px,3.4vw,20px);line-height:1.35;min-height:64px}
+.xinfo b{color:var(--gold)}
+.xbar{display:grid;grid-gap:8px;gap:8px;margin-top:8px}
+.xbar .r{display:flex;align-items:center;grid-gap:10px;gap:10px;background:#0B0720;padding:8px 12px}
+.xbar .lab{flex:0 0 92px;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.xbar .bars{flex:1;display:grid;grid-gap:3px;gap:3px;min-width:0}
+.xbar .bars i{display:block;height:9px;background:var(--cyan)}
+.xbar .bars i.m{background:var(--gold)}
+.xbar .num{flex:0 0 76px;text-align:right;font-family:var(--f-display);color:var(--gold)}
+.cmp{width:100%;border-collapse:collapse;font-size:3vw;font-size:clamp(15px,3vw,18px)}
+.cmp th{font-family:var(--f-display);text-transform:uppercase;font-size:13px;letter-spacing:.08em;color:var(--cyan);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
+.cmp td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp td:first-child{font-family:var(--f-display);color:var(--gold);text-transform:uppercase}
 #fx{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:85}
 .target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
 .target.pic{padding:10px}
@@ -341,6 +362,8 @@ html.no-flexgap .layer>*+*{margin-left:10px}
 html.no-flexgap .pool>*{margin:0 10px 10px 0}
 html.no-flexgap .sw>*+*{margin-left:10px}
 html.no-flexgap .file>*+*{margin-left:12px}
+html.no-flexgap .kws>*{margin:0 8px 8px 0}
+html.no-flexgap .xbar .r>*+*{margin-left:10px}
 html.no-flexgap .tick>*+*{margin-left:14px}</style></head><body>
 
 <script>(function(){try{var d=document.createElement('div');d.style.cssText='display:flex;flex-direction:column;gap:1px';var x=document.createElement('div'),y=document.createElement('div');x.style.height='1px';y.style.height='1px';d.appendChild(x);d.appendChild(y);document.body.appendChild(d);var ok=d.scrollHeight===3;document.body.removeChild(d);if(!ok)document.documentElement.className+=' no-flexgap'}catch(e){}})();</script>
@@ -931,12 +954,14 @@ function teachPlayer(el,n){
     const t=T[i];tries=0;answered=false;
     const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
     el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
-    <div class="sl ${t.img?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul></div>
+    <div class="sl ${t.img?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div>
     ${t.img?`<figure class="slp"><img src="img/${t.img}.jpg" alt="">${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div id="sx"></div>
     <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
     <div class="byte" id="by"></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
     say($('#by',el),'idle','Read the points, then answer the quick check.');
+    if(typeof slideExtra==='function')slideExtra(t,$('#sx',el));
     el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
       if(answered)return;const o=opts[+b.dataset.k];
       if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
