@@ -284,6 +284,18 @@ body.lite *{filter:none!important}
 .cmp th{font-family:var(--f-display);text-transform:uppercase;font-size:13px;letter-spacing:.08em;color:var(--cyan);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
 .cmp td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
 .cmp td:first-child{font-family:var(--f-display);color:var(--gold);text-transform:uppercase}
+.tease{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.04em;color:var(--red,#FF4757);border-left:5px solid #FF4757;background:rgba(255,71,87,.1);padding:10px 14px;animation:pulse 1.4s infinite;font-size:3.2vw;font-size:clamp(15px,3.2vw,19px)}
+.topo{position:relative}
+.susp{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;background:rgba(5,2,15,.82);font-family:var(--f-display);font-size:20vw;font-size:clamp(70px,20vw,130px);color:#FF4757;text-shadow:0 0 30px #FF4757;z-index:5;animation:pulse .7s infinite}
+.susp small{display:block;font-size:16px;letter-spacing:.2em;text-align:center;color:#fff;text-shadow:none}
+.goals{display:grid;grid-gap:6px;gap:6px}
+.gl{display:flex;grid-gap:10px;gap:10px;align-items:center;background:#0B0720;padding:8px 12px;border-left:5px solid var(--line);font-size:17px}
+.gl .gk{flex:none;width:26px;height:26px;display:grid;place-items:center;background:var(--panel2);font-family:var(--f-display)}
+.gl.ok{border-left-color:var(--lime)}
+.gl.ok .gk{background:var(--lime);color:#00331A}
+.gl.cur{border-left-color:var(--gold)}
+@keyframes flick{0%,100%{opacity:1}20%{opacity:.3}40%{opacity:.9}60%{opacity:.2}80%{opacity:.8}}
+.flick{animation:flick .9s}
 .mdtabs{display:flex;grid-gap:8px;gap:8px;flex-wrap:wrap}
 .mdtabs .opt{flex:1 1 140px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
 .mdtabs .opt[aria-pressed="true"]{background:var(--cyan);color:#001A22;border-left-color:#fff}
@@ -372,6 +384,7 @@ html.no-flexgap .sw>*+*{margin-left:10px}
 html.no-flexgap .file>*+*{margin-left:12px}
 html.no-flexgap .kws>*{margin:0 8px 8px 0}
 html.no-flexgap .xbar .r>*+*{margin-left:10px}
+html.no-flexgap .gl>*+*{margin-left:10px}
 html.no-flexgap .mdtabs>*{margin:0 8px 8px 0}
 html.no-flexgap .tick>*+*{margin-left:14px}</style></head><body>
 
@@ -422,28 +435,28 @@ const WHY=[
  ['In a ring, each computer joins two neighbours and the cables form a circle.','Data passes from one computer to the next around the circle, in one direction.','Data moves in an orderly way, so computers do not crash into each other and each gets a fair turn.','The data must pass through every computer, so one break can stop the whole ring.','Only the star topology has a central hub or switch.']
 ];
 const LEVELS=[
- {id:1,name:'Network Basics',wp:'JSS 2 · Topic 1',topic:'What Is a Network Topology?',badge:'Network Starter',boss:['The Tangle','#FF2E88'],
+ {id:1,name:'Network Basics',case:'Case file 01: The Tangle',wp:'JSS 2 · Topic 1',topic:'What Is a Network Topology?',badge:'Network Starter',boss:['The Tangle','#FF2E88'],
   mission:'A storm tangled the lab cables. Learn how computers are joined so you can sort them out.',
   cards:[
    {t:'Network',ic:'network',svg:'net',d:'A network is two or more computers joined together so they can share files, printers and the internet.',like:'Children holding hands in a line. Each one can pass a message to the next.'},
    {t:'Node',ic:'laptop',svg:'net',d:'A node is any computer, printer or phone on the network.',like:'Each house on a street is a node. The street joins them.'},
    {t:'Link',ic:'plug',svg:'net',d:'A link is a cable (or wireless signal) that joins the nodes.',like:'The road between two villages.'},
    {t:'Topology',ic:'map',svg:'all',d:'Topology means the shape or layout of a network. It shows how the computers are arranged and joined.',like:'A map of your school. It shows where each building is and how the paths join them.'}]},
- {id:2,name:'Bus Line',wp:'JSS 2 · Topic 2',topic:'Bus Topology',badge:'Bus Builder',boss:['Bus Breaker','#FFC700'],
+ {id:2,name:'Bus Line',case:'Case file 02: The Dark Lab',wp:'JSS 2 · Topic 2',topic:'Bus Topology',badge:'Bus Builder',boss:['Bus Breaker','#FFC700'],
   mission:'All the computers hang on one long cable. Learn how a bus network works and what can go wrong.',
   cards:[
    {t:'Bus topology',ic:'list',svg:'bus',d:'All the computers connect to one main cable called the bus (or backbone).',like:'A danfo bus route. Every bus stop is on the same road.'},
    {t:'Terminators',ic:'lock',svg:'bus',d:'A terminator sits at each end of the main cable. It stops the signal from bouncing back.',like:'The wall at the end of a corridor. It stops the ball rolling out.'},
    {t:'Advantages',ic:'star',svg:'bus',d:'A bus network is cheap, easy to set up, uses less cable and is good for a small network.',like:'A short road with a few bus stops is cheap to build.'},
    {t:'Disadvantages',ic:'shield',svg:'bus',d:'If the main cable breaks, the whole network can stop. It slows down with many computers, and faults are hard to find.',like:'If the road is blocked, no bus can pass.'}]},
- {id:3,name:'Star Station',wp:'JSS 2 · Topic 3',topic:'Star Topology',badge:'Star Engineer',boss:['Hub Crasher','#19D3FF'],
+ {id:3,name:'Star Station',case:'Case file 03: The Silent Office',wp:'JSS 2 · Topic 3',topic:'Star Topology',badge:'Star Engineer',boss:['Hub Crasher','#19D3FF'],
   mission:'Every computer connects to a hub in the middle. Learn how a star network works and what can go wrong.',
   cards:[
    {t:'Star topology',ic:'network',svg:'star',d:'Every computer connects to a central hub or switch. Each computer has its own cable.',like:'A village square. Every path leads to the middle.'},
    {t:'Hub and switch',ic:'chip',svg:'star',d:'The hub (or switch) is the box in the middle. It passes data from one computer to another.',like:'A traffic warden at a junction. He sends each car the right way.'},
    {t:'Advantages',ic:'star',svg:'star',d:'If one cable or computer fails, the others keep working. It is easy to add computers and easy to find faults.',like:'If one path to the square is blocked, the other paths still work.'},
    {t:'Disadvantages',ic:'shield',svg:'star',d:'If the hub fails, the whole network stops. It needs more cable than a bus, and the hub costs money.',like:'If the village square is closed, nobody can meet.'}]},
- {id:4,name:'Ring Road',wp:'JSS 2 · Topic 4',topic:'Ring Topology and Comparing Topologies',badge:'Ring Master',boss:['Loop Lord','#8A5CFF'],
+ {id:4,name:'Ring Road',case:'Case file 04: The Endless Loop',wp:'JSS 2 · Topic 4',topic:'Ring Topology and Comparing Topologies',badge:'Ring Master',boss:['Loop Lord','#8A5CFF'],
   mission:'The computers pass data around a circle. Learn how a ring works, then compare all three topologies.',
   cards:[
    {t:'Ring topology',ic:'gear',svg:'ring',d:'Each computer connects to two neighbours. Together they make a circle.',like:'Children sitting in a circle, passing a parcel.'},
@@ -454,82 +467,94 @@ const LEVELS=[
 ];
 const TEACH={
 1:[
- {h:'Why connect computers?',lines:['Picture a school lab with ten computers and only one printer.','Without a network, you must carry a flash drive from computer to computer. And only the computer joined to the printer can print.','With a network, all ten computers can use the same printer and share files.','So a **network** is two or more computers **joined together** so they can share things.'],why:'Sharing saves money (one printer instead of ten), saves time, and lets people work together.',ex:'Your school lab, a bank with many branches, a cyber café.',svg:'net',cap:'Computers and a printer joined through a hub.',q:'Why do schools connect their computers in a network?',o:['So the computers can share files and a printer','So the computers become taller','So the screens turn red','So the computers do not need electricity']},
- {h:'What can a network share?',lines:['**Files**: save a project on one computer and open it on another.','**Hardware**: one printer or scanner can serve many computers.','**An internet connection**: one internet line can serve the whole lab.','**Messages**: send emails and chats to other computers.'],why:'All of these ideas work because the computers are joined together and can send data to each other.',svg:'',cap:'',q:'Which of these can computers on a network share?',o:['A printer and an internet connection','The weather','A school uniform','A football']},
- {h:'Nodes: the devices',lines:['Every device on the network is called a **node**.','A node can be a computer, a laptop, a printer, a phone or a scanner.','Think of a street. Each house on the street is a node.','Count every device, not only the computers.'],ex:'A lab with 10 computers and 1 printer on the network has **11 nodes**.',svg:'net',cap:'Three computers and a printer are nodes. The hub joins them.',q:'A lab has 6 computers and 1 printer on the network. How many nodes are there?',o:['7','6','1','2']},
- {h:'Links: the connections',lines:['The **link** is what joins the nodes together.','A link can be a **cable** (wired) or a **wireless signal** like Wi-Fi.','Data (messages, files) travels along the links, like cars on a road.','Without links, the nodes would be alone.'],kw:[['Wired','uses cables'],['Wireless','uses signals in the air']],svg:'',cap:'',q:'What do we call the cables or signals that join the nodes?',o:['Links','Icons','Folders','Passwords']},
- {h:'Hub and switch',lines:['A **hub** or **switch** is a box with many sockets.','The cable from each computer plugs into one socket.','The box receives data and passes it on.','Think of a junction where many roads meet.'],kw:[['Hub','passes data to all']],why:'A hub or switch lets many cables meet in one place, so it is easy to connect many computers.',svg:'net',cap:'The hub is in the middle.',q:'A box that joins many cables together is called a...',o:['hub or switch','keyboard','monitor','speaker']},
- {h:'What is a topology?',lines:['**Topology** means the **layout** of a network.','It answers one question: how are the computers arranged and joined together?','If you draw a dot for each computer and a line for each cable, the picture you draw is the **topology**.','Two labs can have the same computers but a different topology.'],why:'The word comes from Greek. "Topos" means place, and the ending means study. So topology is the study of where things are placed.',svg:'',cap:'',q:'If you draw dots for computers and lines for cables, you have drawn the network\'s...',o:['topology','password','program','keyboard']},
- {h:'Three common layouts',lines:['**Bus**: all computers hang on one main cable.','**Star**: all computers join a hub in the middle.','**Ring**: the computers join in a circle.','In the next lessons you will learn each one carefully.'],svg:'all',cap:'Bus, star and ring.',q:'Which one is a type of network topology?',o:['Ring','Hammer','Pencil','Window']},
- {h:'Why does topology matter?',lines:['The layout changes the **cost** of the network.','It changes how **fast** and how **fairly** the network works.','It changes **what happens when something breaks**.','So people choose the layout that suits their needs.'],ex:'A small school lab wants a **cheap** network. A bank wants a network that **keeps working** when one cable breaks. They may choose different topologies.',svg:'',cap:'',q:'The layout of a network can change...',o:['its cost and what happens when something breaks','the weather','the colour of the keyboard','your name']}
+ {h:'Alert in the lab',kind:'Briefing',lines:['A storm has cut the cables in the school lab. Ten computers and one printer, and nobody can share a thing.','To fix it you must understand how a **network** works.','A network is two or more computers **joined together** so they can share files, printers and the internet.'],svg:'net',cap:'Computers and a printer, joined by a hub.',q:'Why would a school join its computers into a network?',o:['So the computers can share files and a printer','So the computers become taller','So the screens turn red','So the computers do not need electricity'],tease:'But how do computers actually get joined? Build one yourself...'},
+ {h:'Build a network',kind:'Experiment',type:'builder',lines:['Join the devices with links.','Your goal: every device must be able to reach the printer.'],svg:'',cap:'',tease:'Look at the shape you just made. It has a name...'},
+ {h:'Inspect the parts',kind:'Evidence',type:'explore',topo:'net',lines:['Every network is made of a few simple parts.','Tap each gold number and read what it is.'],svg:'',cap:'',parts:[
+   {x:92,y:34,t:'1. Node',d:'Any device on the network: a computer, laptop, phone or printer.'},
+   {x:212,y:100,t:'2. Link',d:'The cable (or wireless signal) that joins the devices. Data travels along it.'},
+   {x:160,y:86,t:'3. Hub or switch',d:'A box with many sockets. Each cable plugs into it, and it passes data on.'},
+   {x:296,y:158,t:'4. Printer',d:'A printer is a node too. Every device on the network counts as a node.'}],
+  q:'Each computer, printer or phone on a network is called a...',o:['node','link','hub','bus']},
+ {h:'Count the nodes',kind:'Evidence',lines:['A **node** is any device on the network.','Do not forget the printers, phones and scanners.','Count every device, not only the computers.'],ex:'6 computers and 1 printer on a network make **7 nodes**.',svg:'',cap:'',q:'A lab has 6 computers and 1 printer on the network. How many nodes are there?',o:['7','6','1','2']},
+ {h:'The shape you made',kind:'Discovery',lines:['The pattern of links you built is called a **topology**.','**Topology** means the **layout** of a network: how the computers are arranged and joined.','Two labs can have the same computers but a different topology.'],why:'The word comes from Greek. "Topos" means place, so topology is the study of where things are placed.',svg:'',cap:'',q:'If you draw dots for computers and lines for cables, you have drawn the network\'s...',o:['topology','password','program','keyboard'],tease:'There are three famous shapes. Each one has a secret weakness...'},
+ {h:'Three famous shapes',kind:'Preview',lines:['**Bus**: all computers hang on one main cable.','**Star**: all computers join a hub in the middle.','**Ring**: the computers join in a circle.','Which one is best? The next cases will show you.'],svg:'all',cap:'Bus, star and ring.',q:'Which one is a type of network topology?',o:['Ring','Hammer','Pencil','Window'],tease:'Case file 02 is waiting for you...'}
 ],
 2:[
- {h:'Picture a bus route',lines:['Think of a road with bus stops along it.','The road is one long line. Every bus stop is on that same road.','A **bus topology** works in a similar way.','The road is the main cable. The bus stops are the computers.'],svg:'bus',cap:'Computers hang off one main cable, like bus stops on a road.',q:'In the picture, what is like the road?',o:['The main cable','A computer','A terminator','The printer']},
- {h:'Parts of a bus network',type:'explore',topo:'bus',lines:['A bus network has a few parts.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+ {h:'The dark lab',kind:'Briefing',lines:['At 2:13 pm, part of the school lab lost its connection. Nobody touched a computer.','The lab is a **bus network**: all the computers hang on **one main cable**.','Something went wrong with that cable. To solve the case, you must learn how a bus works.'],svg:'bus-cut',cap:'The red dashes: a break in the main cable.',q:'In a bus network, what do all the computers connect to?',o:['One main cable','A hub','A circle of cables','A satellite'],tease:'Start by inspecting the crime scene...'},
+ {h:'Inspect the scene',kind:'Evidence',type:'explore',topo:'bus',lines:['Tap each gold number and read what the part is.'],svg:'',cap:'',parts:[
    {x:100,y:34,t:'1. Computer (node)',d:'A computer on the network. In the picture there are six.'},
    {x:92,y:82,t:'2. Drop cable',d:'A short cable that joins one computer to the main cable.'},
    {x:122,y:100,t:'3. Main cable (bus or backbone)',d:'The one long cable that every computer connects to. All data travels along it.'},
-   {x:20,y:92,t:'4. Terminator',d:'A block at each end of the main cable. It stops the signal from bouncing back.'}],
+   {x:20,y:92,t:'4. Terminator',d:'A block at each end of the main cable. Why is it there? You will test that soon.'}],
   q:'What is the main cable in a bus network also called?',o:['The backbone','The terminator','The node','The hub']},
- {h:'Terminators',lines:['At each end of the main cable there is a **terminator**.','Data travels along the cable as an electrical signal.','When the signal reaches the end of the cable, it could bounce back, like an echo.','The terminator **absorbs** the signal so it disappears.'],why:'If the signal bounced back, it would mix with new data and confuse the computers.',svg:'bus',cap:'The red blocks are the terminators.',q:'Why does a bus network need terminators?',o:['To stop the signal bouncing back','To make the cable longer','To add more computers','To switch on the printer']},
- {h:'Watch: how a message travels',type:'watch',topo:'bus',from:'pc1',to:'pc6',lines:['Follow a message from PC1 to PC6.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+ {h:'Follow the message',kind:'Evidence',type:'watch',topo:'bus',from:'pc1',to:'pc6',lines:['Follow a message from PC1 to PC6.'],svg:'',cap:'',steps:[
    {at:0,text:'PC1 wants to send a message to PC6. It puts the data on the main cable.'},
-   {at:2,text:'The data travels along the main cable. Every computer on the cable can "hear" it.'},
-   {at:3,text:'The data keeps moving along the cable, towards the right side of the network.'},
-   {at:4,text:'PC6 sees that the message is for it and takes it. The other computers ignore it.'}],
+   {at:2,text:'The data travels along the main cable. **Every** computer on the cable can hear it.'},
+   {at:3,text:'It keeps moving along the cable, towards the right side.'},
+   {at:4,text:'PC6 sees the message is for it and takes it. The others ignore it.'}],
   q:'In a bus network, which computers can hear a message on the main cable?',o:['All of them, but only the right one takes it','Only the first computer','Only the last computer','None of them']},
- {h:'Advantage 1: it is cheap',lines:['A bus network uses **less cable** than other layouts.','One main cable is shared by all the computers.','Each computer only needs a short cable to join the main one.','Less cable means less money.'],why:'Every computer shares the same main cable, so you do not need a separate long cable for each computer.',ex:'Six computers need one main cable and six short drop cables.',svg:'bus',cap:'',q:'Why is a bus network cheap?',o:['All the computers share one main cable','It has no computers','It uses gold cable','It does not need electricity']},
- {h:'Advantage 2: easy to set up',lines:['To build a bus network, lay one main cable and plug the computers in along it.','To add a new computer, join it to the main cable.','This is simple, so it works well for **small networks**.'],ex:'A small lab with 4 to 6 computers, or a small office.',svg:'bus',cap:'',q:'A bus topology is best for a...',o:['small network','network of thousands of computers','network with no computers','space station']},
- {h:'Disadvantage 1: one break stops everything',lines:['All the computers depend on the **same main cable**.','If the main cable breaks, the network splits in two, or stops completely.','Computers on different sides of the break cannot talk to each other.'],why:'There is only one path for the data. If the path is cut, the data has no other way to go.',svg:'bus-cut',cap:'The cut in the main cable splits the network.',q:'Why does one break in the main cable cause so many problems?',o:['There is only one path for the data','The computers get angry','The cable is heavy','The terminators run away']},
- {h:'Disadvantage 2: slow when busy',lines:['All computers share one cable.','Only one computer can send data at a time.','If two computers send together, their data **collide** and must be sent again.','More computers means more waiting.'],why:'It is like a one-lane road. When many cars try to use it at once, there is a traffic jam.',svg:'',cap:'',q:'Why does a busy bus network slow down?',o:['All the computers share one cable','The cable is too short','The terminators are tired','The computers are too tall']},
- {h:'Disadvantage 3: hard to find faults',lines:['If the network stops, the problem could be **anywhere** along the long main cable.','You may have to check the cable piece by piece.','This can take a long time.'],ex:'A technician must walk along the whole cable to find the damaged part.',svg:'',cap:'',q:'Why is it hard to find a fault in a bus network?',o:['The fault could be anywhere along the main cable','There are no cables','Faults hide in the monitor','Terminators hide them']},
- {h:'Now try it yourself',lines:['In the **Play** stage there is a **Bus network lab**.','Send a message from one computer to another.','Then cut the main cable and send again.','You will see for yourself why one break is a big problem.'],svg:'bus',cap:'',q:'In the lab, you cut the main cable between PC1 and PC3. What happens to a message from PC1 to PC3?',o:['It fails to arrive','It arrives faster','It arrives twice','It turns into an email']}
+ {h:'The mystery of the red blocks',kind:'Experiment',type:'echo',lines:['There are two red blocks at the ends of the cable. What are they for?','Run the experiment and find out.'],svg:'',cap:'',tease:'Now the saboteur strikes. Can you predict what he will do?'},
+ {h:'Predict the sabotage',kind:'Prediction',type:'predict',topo:'bus',from:'pc1',fault:{cut:['b1']},lines:['The saboteur will cut the main cable between the middle and the right side.','Tap every computer you think will **lose contact with PC1**. Then press the button.'],svg:'',cap:'',ask:'Which computers will PC1 lose contact with?',btn:'Cut the cable!',explain:'The cut splits the network in two. The computers on the far side can no longer be reached, because there is only one path.',tease:'Now it is your turn to be the saboteur...'},
+ {h:'You are the saboteur',kind:'Experiment',type:'puzzle',topo:'bus',modes:['cut','send'],intro:'Complete the three goals by cutting cables.',lines:['Cut the cables to reach each goal.'],svg:'',cap:'',goals:[
+   {text:'Cut ONE cable so that only ONE computer is cut off from the rest.',after:'Cutting a drop cable cuts off one computer.',test:s=>{const c=Object.keys(s.cut).filter(k=>s.cut[k]);if(c.length!==1)return false;const g=s.comps();return g.length===2&&Math.min(g[0].length,g[1].length)===1}},
+   {text:'Cut ONE cable so the network splits into two big groups (at least two computers in each).',after:'Cutting the main cable splits the network in two.',test:s=>{const c=Object.keys(s.cut).filter(k=>s.cut[k]);if(c.length!==1)return false;const g=s.comps();return g.length===2&&Math.min(g[0].length,g[1].length)>=2}},
+   {text:'Cut ONE cable so that PC1 can no longer reach PC6.',after:'',test:s=>!s.reach('pc1','pc6')}],
+  win:'All goals done. In a bus network one cut can cut off a computer, or split the whole network. Everything depends on the same cable.',tease:'The next clue is about money. Why do schools still use bus networks?'},
+ {h:'Count the cable',kind:'Evidence',type:'counter',lines:['Compare how much cable a bus and a star need.','Use the buttons to add computers.'],why:'All the computers share the same main cable, so a bus needs less cable.',svg:'',cap:'',q:'Why is a bus network cheap?',o:['All the computers share one main cable','It has no computers','It uses gold cable','It does not need electricity']},
+ {h:'Rush hour',kind:'Experiment',type:'jam',lines:['What happens when every computer wants to send at the same moment?'],svg:'',cap:'',tease:'One more weakness is hiding. A fault somewhere along the cable...'},
+ {h:'Find the hidden fault',kind:'Experiment',type:'hunt',topo:'bus',lines:['A piece of the main cable is damaged. You cannot see which one.','Test the pieces one at a time and find it.'],svg:'',cap:'',tease:'You have gathered all the evidence. Time for the verdict...'},
+ {h:'Case closed',kind:'Verdict',lines:['**The culprit:** the main cable. Everything depends on it.','**Strengths:** cheap, easy to set up, good for a small network.','**Weaknesses:** one break can stop all, it slows down when busy, and faults are hard to find.'],svg:'bus',cap:'',q:'Which is a disadvantage of a bus topology?',o:['If the main cable breaks, the whole network can stop','It is very expensive','It needs a hub','It has no cable'],tease:'Case file 03 is next. This time, the villain goes for the heart of the network...'}
 ],
 3:[
- {h:'Picture a village square',lines:['Imagine a village with a square in the middle.','Every path from every house leads to the square.','To visit a neighbour, you walk to the square, then take the neighbour\'s path.','A **star topology** works in a similar way.'],svg:'star',cap:'Every computer has a path to the middle.',q:'In the picture, what is like the village square?',o:['The hub','A computer','The printer','A terminator']},
- {h:'Parts of a star network',type:'explore',topo:'star',lines:['A star network has three main parts.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+ {h:'The silent office',kind:'Briefing',lines:['At 9:00 am, every computer in the school office stopped talking to the others.','The office uses a **star network**: each computer has its own cable to a **hub** in the middle.','Was it the cables? Or something else? Investigate.'],svg:'star',cap:'Every cable leads to the hub.',q:'In a star network, every computer connects to a...',o:['central hub or switch','main bus cable','ring of cables','keyboard'],tease:'First, inspect the scene...'},
+ {h:'Inspect the scene',kind:'Evidence',type:'explore',topo:'star',lines:['Tap each gold number and read what the part is.'],svg:'',cap:'',parts:[
    {x:160,y:86,t:'1. Hub (or switch)',d:'The box in the middle. Every cable from every computer plugs into it.'},
-   {x:218,y:84,t:'2. Cable (the spoke)',d:'Each computer has its own cable going to the hub. Like the spokes of a wheel.'},
+   {x:218,y:84,t:'2. Cable (the spoke)',d:'Each computer has its own cable going to the hub, like the spokes of a wheel.'},
    {x:192,y:22,t:'3. Computer (node)',d:'A computer on the network. In the picture there are six.'}],
   q:'In a star network, how does each computer connect to the hub?',o:['With its own cable','Through one shared main cable','Through its two neighbours','It does not connect']},
- {h:'Hub or switch?',lines:['A **hub** receives data and sends it out to **all** the computers.','A **switch** is smarter. It sends the data **only** to the computer it is meant for.','Both sit in the middle of a star network.','Most modern networks use switches.'],kw:[['Hub','sends to everyone'],['Switch','sends to the right computer only']],why:'A switch wastes less of the network, because the other computers are not bothered with data that is not for them.',svg:'star',cap:'',q:'Which one sends data only to the computer it is meant for?',o:['A switch','A hub','Both of them','Neither of them']},
- {h:'Watch: how a message travels',type:'watch',topo:'star',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+ {h:'Follow the message',kind:'Evidence',type:'watch',topo:'star',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.'],svg:'',cap:'',steps:[
    {at:0,text:'PC1 wants to send a message to PC4. It sends the data along its own cable.'},
-   {at:1,text:'The data reaches the hub. The hub decides where to send it.'},
-   {at:2,text:'The hub sends the data along PC4\'s own cable. PC4 receives the message.'}],
-  q:'In a star network, a message from one computer to another always passes through the...',o:['hub','printer','keyboard','speaker']},
- {h:'Advantage 1: one failure does not stop the rest',lines:['Each computer has its **own cable** to the hub.','If one cable breaks, only the computer at the end of it is cut off.','All the other computers carry on working.'],why:'The cables do not depend on each other. A break in one spoke does not affect the other spokes.',ex:'If PC3\'s cable breaks, PC1, PC2, PC4, PC5 and PC6 can still talk to each other.',svg:'star-cut',cap:'One cut cable cuts off one computer only.',q:'In a star network, one computer\'s cable breaks. What happens?',o:['Only that computer is cut off','The whole network stops','The hub explodes','Every computer slows down']},
- {h:'Advantage 2: easy to add or remove computers',lines:['To add a computer, plug a new cable into a free socket on the hub.','To remove one, unplug its cable.','The other computers are not disturbed.'],ex:'A school buys two new computers. The technician plugs two more cables into the switch.',svg:'star',cap:'',q:'How do you add a new computer to a star network?',o:['Plug a new cable into the hub','Cut the main cable','Rebuild the whole network','Turn off every computer for a week']},
- {h:'Advantage 3: easy to find faults',lines:['If one computer cannot connect, check **its** cable first.','The other computers still work, so you know the hub is fine.','Faults are quick to find and fix.'],why:'Each computer has its own cable, so you can tell exactly which part has the problem.',svg:'',cap:'',q:'Why is it easy to find a fault in a star network?',o:['Each computer has its own cable, so you can check one at a time','There are no faults','The cable is very short','The hub fixes itself']},
- {h:'Disadvantage 1: if the hub fails, everything stops',lines:['Every message passes through the **hub**.','If the hub breaks or loses power, no computer can talk to another.','The whole network stops.'],why:'The hub is the one part that everything depends on. This is the weakness of a star.',svg:'star-off',cap:'The hub is off. Nothing can get through.',q:'If the hub of a star network fails...',o:['the whole network stops','nothing happens','only one computer stops','the cables get shorter']},
- {h:'Disadvantage 2: more cable and more money',type:'counter',lines:['Every computer needs its **own cable** all the way to the hub.','A bus network shares one main cable.','Use the buttons to change the number of computers.'],svg:'',cap:'',q:'Why does a star network usually need more cable than a bus network?',o:['Each computer needs its own cable to the hub','Computers are bigger','Hubs eat cable','The cable is shorter']},
- {h:'Star in real life',lines:['Most school, bank and office networks today use a star layout.','Your home **Wi-Fi router** is like a hub. Every phone and laptop connects to it.','If the router goes off, your devices cannot talk to each other or to the internet.'],ex:'A school lab where all computers are plugged into one switch in the corner.',svg:'',cap:'',q:'A home Wi-Fi router works like a...',o:['hub in a star network','bus cable','ring','keyboard']}
+   {at:1,text:'The data reaches the hub. The hub decides where it must go.'},
+   {at:2,text:'The hub sends it along PC4\'s own cable. PC4 receives it.'}],
+  q:'In a star network, a message from one computer to another always passes through the...',o:['hub','printer','keyboard','speaker'],tease:'Suspect number one: a broken cable. Test it...'},
+ {h:'Can a cable do it?',kind:'Experiment',type:'puzzle',topo:'star',modes:['cut','off'],intro:'Complete the goals. Look carefully at what happens to the other computers.',lines:['Try to bring the network down.'],svg:'',cap:'',goals:[
+   {text:'Cut ONE cable. Do all the other computers still work?',after:'Only the computer on that cable was cut off. The rest still work.',test:s=>Object.keys(s.cut).filter(k=>s.cut[k]).length===1},
+   {text:'Cut TWO different cables. Who is still connected?',after:'Two computers are cut off. The other four still talk to each other.',test:s=>Object.keys(s.cut).filter(k=>s.cut[k]).length===2},
+   {text:'Now take the WHOLE network down so no computer can reach another. Find the fastest way!',after:'',test:s=>s.comps().every(g=>g.length===1)}],
+  win:'You took it down in {m} move(s). The fastest way is only ONE move: switch off the hub. That is the weakness of a star network.',tease:'Now you suspect the hub. Can you predict what happens when it fails?'},
+ {h:'Predict the blackout',kind:'Prediction',type:'predict',topo:'star',from:'pc1',fault:{off:['hub']},lines:['The saboteur is about to switch off the hub.','Tap every computer you think will **lose contact with PC1**. Then press the button.'],svg:'',cap:'',ask:'Which computers will PC1 lose contact with?',btn:'Switch off the hub!',explain:'Every message passes through the hub, so when it fails, the whole network stops.',tease:'The hub is the culprit. But not all hubs are the same...'},
+ {h:'Hub or switch?',kind:'Experiment',type:'hubswitch',lines:['Hubs and switches both sit in the middle of a star.','Try both and see who receives the message.'],kw:[['Hub','sends to everyone'],['Switch','sends to the right computer only']],svg:'',cap:'',tease:'Next: a computer goes offline. Can you find the broken cable fast?'},
+ {h:'Find the broken cable',kind:'Experiment',type:'hunt',topo:'star',lines:['One computer shows a red light. Find the broken cable.'],svg:'',cap:'',tease:'One more clue: the cost of all those cables...'},
+ {h:'Count the cable',kind:'Evidence',type:'counter',lines:['Every computer needs its **own cable** all the way to the hub.','Add computers and compare with a bus.'],why:'In a bus the computers share one main cable. In a star each one needs a separate cable to the hub.',svg:'',cap:'',q:'Why does a star network usually need more cable than a bus network?',o:['Each computer needs its own cable to the hub','Computers are bigger','Hubs eat cable','The cable is shorter']},
+ {h:'Case closed',kind:'Verdict',lines:['**The culprit:** the hub. Everything passes through it.','**Strengths:** one failure does not stop the others, easy to add computers, easy to find faults.','**Weaknesses:** if the hub fails the whole network stops, and it needs more cable.','Your home Wi-Fi router works like a hub. Most school and office networks are stars.'],svg:'star',cap:'',q:'Which is an advantage of a star topology?',o:['It is easy to add a computer and find faults','It uses the least cable','It needs no hub','It costs nothing'],tease:'Case file 04, the last one. The data is going round and round in circles...'}
 ],
 4:[
- {h:'Picture pass the parcel',lines:['Imagine children sitting in a circle, playing pass the parcel.','Each child hands the parcel to the child next to them.','The parcel goes round and round in one direction.','A **ring topology** works in a similar way.'],svg:'ring',cap:'Each computer passes data to the next one.',q:'In the picture, what is like the parcel?',o:['The data','The computer','The cable','The printer']},
- {h:'Parts of a ring network',type:'explore',topo:'ring',lines:['A ring network has computers and links.','Tap each gold number on the picture and read what it is.'],svg:'',cap:'',parts:[
+ {h:'The endless loop',kind:'Briefing',lines:['In the school bank office, data keeps going round and round in circles.','The computers are joined in a **ring**. Each one passes data to its neighbour.','Loop Lord is hiding somewhere in the circle. Learn how a ring works to catch him.'],svg:'ring',cap:'Each computer passes data to the next one.',q:'In a ring topology, each computer is connected to...',o:['two neighbours','one main cable','a central hub','no other computer'],tease:'Inspect the ring first...'},
+ {h:'Inspect the scene',kind:'Evidence',type:'explore',topo:'ring',lines:['Tap each gold number and read what the part is.'],svg:'',cap:'',parts:[
    {x:192,y:24,t:'1. Computer (node)',d:'Each computer is joined to exactly two neighbours.'},
    {x:222,y:50,t:'2. Link',d:'A cable between two neighbouring computers. All the links together make a circle.'},
-   {x:279,y:115,t:'3. Direction arrow',d:'Shows which way the data travels. In a simple ring the data goes one way only.'},
-   {x:192,y:206,t:'4. Neighbours',d:'Every computer has two neighbours. It receives from one and passes to the other.'}],
-  q:'In a ring topology, each computer is connected to...',o:['two neighbours','one main cable','a central hub','no other computer']},
- {h:'Watch: how a message travels',type:'watch',topo:'ring',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.','Press **Next step** under the picture.'],svg:'',cap:'',steps:[
+   {x:279,y:115,t:'3. Direction arrow',d:'Shows which way the data travels. In a simple ring it goes one way only.'},
+   {x:192,y:206,t:'4. Neighbours',d:'Every computer receives from one neighbour and passes to the other.'}],
+  q:'In a ring, data travels...',o:['around the circle, one computer to the next','to every computer at once','straight down a main cable','nowhere']},
+ {h:'Follow the message',kind:'Evidence',type:'watch',topo:'ring',from:'pc1',to:'pc4',lines:['Follow a message from PC1 to PC4.'],svg:'',cap:'',steps:[
    {at:0,text:'PC1 wants to send a message to PC4. It passes the data to its neighbour, PC2.'},
-   {at:1,text:'PC2 checks. The message is not for it, so it passes the data on to PC3.'},
-   {at:2,text:'PC3 checks. The message is not for it either, so it passes it on to PC4.'},
+   {at:1,text:'PC2 checks. It is not for PC2, so PC2 passes it on to PC3.'},
+   {at:2,text:'PC3 checks. It is not for PC3 either, so it goes on to PC4.'},
    {at:3,text:'PC4 sees the message is for it and keeps it.'}],
-  q:'In a ring, a message from PC1 to PC4 passes through...',o:['the computers in between, one after the other','a central hub','one main cable','no computer']},
- {h:'Fair turns: the token idea',lines:['In some rings, a special message called a **token** goes round and round.','Only the computer that holds the token may send data.','When it is finished, it passes the token to the next computer.','So every computer gets a turn.'],kw:[['Token','a pass that lets a computer send']],why:'Because only one computer sends at a time, data does not crash into other data.',svg:'ring',cap:'',q:'In a token ring, which computer may send data?',o:['The one holding the token','All computers at once','Only the first computer','Nobody']},
- {h:'Advantage 1: orderly data',lines:['Data moves in **one direction**, in order.','Computers do not send at the same time, so data does not **collide**.','This makes the network steady and predictable.'],why:'Everyone follows the same order, like children in a queue.',svg:'ring',cap:'',q:'Why does data not crash in a ring network?',o:['It moves in order, one way round','The cable is magic','There is only one computer','It does not move'] },
- {h:'Advantage 2: fair turns, even when busy',lines:['Every computer gets a **fair turn** to send data.','No computer is left waiting forever.','A ring keeps working well even when the network is busy.'],ex:'In a busy school lab, every student\'s computer still gets its turn.',svg:'',cap:'',q:'Which is an advantage of a ring topology?',o:['Every computer gets a fair turn','It uses the most cable','It needs a hub','It never fails']},
- {h:'Disadvantage 1: one break can stop the ring',lines:['The data must pass through **every computer** on the way round.','If one computer or one cable fails, the data cannot get past it.','The whole ring can stop working.'],why:'There is only one way round. If the way is blocked, the data cannot reach the other side.',svg:'ring-cut',cap:'A cut cable breaks the circle.',q:'If one computer in a simple ring fails...',o:['the whole ring can stop','only that computer stops while all others work','nothing happens','the ring becomes a star']},
- {h:'Disadvantage 2: hard to fix and hard to change',lines:['When the ring stops, it is **hard to find** which computer or cable is the problem.','Adding or removing a computer **disturbs** the whole network.','You may need to switch the network off to change it.'],svg:'',cap:'',q:'Why is it a problem to add a computer to a ring?',o:['It disturbs the whole ring','There are no sockets','Rings do not have computers','The computers are too tall']},
- {h:'Compare the three',type:'table',lines:['Read the table. It shows all three topologies side by side.'],svg:'',cap:'',q:'Which topology has a central hub or switch?',o:['Star','Bus','Ring','All of them']},
- {h:'Choosing the best topology',lines:['Small, cheap lab with few computers: **bus**.','A lab where faults must be easy to find and fix: **star**.','A network where every computer needs a fair turn: **ring**.','There is no best topology for everything. It depends on what you need.'],ex:'A school plans to add new computers every year and wants faults fixed fast. A **star** suits it best.',svg:'',cap:'',q:'A school wants a network that is easy to fix when one cable breaks. Best choice?',o:['Star','Bus','Ring','None of them']}
+  q:'In a ring, a message from PC1 to PC4 passes through...',o:['the computers in between, one after the other','a central hub','one main cable','no computer'],tease:'How do the computers avoid crashing? There is a secret...'},
+ {h:'The secret token',kind:'Experiment',type:'token',lines:['A special message called a **token** goes round the ring.','Only the computer holding the token may send.','Tap computers that want to send, and watch who gets a turn.'],svg:'',cap:'',tease:'Now the villain strikes. Predict what he will break...'},
+ {h:'Predict the break',kind:'Prediction',type:'predict',topo:'ring',from:'pc1',fault:{off:['pc3']},lines:['The saboteur is about to switch off PC3.','Tap every computer you think will **lose contact with PC1**. Remember which way the data goes.'],svg:'',cap:'',ask:'Which computers will PC1 lose contact with?',btn:'Switch off PC3!',explain:'Data must pass through every computer on the way round. PC3 is off, so PC4, PC5 and PC6 cannot be reached. Only PC2, before PC3, still works.',tease:'Now try breaking the ring yourself...'},
+ {h:'Break the ring',kind:'Experiment',type:'puzzle',topo:'ring',modes:['cut','off'],intro:'Complete the goals. Where you break the ring decides who loses contact.',lines:['Complete the three goals.'],svg:'',cap:'',goals:[
+   {text:'Break the ring so PC1 can NOT send a message to PC4.',after:'One break is enough.',test:s=>!s.reach('pc1','pc4')},
+   {text:'Now break it so PC1 CAN reach PC4, but can NOT reach PC5.',after:'The break is after PC4.',test:s=>s.reach('pc1','pc4')&&!s.reach('pc1','pc5')},
+   {text:'Last: break the ring so PC1 can reach NO other computer.',after:'',test:s=>['pc2','pc3','pc4','pc5','pc6'].every(id=>!s.reach('pc1',id))}],
+  win:'Because data goes one way round, where the break is decides who loses contact. One failure can stop the ring.',tease:'You have found the weaknesses of all three layouts. Put them side by side...'},
+ {h:'Compare the three',kind:'Evidence',type:'table',lines:['Read the table. It shows all three topologies side by side.'],svg:'',cap:'',q:'Which topology has a central hub or switch?',o:['Star','Bus','Ring','All of them']},
+ {h:'Final verdict',kind:'Verdict',lines:['Small, cheap lab with few computers: **bus**.','A lab where faults must be easy to find and fix: **star**.','A network where every computer needs a fair turn: **ring**.','There is no best topology for everything. It depends on what you need.'],ex:'A school plans to add new computers every year and wants faults fixed fast. A **star** suits it best.',svg:'',cap:'',q:'A school wants a network that is easy to fix when one cable breaks. Best choice?',o:['Star','Bus','Ring','None of them']}
 ]};
 const RECAP={
 1:['A network is two or more computers joined together to share files, printers and the internet.','A node is any device on the network. A link is the cable or signal that joins nodes.','A hub or switch is a box that joins many cables together.','Topology is the layout of a network. The three types are bus, star and ring.'],
-2:['Bus topology: all computers connect to one main cable (the bus or backbone). Terminators sit at both ends.','Advantages: cheap, uses less cable, easy to set up, good for small networks.','Disadvantages: one break can stop the whole network, it slows down when busy, and faults are hard to find.','Why? All computers share one cable and there is only one path.'],
+2:['Bus topology: all computers connect to one main cable (the bus or backbone). Terminators sit at both ends and stop the signal bouncing back.','Advantages: cheap, uses less cable, easy to set up, good for small networks.','Disadvantages: one break can stop the whole network, it slows down when busy, and faults are hard to find.','Why? All computers share one cable and there is only one path.'],
 3:['Star topology: every computer has its own cable to a central hub or switch.','Advantages: one failure does not stop the others, easy to add computers, easy to find faults.','Disadvantages: if the hub fails the whole network stops, and it needs more cable.','Why? The hub is the centre, and the cables do not depend on each other.'],
 4:['Ring topology: computers joined in a circle. Each has two neighbours and data goes one way.','Advantages: orderly data, fair turns, steady when busy.','Disadvantages: one break can stop the ring, hard to find faults, hard to add computers.','Bus is cheap, star is easy to fix, ring is fair. Choose the one that fits the need.']
 };
@@ -638,6 +663,10 @@ const sfx={
   win(){if(!S.sfx||!actx())return;const t=now();[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.3,'square',.08))},
   lose(){if(!S.sfx||!actx())return;const t=now();[392,330,262,196].forEach((f,i)=>tone(f,t+i*.18,.35,'sawtooth',.08))},
   whoosh(){if(!S.sfx||!actx())return;noise(now(),.35,.12,1500)},
+  tick(){if(!S.sfx||!actx())return;tone(170,now(),.1,'square',.08)},
+  drone(){if(!S.sfx||!actx())return;const t=now();tone(82,t,1.6,'sawtooth',.06);tone(87,t,1.6,'sawtooth',.04)},
+  boom(){buzz(120);if(!S.sfx||!actx())return;const t=now();noise(t,.45,.3,150);tone(60,t,.6,'sawtooth',.18)},
+  dark(){if(!S.sfx||!actx())return;const t=now();[380,300,230,170,120].forEach((f,i)=>tone(f,t+i*.09,.25,'triangle',.08))},
   up(){if(!S.sfx||!actx())return;const t=now();[392,523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,'triangle',.1))}
 };
 /* music: 16-step bar, Am F C G. "menu" is relaxed, "battle" adds drums and runs faster. */
@@ -808,7 +837,7 @@ async function level(n){
   app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
   <nav class="stage"><a href="#" data-s="learn"><span>Learn</span></a><a href="#" data-s="cards"><span>Cards</span></a><a href="#" data-s="play"><span>Play</span></a><a href="#" data-s="boss"><span>Boss</span></a><a href="#" data-s="home"><span>Home</span></a></nav>
   <div class="panel quest rv"><b>By the end you can</b><ul class="can">${HW[n-1].obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
-  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN WITH BYTE</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>${esc(L.case||'LEARN WITH BYTE')}</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
   <section id="s-cards"><h2 data-rv><span class="skew">Stage 2</span><small>REVIEW CARDS</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.svg?topoSVG(c.svg):(c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)">`:'')}${c.svg?'':ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
   <section id="s-play"><h2 data-rv><span class="skew">Stage 3</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
   <section id="s-boss"><h2 data-rv><span class="skew">Stage 4</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
@@ -1020,28 +1049,36 @@ function bootGame(el,n,gi){
 }
 
 function teachPlayer(el,n){
-  const T=TEACH[n];let i=0,tries=0,answered=false;
+  const T=TEACH[n];let i=0,tries=0,answered=false,fin=false;
   const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   function draw(){
     if(i>=T.length)return recap();
-    const t=T[i];tries=0;answered=false;
-    const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
-    el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
+    const t=T[i];tries=0;answered=false;fin=false;
+    const hasQ=!!t.q;
+    const opts=hasQ?shuffle(t.o.map((x,j)=>({x,ok:j===0}))):[];
+    el.innerHTML=`<div class="hud2"><span class="eyebrow">${t.kind?esc(t.kind)+' · ':''}${LEVELS[n-1].case?'Clue':'Lesson'} ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
     <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul>${t.why?`<div class="why"><em>Why?</em>${md(t.why)}</div>`:''}${t.ex?`<div class="why ex"><em>Example</em>${md(t.ex)}</div>`:''}${t.kw?`<div class="kws">${t.kw.map(k=>`<span class="kw"><b>${esc(k[0])}</b> ${esc(k[1])}</span>`).join('')}</div>`:''}</div>
     ${(t.img||t.svg)?`<figure class="slp">${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
     <div id="sx"></div>
-    <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
+    ${hasQ?`<div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
+    <div class="tease" id="ts" hidden></div>
     <div class="byte" id="by"></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
-    say($('#by',el),'idle','Read the points, then answer the quick check.');
-    if(typeof slideExtra==='function')slideExtra(t,$('#sx',el));
+    say($('#by',el),'idle',hasQ?'Read the points, then answer the quick check.':'Do the activity above. Then you can move on.');
+    const complete=(perfect)=>{
+      if(fin)return;fin=true;
+      if(perfect&&!S.teach[n][i]){S.teach[n][i]=true;save();floatTxt('+5 XP',$('#nx',el),'#FFC700');paintHud()}
+      $('#nx',el).disabled=false;
+      if(t.tease){const ts=$('#ts',el);ts.textContent=t.tease;ts.hidden=false}
+    };
+    const ctx={done:(perfect,msg)=>{complete(perfect);if(msg)say($('#by',el),perfect?'ok':'idle',msg)},say:(m,x)=>say($('#by',el),m,x)};
+    if(typeof slideExtra==='function')slideExtra(t,$('#sx',el),ctx);
     el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
       if(answered)return;const o=opts[+b.dataset.k];
       if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
-        if(!S.teach[n][i]&&tries===0){S.teach[n][i]=true;save();floatTxt('+5 XP',b,'#FFC700');paintHud()}
-        say($('#by',el),'ok',pick(CHEER));$('#nx',el).disabled=false;$('#nx',el).focus({preventScroll:true})}
-      else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Read the points again and try another answer.');
-        if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');$('#nx',el).disabled=false}}
+        say($('#by',el),'ok',pick(CHEER)+(t.explain?' '+t.explain:''));complete(tries===0);$('#nx',el).focus({preventScroll:true})}
+      else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Look at the clues again and try another answer.');
+        if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');complete(false)}}
     });
     $('#pv',el).onclick=()=>{sfx.tap();i--;draw();toTopOf(el)};
     $('#nx',el).onclick=()=>{sfx.tap();i++;draw();toTopOf(el)};
@@ -1049,9 +1086,9 @@ function teachPlayer(el,n){
   function recap(){
     const got=S.teach[n].filter(Boolean).length;
     sfx.win();burst(50);
-    el.innerHTML=`<div class="eyebrow">Lesson complete</div><h3><span class="skew">What you learned</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
-    <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Flip the cards</span></button></div>`;
-    say($('#by',el),'ok',`You got ${got} of ${T.length} quick checks right on the first try. Now flip the review cards, then play the games.`);
+    el.innerHTML=`<div class="eyebrow">${LEVELS[n-1].case?'Case closed':'Lesson complete'}</div><h3><span class="skew">${LEVELS[n-1].case?'What you found out':'What you learned'}</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
+    <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Next: the cards</span></button></div>`;
+    say($('#by',el),'ok',`You solved ${got} of ${T.length} clues on the first try. Now flip the review cards, then play the games.`);
     $('#again',el).onclick=()=>{i=0;draw();toTopOf(el)};$('#go2',el).onclick=()=>{sfx.tap();if(goStage)goStage('cards')};
   }
   draw();
@@ -1122,7 +1159,8 @@ function TOPO(type){
 function drawTopo(type,o){
   o=o||{};const T=TOPO(type),N={};T.nodes.forEach(n=>N[n.id]=n);let s='';
   if(type==='bus'){
-    s+='<line x1="26" y1="115" x2="70" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/><line x1="270" y1="115" x2="294" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/><rect x="16" y="104" width="9" height="22" fill="#FF4757"/><rect x="295" y="104" width="9" height="22" fill="#FF4757"/>';
+    s+='<line x1="26" y1="115" x2="70" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/><line x1="270" y1="115" x2="294" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/>';
+    if(!o.noTerm)s+='<rect x="16" y="104" width="9" height="22" fill="#FF4757"/><rect x="295" y="104" width="9" height="22" fill="#FF4757"/>';
   }
   T.edges.forEach(e=>{
     const a=N[e.a],b=N[e.b],cut=o.cut&&o.cut[e.id];
@@ -1163,10 +1201,11 @@ function findPath(T,src,dst,cut,off){
   if(!(dst in prev))return null;
   const p=[];for(let u=dst;u!==null;u=prev[u])p.unshift(u);return p;
 }
-function labFor(type){
+function labFor(type,opts){
+  opts=opts||{};
   return (el,n,gi)=>{
     const T=TOPO(type),N={};T.nodes.forEach(x=>N[x.id]=x);
-    let mode='send',src=null,cut={},off={},busy=false,seenOK=false,seenFail=false,msg='';
+    let mode=(opts.modes||['send'])[0],src=null,cut={},off={},busy=false,seenOK=false,seenFail=false,msg='',gdone=(opts.goals||[]).map(()=>false),moves=0;
     const NAME={bus:'Bus network lab',star:'Star network lab',ring:'Ring network lab'}[type];
     const HINT={send:'Tap a computer to send FROM. Then tap another computer to send TO.',cut:'Tap a cable to cut it. Tap it again to repair it.',off:type==='star'?'Tap a computer or the hub to switch it off. Tap again to switch it on.':'Tap a computer to switch it off. Tap again to switch it on.'};
     const label=id=>N[id].label;
@@ -1179,8 +1218,8 @@ function labFor(type){
     }
     function render(){
       el.className='w';
-      el.innerHTML=`<h3><span class="skew">${NAME}</span></h3><p class="hint">Send messages, then break things and see what happens.</p>
-      <div class="mdtabs" id="md">${[['send','Send a message'],['cut','Cut a cable'],['off',type==='star'?'Switch off a device':'Switch off a computer']].map(m=>`<button class="opt" data-m="${m[0]}" aria-pressed="${mode===m[0]}">${m[1]}</button>`).join('')}</div>
+      el.innerHTML=`<h3><span class="skew">${NAME}</span></h3><p class="hint">${esc(opts.intro||'Send messages, then break things and see what happens.')}</p>${opts.goals?`<div class="goals">${opts.goals.map((g,i)=>`<div class="gl ${gdone[i]?'ok':(gdone.indexOf(false)===i?'cur':'')}"><span class="gk">${gdone[i]?'✓':i+1}</span><span>${esc(g.text)}</span></div>`).join('')}</div>`:''}
+      <div class="mdtabs" id="md">${[['send','Send a message'],['cut','Cut a cable'],['off',type==='star'?'Switch off a device':'Switch off a computer']].filter(m=>(opts.modes||['send','cut','off']).indexOf(m[0])>=0).map(m=>`<button class="opt" data-m="${m[0]}" aria-pressed="${mode===m[0]}">${m[1]}</button>`).join('')}</div>
       <div class="eyebrow" id="hn">${esc(HINT[mode])}${mode==='send'&&src?' From: '+label(src):''}</div>
       <div class="topo"><svg id="sv" viewBox="0 0 320 230" role="img" aria-label="${type} network. Tap computers and cables.">${drawTopo(type,{hit:true,cut,off,sel:src})}</svg></div>
       <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="rp"><span>Repair everything</span></button></div>`;
@@ -1191,8 +1230,8 @@ function labFor(type){
       sv.onclick=e=>{
         if(busy)return;
         const nd=e.target.closest('.nd'),hit=e.target.closest('.hit');
-        if(mode==='cut'&&hit){const id=hit.dataset.e;cut[id]=!cut[id];sfx.tap();msg=cut[id]?'no:Cable cut. Now try sending a message.':'ok:Cable repaired.';render();return}
-        if(mode==='off'&&nd){const id=nd.dataset.n;off[id]=!off[id];sfx.tap();msg=off[id]?'no:'+label(id)+' is off.':'ok:'+label(id)+' is back on.';render();return}
+        if(mode==='cut'&&hit){const id=hit.dataset.e;cut[id]=!cut[id];sfx.tap();msg=cut[id]?'no:Cable cut.':'ok:Cable repaired.';moves++;evalGoals();render();return}
+        if(mode==='off'&&nd){const id=nd.dataset.n;off[id]=!off[id];sfx.tap();msg=off[id]?'no:'+label(id)+' is off.':'ok:'+label(id)+' is back on.';moves++;evalGoals();render();return}
         if(mode==='send'&&nd){
           const id=nd.dataset.n;if(N[id].k==='hub'){msg='idle:The hub passes messages along. Choose two computers.';render();return}
           if(!src){src=id;sfx.tap();render();return}
@@ -1205,7 +1244,7 @@ function labFor(type){
       busy=true;const path=findPath(T,a,b,cut,off);src=null;
       const sv=$('#sv',el);
       if(!path){
-        sfx.no();shakeScreen();seenFail=true;msg='no:Message from '+label(a)+' to '+label(b)+' failed. '+explainFail(a,b);busy=false;render();check();return;
+        sfx.no();shakeScreen();seenFail=true;msg='no:Message from '+label(a)+' to '+label(b)+' failed. '+explainFail(a,b);busy=false;evalGoals();render();check();return;
       }
       const pts=path.map(id=>N[id]);let len=[0];for(let i=1;i<pts.length;i++)len.push(len[i-1]+Math.hypot(pts[i].x-pts[i-1].x,pts[i].y-pts[i-1].y));
       const total=len[len.length-1],dur=Math.max(900,Math.min(2400,total*7));
@@ -1216,11 +1255,23 @@ function labFor(type){
         const k=(d-len[i-1])/((len[i]-len[i-1])||1);dot.setAttribute('cx',pts[i-1].x+(pts[i].x-pts[i-1].x)*k);dot.setAttribute('cy',pts[i-1].y+(pts[i].y-pts[i-1].y)*k);
         if(f<1)setTimeout(step,30);else{
           const route=path.filter(id=>N[id].k!=='j').map(label).join(' → ');
-          seenOK=true;sfx.ok();msg='ok:Message arrived! '+route+'.';busy=false;render();check();
+          seenOK=true;sfx.ok();msg='ok:Message arrived! '+route+'.';busy=false;evalGoals();render();check();
         }
       })();
     }
+    function evalGoals(){
+      if(!opts.goals)return;
+      const i=gdone.indexOf(false);if(i<0)return;
+      const s={cut,off,T,moves,reach:(a,b)=>!!findPath(T,a,b,cut,off),comps:()=>comps(T,cut,off)};
+      if(opts.goals[i].test(s)){
+        gdone[i]=true;sfx.ok();burst(30);msg='ok:Goal '+(i+1)+' complete! '+(opts.goals[i].after||'');
+        const m=moves;
+        if(i<opts.goals.length-1){cut={};off={};moves=0}
+        else if(opts.onDone)opts.onDone(m);
+      }
+    }
     function check(){
+      if(opts.embed)return;
       if(seenOK&&seenFail&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();burst(70);sfx.win();floatTxt('+20 XP',$('#sv',el),'#FFC700');paintHud()}
     }
     render();
@@ -1228,28 +1279,67 @@ function labFor(type){
 }
 
 
-function slideExtra(t,box){
+/* ---------- helpers for the investigation slides ---------- */
+/* ---------- helpers for the investigation slides ---------- */
+/* ---------- helpers for the investigation slides ---------- */
+function comps(T,cut,off){
+  const par={};T.nodes.forEach(n=>par[n.id]=n.id);
+  const f=x=>par[x]===x?x:(par[x]=f(par[x]));
+  T.edges.forEach(e=>{if(cut[e.id]||off[e.a]||off[e.b])return;par[f(e.a)]=f(e.b)});
+  const g={};T.nodes.forEach(n=>{if(n.k==='pc'&&!off[n.id]){(g[f(n.id)]=g[f(n.id)]||[]).push(n.id)}});
+  return Object.keys(g).map(k=>g[k]);
+}
+function suspense(box,ms,cb){
+  const d=document.createElement('div');d.className='susp';let k=3;
+  d.innerHTML=k+'<small>WATCH CLOSELY</small>';box.appendChild(d);sfx.drone();sfx.tick();
+  const iv=setInterval(()=>{k--;if(k<=0){clearInterval(iv);d.remove();cb()}else{d.innerHTML=k+'<small>WATCH CLOSELY</small>';sfx.tick()}},ms/3);
+}
+function netInner(o){
+  o=o||{};const p=(x,y)=>`<line x1="160" y1="115" x2="${x}" y2="${y}" stroke="#19D3FF" stroke-width="3"/>`;
+  return `${p(60,55)}${p(260,55)}${p(60,175)}${p(260,175)}${pcSvg(60,55,'PC1',null)}${pcSvg(260,55,'PC2',null)}${pcSvg(60,175,'PC3',null)}<g transform="translate(240,165)"><rect width="40" height="20" rx="3" fill="#0B0720" stroke="#8A5CFF" stroke-width="2"/><rect x="6" y="-8" width="28" height="8" fill="#8A5CFF" opacity=".5"/><text x="44" y="14" font-size="10" fill="#F4F0FF" ${SVGF}>Printer</text></g>${hubSvg(160,115)}`;
+}
+function runPath(svg,pts,speed,onSeg,done){
+  const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','8');dot.setAttribute('fill','#3CFF8F');dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','2');svg.appendChild(dot);
+  let seg=0;
+  (function next(){
+    if(seg>=pts.length-1){done&&done(dot);return}
+    const a=pts[seg],b=pts[seg+1],d=Math.hypot(b[0]-a[0],b[1]-a[1]),dur=Math.max(250,d/speed*1000),t0=Date.now();
+    (function step(){
+      if(!document.contains(svg)){return}
+      const f=Math.min(1,(Date.now()-t0)/dur);dot.setAttribute('cx',a[0]+(b[0]-a[0])*f);dot.setAttribute('cy',a[1]+(b[1]-a[1])*f);
+      if(f<1)setTimeout(step,30);else{seg++;if(onSeg)onSeg(seg,dot);next()}
+    })();
+  })();
+}
+
+function slideExtra(t,box,ctx){
   const mdx=x=>esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   if(!t.type){box.innerHTML='';return}
+  const svgOpen=(label)=>`<svg viewBox="0 0 320 230" role="img" aria-label="${label}">`;
+
   if(t.type==='explore'){
-    box.innerHTML=`<div class="topo"><svg viewBox="0 0 320 230" role="img" aria-label="${t.topo} topology with numbered parts">${drawTopo(t.topo,{labels:false,marks:t.parts})}</svg></div><div class="xinfo" id="xi">Tap a gold number on the picture to learn about that part.</div>`;
+    const inner=t.topo==='net'?netInner():drawTopo(t.topo,{labels:false});
+    const marks=t.parts.map((m,i)=>`<g class="mk" data-i="${i}" style="cursor:pointer"><circle cx="${m.x}" cy="${m.y}" r="20" fill="rgba(0,0,0,0.001)"/><circle cx="${m.x}" cy="${m.y}" r="12" fill="#FFC700" stroke="#1B1200" stroke-width="2"/><text x="${m.x}" y="${m.y+5}" text-anchor="middle" font-size="15" fill="#1B1200" ${SVGF}>${i+1}</text></g>`).join('');
+    box.innerHTML=`<div class="topo">${svgOpen(t.topo+' with numbered parts')}${inner}${marks}</svg></div><div class="xinfo" id="xi">Tap a gold number on the picture to learn about that part.</div>`;
     const seen={};
     box.querySelectorAll('.mk').forEach(g=>g.onclick=()=>{const p=t.parts[+g.dataset.i];seen[g.dataset.i]=1;sfx.tap();$('#xi',box).innerHTML='<b>'+esc(p.t)+'</b><br>'+esc(p.d)+'<br><span style="color:var(--muted);font-size:15px">Parts seen: '+Object.keys(seen).length+' of '+t.parts.length+'</span>'});
     return;
   }
+
   if(t.type==='watch'){
     const T=TOPO(t.topo),N={};T.nodes.forEach(n=>N[n.id]=n);const path=findPath(T,t.from,t.to,{},{});let k=0;
     const draw=()=>{
       const st=t.steps[k];let hl='';
       for(let i=1;i<=st.at;i++){const a=N[path[i-1]],b=N[path[i]];hl+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#3CFF8F" stroke-width="7" stroke-linecap="round" opacity=".85"/>`}
       const c=N[path[st.at]];
-      box.innerHTML=`<div class="topo"><svg viewBox="0 0 320 230" role="img" aria-label="Message travelling in a ${t.topo} network">${drawTopo(t.topo,{})}${hl}<circle cx="${c.x}" cy="${c.y}" r="9" fill="#3CFF8F" stroke="#fff" stroke-width="2"/></svg></div>
+      box.innerHTML=`<div class="topo">${svgOpen('Message travelling in a '+t.topo+' network')}${drawTopo(t.topo,{})}${hl}<circle cx="${c.x}" cy="${c.y}" r="9" fill="#3CFF8F" stroke="#fff" stroke-width="2"/></svg></div>
       <div class="xinfo" aria-live="polite"><b>Step ${k+1} of ${t.steps.length}.</b> ${mdx(st.text)}</div>
       <div class="row" style="margin-top:8px"><button class="btn gh" id="wb" ${k?'':'disabled'}><span>Previous step</span></button><button class="btn cy" id="wn" ${k<t.steps.length-1?'':'disabled'}><span>Next step</span></button></div>`;
       $('#wb',box).onclick=()=>{k--;sfx.tap();draw()};$('#wn',box).onclick=()=>{k++;sfx.ok();draw()};
     };
     draw();return;
   }
+
   if(t.type==='counter'){
     let n=4;
     const draw=()=>{
@@ -1262,9 +1352,192 @@ function slideExtra(t,box){
     };
     draw();return;
   }
+
   if(t.type==='table'){
     const rows=[['Bus','One main cable','Cheap. Easy to set up. Uses less cable.','One break can stop all. Slows when busy. Hard to find faults.'],['Star','A central hub or switch','One failure does not stop the rest. Easy to add computers and find faults.','If the hub fails, all stop. Needs more cable.'],['Ring','A circle of computers','Orderly data. Fair turns. Steady when busy.','One break can stop the ring. Hard to fix and to change.']];
     box.innerHTML=`<div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Topology</th><th>Shape</th><th>Advantages</th><th>Disadvantages</th></tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    return;
+  }
+
+  /* ---- predict: tap the computers you think will lose contact, then watch it happen ---- */
+  if(t.type==='predict'){
+    const T=TOPO(t.topo),N={};T.nodes.forEach(n=>N[n.id]=n);
+    const cut={},off={};(t.fault.cut||[]).forEach(e=>cut[e]=true);(t.fault.off||[]).forEach(e=>off[e]=true);
+    const cands=T.nodes.filter(n=>n.k==='pc'&&n.id!==t.from&&!off[n.id]);
+    const lose=cands.filter(n=>!findPath(T,t.from,n.id,cut,off)).map(n=>n.id);
+    let picked={},shown=false,shownLose={},done=false,busy=false;
+    const ring=(n,col,dash)=>`<circle cx="${n.x}" cy="${n.y}" r="23" fill="none" stroke="${col}" stroke-width="3"${dash?' stroke-dasharray="5 4"':''}/>`;
+    const warn=()=>{let s='';
+      (t.fault.cut||[]).forEach(id=>{const e=T.edges.find(x=>x.id===id),a=N[e.a],b=N[e.b];s+=`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="14" fill="none" stroke="#FF4757" stroke-width="3"><animate attributeName="r" values="9;19;9" dur="1s" repeatCount="indefinite"/></circle>`});
+      (t.fault.off||[]).forEach(id=>{const n=N[id];s+=`<circle cx="${n.x}" cy="${n.y}" r="26" fill="none" stroke="#FF4757" stroke-width="3"><animate attributeName="r" values="22;33;22" dur="1s" repeatCount="indefinite"/></circle>`});return s};
+    const render=()=>{
+      let ov='';
+      if(!shown){ov+=warn();cands.forEach(n=>{if(picked[n.id])ov+=ring(n,'#FFC700',true)})}
+      else cands.forEach(n=>{if(lose.indexOf(n.id)>=0){if(shownLose[n.id])ov+=ring(n,'#FF4757')+`<text x="${n.x}" y="${n.y+5}" text-anchor="middle" font-size="26" fill="#FF4757" ${SVGF}>✕</text>`}else ov+=ring(n,'#3CFF8F')});
+      const cnt=Object.keys(picked).filter(k=>picked[k]).length;
+      box.innerHTML=`<div class="topo">${svgOpen('Tap the computers you think will lose contact')}${drawTopo(t.topo,{hit:true,sel:t.from,cut:shown?cut:{},off:shown?off:{}})}${ov}</svg></div>
+      <div class="xinfo">${done?'':'<b>Your prediction.</b> '}${esc(done?res:t.ask)}${done?'':' <span style="color:var(--muted)">('+cnt+' picked)</span>'}</div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start"><button class="btn mg" id="go" ${(busy||done)?'disabled':''}><span>${esc(t.btn||'Do it!')}</span></button></div>`;
+      box.querySelectorAll('.nd').forEach(g=>g.onclick=()=>{if(shown||busy)return;const id=g.dataset.n;if(id===t.from||!cands.some(c=>c.id===id))return;picked[id]=!picked[id];sfx.tap();render()});
+      $('#go',box).onclick=()=>{
+        busy=true;render();
+        suspense($('.topo',box),2100,()=>{
+          shown=true;sfx.boom();shakeScreen();render();
+          let k=0;const iv=setInterval(()=>{
+            if(k<lose.length){shownLose[lose[k]]=true;sfx.dark();k++;render()}
+            else{clearInterval(iv);let right=0;cands.forEach(n=>{if(!!picked[n.id]===(lose.indexOf(n.id)>=0))right++});
+              const perfect=right===cands.length;done=true;busy=false;res='You predicted '+right+' of '+cands.length+' computers correctly. '+t.explain;render();ctx.done(perfect,perfect?'Spot on! '+t.explain:'Not quite, but now you have seen it. '+t.explain)}
+          },lose.length?500:0);
+          if(!lose.length){clearInterval(iv);let right=0;cands.forEach(n=>{if(!picked[n.id])right++});done=true;busy=false;res='Nothing was lost. '+t.explain;render();ctx.done(right===cands.length,t.explain)}
+        });
+      };
+    };
+    let res='';render();return;
+  }
+
+  /* ---- puzzle: goals to achieve in a small lab ---- */
+  if(t.type==='puzzle'){
+    labFor(t.topo,{goals:t.goals,modes:t.modes||['cut','off'],embed:true,onDone:m=>ctx.done(true,t.win?t.win.replace('{m}',m):'Case solved.'),intro:t.intro})(box,0,0);
+    return;
+  }
+
+  /* ---- builder: join the devices so everything can reach the printer ---- */
+  if(t.type==='builder'){
+    const P=[{id:'a',x:60,y:55,l:'PC1'},{id:'b',x:260,y:55,l:'PC2'},{id:'c',x:60,y:175,l:'PC3'},{id:'p',x:260,y:175,l:'Printer'}];
+    let links=[],sel=null,won=false;
+    const connected=()=>{const par={};P.forEach(n=>par[n.id]=n.id);const f=x=>par[x]===x?x:(par[x]=f(par[x]));links.forEach(l=>{par[f(l[0])]=f(l[1])});return new Set(P.map(n=>f(n.id))).size===1};
+    const draw=()=>{
+      const N={};P.forEach(n=>N[n.id]=n);
+      let s=links.map(l=>`<line x1="${N[l[0]].x}" y1="${N[l[0]].y}" x2="${N[l[1]].x}" y2="${N[l[1]].y}" stroke="#19D3FF" stroke-width="4" stroke-linecap="round"/>`).join('');
+      s+=P.map(n=>`<g class="nd" data-n="${n.id}" style="cursor:pointer">${n.id==='p'?`<g transform="translate(${n.x-20},${n.y-10})">${sel===n.id?'<rect x="-5" y="-14" width="50" height="40" rx="4" fill="none" stroke="#FFC700" stroke-width="3"/>':''}<rect width="40" height="20" rx="3" fill="#0B0720" stroke="#8A5CFF" stroke-width="2"/><rect x="6" y="-8" width="28" height="8" fill="#8A5CFF" opacity=".5"/><text x="20" y="36" text-anchor="middle" font-size="10" fill="#F4F0FF" ${SVGF}>Printer</text></g>`:pcSvg(n.x,n.y,n.l,null,sel===n.id)}</g>`).join('');
+      box.innerHTML=`<div class="topo">${svgOpen('Join the devices')}${s}</svg></div><div class="xinfo">${won?'<b>Connected!</b> Every device can now reach every other device. The shape you drew is your network\'s <b>topology</b>. You used '+links.length+' links.':'Tap one device, then tap another to join them with a link. Tap the same two again to remove the link. <b>Goal:</b> every device must be able to reach the printer.'}</div>`;
+      box.querySelectorAll('.nd').forEach(g=>g.onclick=()=>{
+        const id=g.dataset.n;if(won)return;
+        if(!sel){sel=id;sfx.tap();draw();return}
+        if(sel===id){sel=null;draw();return}
+        const k=links.findIndex(l=>(l[0]===sel&&l[1]===id)||(l[1]===sel&&l[0]===id));
+        if(k>=0)links.splice(k,1);else links.push([sel,id]);
+        sel=null;sfx.tap();
+        if(connected()){won=true;sfx.win();burst(50);draw();ctx.done(true,'You built a network! The pattern of links you made is a topology.')}else draw();
+      });
+    };
+    draw();return;
+  }
+
+  /* ---- echo: why terminators exist ---- */
+  if(t.type==='echo'){
+    let stage=0,busy=false;
+    const draw=(term)=>{
+      box.innerHTML=`<div class="topo">${svgOpen('A bus network and a signal')}${drawTopo('bus',{labels:false,noTerm:!term})}</svg></div>
+      <div class="xinfo" id="xi">${stage===0?'A computer is about to send a signal. First, take the terminators off. What do you think will happen?':stage===1?'<b>Echo!</b> Without terminators, the signal hits the end of the cable and bounces back. It mixes with new data and confuses every computer.':'<b>Absorbed.</b> With terminators, the signal reaches the end and disappears. The cable stays clean.'}</div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start"><button class="btn mg" id="go" ${busy?'disabled':''}><span>${stage===0?'Remove terminators and send':stage===1?'Put terminators back and send':'Done'}</span></button></div>`;
+      $('#go',box).onclick=()=>{
+        if(stage===2)return;busy=true;const withTerm=stage===1;draw(withTerm);
+        const sv=$('svg',box),pts=withTerm?[[170,115],[294,115]]:[[170,115],[294,115],[26,115],[294,115],[26,115]];
+        sfx.drone();
+        runPath(sv,pts,260,(seg,dot)=>{if(!withTerm){sfx.no();dot.setAttribute('fill','#FF4757');shakeScreen()}},dot=>{
+          if(withTerm){sfx.ok();dot.remove()}
+          stage++;busy=false;draw(stage===2);if(stage===2)ctx.done(true,'Terminators stop the signal bouncing back. That is why a bus network needs one at each end.');
+        });
+      };
+    };
+    draw(true);return;
+  }
+
+  /* ---- jam: everyone sends at once on one cable ---- */
+  if(t.type==='jam'){
+    let ran=false,busy=false;
+    const draw=()=>{
+      box.innerHTML=`<div class="topo">${svgOpen('All computers send at the same time')}${drawTopo('bus',{labels:false})}</svg></div><div class="xinfo" id="xi">${ran?'<b>Six computers, one cable.</b> They crashed into each other and had to wait their turn, one after the other. The more computers, the longer the queue.':'All six computers want to send data right now. There is only one main cable. What will happen?'}</div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start"><button class="btn mg" id="go" ${busy?'disabled':''}><span>${ran?'Try again':'Everyone sends at once!'}</span></button></div>`;
+      $('#go',box).onclick=()=>{
+        busy=true;draw();const sv=$('svg',box),xi=$('#xi',box);
+        const T=TOPO('bus'),N={};T.nodes.forEach(n=>N[n.id]=n);const J=[0,1,2,0,1,2].map(j=>N['j'+j]);
+        const dots=[];
+        T.nodes.filter(n=>n.k==='pc').forEach((p,i)=>{const d=document.createElementNS('http://www.w3.org/2000/svg','circle');d.setAttribute('r','7');d.setAttribute('fill','#3CFF8F');d.setAttribute('cx',p.x);d.setAttribute('cy',p.y);sv.appendChild(d);dots.push(d)});
+        sfx.drone();const t0=Date.now();
+        (function toMain(){const f=Math.min(1,(Date.now()-t0)/900);dots.forEach((d,i)=>{const p=N['pc'+(i+1)];d.setAttribute('cx',p.x+(J[i].x-p.x)*f);d.setAttribute('cy',p.y+(J[i].y-p.y)*f)});
+          if(f<1)return setTimeout(toMain,30);
+          xi.innerHTML='<b>COLLISION!</b> Everyone sent at once, so the data crashed.';dots.forEach(d=>d.setAttribute('fill','#FF4757'));sfx.no();shakeScreen();
+          setTimeout(()=>{dots.forEach(d=>d.setAttribute('fill','#FFC700'));let k=0;
+            (function turn(){if(!document.contains(sv))return;if(k>=6){ran=true;busy=false;draw();ctx.done(true,'Because everyone shares one cable, a busy bus network slows down.');return}
+              xi.innerHTML='<b>Waiting in line.</b> Computer '+(k+1)+' of 6 is sending now...';const d=dots[k],x0=+d.getAttribute('cx'),y0=+d.getAttribute('cy'),t1=Date.now();sfx.tick();
+              (function mv(){const f=Math.min(1,(Date.now()-t1)/650);d.setAttribute('cx',x0+(294-x0)*f);d.setAttribute('cy',y0+(115-y0)*f);if(f<1)return setTimeout(mv,30);d.remove();sfx.ok();k++;turn()})();
+            })();
+          },1400);
+        })();
+      };
+    };
+    draw();return;
+  }
+
+  /* ---- hunt: find a hidden fault ---- */
+  if(t.type==='hunt'){
+    let tests=0,found=false;const bus=t.topo==='bus';
+    const fault=bus?Math.floor(Math.random()*6):Math.floor(Math.random()*6)+1;
+    const tested={};
+    const draw=(msg)=>{
+      let sv;
+      if(bus){
+        const w=268/6;let s='<rect x="16" y="104" width="9" height="22" fill="#FF4757"/><rect x="295" y="104" width="9" height="22" fill="#FF4757"/>';
+        for(let i=0;i<6;i++){const st=tested[i];s+=`<g class="sg" data-i="${i}" style="cursor:pointer"><rect x="${26+i*w+2}" y="100" width="${w-4}" height="30" fill="${st==='bad'?'#FF4757':st==='ok'?'#3CFF8F':'#FFC700'}" stroke="#1B1200" stroke-width="2"/><text x="${26+i*w+w/2}" y="120" text-anchor="middle" font-size="16" fill="#1B1200" ${SVGF}>${st==='bad'?'✕':st==='ok'?'✓':i+1}</text></g>`}
+        sv=svgOpen('A long main cable in six pieces')+s+'</svg>';
+      }else{
+        sv=svgOpen('A star network with one computer offline')+drawTopo('star',{hit:true,off:{['pc'+fault]:true},cut:tested.cutShown?{['s'+fault]:true}:{}})+'</svg>';
+      }
+      box.innerHTML=`<div class="topo">${sv}</div><div class="xinfo" aria-live="polite">${msg||(bus?'<b>Something is wrong.</b> A fault is hiding in the main cable somewhere. You cannot see it. Tap a piece of the cable to test it.':'<b>Alert.</b> One computer is offline and its light is red. Find the broken cable. Tap a cable to test it.')}<br><span style="color:var(--muted)">Tests used: ${tests}</span></div>`;
+      box.querySelectorAll(bus?'.sg':'.hit').forEach(g=>g.onclick=()=>{
+        if(found)return;
+        if(bus){const i=+g.dataset.i;if(tested[i])return;tests++;
+          if(i===fault){tested[i]='bad';found=true;sfx.boom();draw('<b>Found it!</b> Piece '+(i+1)+' is broken. It took you <b>'+tests+'</b> test'+(tests>1?'s':'')+'. In a star network you would need only 1 test, because the offline computer tells you which cable to check.');ctx.done(true,'In a bus network the fault could be anywhere along the cable, so finding it takes time.')}
+          else{tested[i]='ok';sfx.ok();draw('Piece '+(i+1)+': signal is fine. Keep looking.')}}
+        else{tests++;const id=g.dataset.e;
+          if(id==='s'+fault){found=true;tested.cutShown=true;sfx.boom();draw('<b>Found it!</b> It took you <b>'+tests+'</b> test'+(tests>1?'s':'')+'. The red light showed you exactly which computer to check. That is why faults are easy to find in a star network.');ctx.done(true,'In a star network each computer has its own cable, so you can find the fault quickly.')}
+          else{sfx.no();draw('That cable is fine. Look at which computer is offline.')}}
+      });
+    };
+    draw();return;
+  }
+
+  /* ---- hubswitch: who hears the message? ---- */
+  if(t.type==='hubswitch'){
+    let dev='hub',tried={},sent=false;
+    const T=TOPO('star'),N={};T.nodes.forEach(n=>N[n.id]=n);
+    const draw=()=>{
+      let hl='',ov='';
+      if(sent){const hear=dev==='hub'?['pc2','pc3','pc4','pc5','pc6']:['pc3'];
+        ['pc1'].concat(hear).forEach(id=>{hl+=`<line x1="${N[id].x}" y1="${N[id].y}" x2="160" y2="115" stroke="#3CFF8F" stroke-width="6" stroke-linecap="round" opacity=".9"/>`});
+        hear.forEach(id=>{ov+=`<circle cx="${N[id].x}" cy="${N[id].y}" r="23" fill="none" stroke="${id==='pc3'?'#3CFF8F':'#FFC700'}" stroke-width="3"/>`})}
+      box.innerHTML=`<div class="mdtabs"><button class="opt" data-d="hub" aria-pressed="${dev==='hub'}">Use a hub</button><button class="opt" data-d="switch" aria-pressed="${dev==='switch'}">Use a switch</button></div>
+      <div class="topo">${svgOpen('A star network')}${drawTopo('star',{sel:'pc1'})}${hl}${ov}</svg></div>
+      <div class="xinfo">${sent?(dev==='hub'?'<b>Hub:</b> PC1 sent a message to PC3. The hub copied it to <b>every</b> computer (gold rings). Only PC3 needed it (green ring).':'<b>Switch:</b> PC1 sent a message to PC3. The switch sent it <b>only</b> to PC3 (green ring). The others were left alone.'):'Choose a hub or a switch. Then send a message from PC1 to PC3 and watch who receives it.'}</div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start"><button class="btn mg" id="go"><span>Send PC1 → PC3</span></button></div>`;
+      box.querySelectorAll('.mdtabs .opt').forEach(b=>b.onclick=()=>{dev=b.dataset.d;sent=false;sfx.tap();draw()});
+      $('#go',box).onclick=()=>{sent=true;tried[dev]=true;sfx.ok();draw();if(tried.hub&&tried.switch)ctx.done(true,'A switch is smarter. It sends data only to the computer it is meant for.')};
+    };
+    draw();return;
+  }
+
+  /* ---- token: fair turns in a ring ---- */
+  if(t.type==='token'){
+    const T=TOPO('ring'),N={};T.nodes.forEach(n=>N[n.id]=n);
+    let pos=0,want={},sentN=0,log=[],finished=false,msg='Tap a computer that wants to send. It must wait for the token.';
+    const draw=()=>{
+      let ov=`<circle cx="${N['pc'+(pos+1)].x}" cy="${N['pc'+(pos+1)].y-26}" r="9" fill="#FFC700" stroke="#1B1200" stroke-width="2"/>`;
+      Object.keys(want).forEach(id=>{if(want[id])ov+=`<circle cx="${N[id].x}" cy="${N[id].y}" r="23" fill="none" stroke="#FF2E88" stroke-width="3" stroke-dasharray="5 4"/>`});
+      box.innerHTML=`<div class="topo">${svgOpen('A ring network with a token')}${drawTopo('ring',{hit:true})}${ov}</svg></div><div class="xinfo" aria-live="polite">${msg}<br><span style="color:var(--muted)">Sent so far: ${log.length?log.join(', '):'none'}</span></div>`;
+      box.querySelectorAll('.nd').forEach(g=>g.onclick=()=>{if(finished)return;const id=g.dataset.n;want[id]=!want[id];sfx.tap();draw()});
+    };
+    draw();
+    const iv=setInterval(()=>{
+      if(!document.contains(box)){clearInterval(iv);return}
+      pos=(pos+1)%6;const id='pc'+(pos+1);
+      if(want[id]&&!finished){want[id]=false;log.push('PC'+(pos+1));sentN++;sfx.ok();msg='The token is at <b>PC'+(pos+1)+'</b>. It may send now!'}
+      else msg=finished?'<b>Fair turns.</b> Every computer that asked got a turn, in order, and nobody crashed into anyone.':'The token moves on to PC'+(pos+1)+'. Tap computers that want to send.';
+      draw();
+      if(sentN>=3&&!finished){finished=true;clearInterval(iv);msg='<b>Fair turns.</b> Every computer that asked got a turn, in order, and nobody crashed into anyone.';draw();ctx.done(true,'In a token ring, only the computer holding the token can send. So everyone gets a fair turn.')}
+    },900);
+    return;
   }
 }
 
