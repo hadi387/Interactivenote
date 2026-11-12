@@ -1,0 +1,1150 @@
+<title>Network Squad</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rajdhani:wght@500;600;700&display=swap">
+<style>
+/* Concept: arcade HUD. Dark neon world, chamfered panels and skewed buttons, binary rain behind, music and motion on every action. Deliberately one dark look. */
+:root{
+  --void:#0B0720;--panel:#16103F;--panel2:#221858;--line:#3D2F98;--text:#F4F0FF;--muted:#B5AAEA;
+  --cyan:#19D3FF;--mag:#FF2E88;--gold:#FFC700;--lime:#3CFF8F;--red:#FF4757;--violet:#8A5CFF;--ink:#1B1200;
+  --f-display:'Russo One','Arial Black',Impact,sans-serif;--f-body:'Rajdhani','Segoe UI',system-ui,sans-serif;
+  --cut:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  --cut-s:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--void)}
+body{margin:0;background:#150E3D;background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--world,#2A1B7A) 50%,#0B0720) 0%,var(--void) 60%) fixed;color:var(--text);font:600 18px/1.4 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:0;padding-bottom:90px;overflow-x:hidden}
+body::before{content:"";position:fixed;top:0;right:0;left:0;height:env(safe-area-inset-top,0px);z-index:60;background:var(--void)}
+#rain{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5}
+.wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:400;line-height:1.05;margin:0;text-transform:uppercase;letter-spacing:.02em}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+a{color:inherit}
+.skew{display:inline-block;transform:skewX(-8deg)}
+.eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--cyan)}
+.ic{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* buttons: skewed slabs */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--gold);color:var(--ink);font-family:var(--f-display);text-transform:uppercase;font-size:18px;letter-spacing:.04em;padding:14px 28px;min-height:54px;text-decoration:none;transform:skewX(-10deg);box-shadow:5px 5px 0 #8E6A00;transition:transform .08s,box-shadow .08s}
+.btn>*{transform:skewX(10deg)}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:skewX(-10deg) translate(4px,4px);box-shadow:1px 1px 0 #8E6A00}
+.btn.cy{background:var(--cyan);box-shadow:5px 5px 0 #0A6F8C}
+.btn.mg{background:var(--mag);color:#fff;box-shadow:5px 5px 0 #8F1450}
+.btn.gh{background:transparent;color:var(--text);box-shadow:none;border:2px solid var(--line)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* chamfered panels */
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:18px 20px 18px 24px;min-width:0}
+.panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc,var(--cyan))}
+.panel.sm{clip-path:var(--cut-s);padding:12px 16px 12px 20px}
+
+/* HUD */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(180deg,rgba(11,7,32,.96),rgba(11,7,32,.85));border-bottom:3px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--f-display);text-transform:uppercase;font-size:20px;letter-spacing:.03em;background:none;border:0;padding:0;color:var(--text);flex:none}
+.logo b{color:var(--gold);font-weight:400}
+.hud{display:flex;align-items:center;gap:10px;flex:1;min-width:0;justify-content:flex-end}
+.chip{display:flex;align-items:center;gap:8px;min-width:0}
+.av{flex:none;width:38px;height:38px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-family:var(--f-display);color:#fff;font-size:17px}
+.xpbox{display:grid;gap:3px;min-width:0;flex:0 1 170px}
+.xpbox .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.xpbox .t span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xpbar{height:12px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FF9D00);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.nv{display:flex;gap:6px}
+.nv button{background:var(--panel);border:2px solid var(--line);transform:skewX(-10deg);padding:6px 10px;display:flex;align-items:center;gap:6px;font-family:var(--f-display);text-transform:uppercase;font-size:13px}
+.nv button>*{transform:skewX(10deg)}
+.nv button[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:#001A22}
+.nv button.off{opacity:.5}
+
+/* reveal motion */
+@keyframes up{from{opacity:0;transform:translateY(28px) skewY(2deg)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) skewX(-8deg);filter:blur(10px)}60%{opacity:1;transform:scale(.94) skewX(-8deg);filter:none}100%{opacity:1;transform:scale(1) skewX(-8deg)}}
+@keyframes shake{10%,50%,90%{transform:translateX(-8px)}30%,70%{transform:translateX(8px)}}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(255,199,0,.0),0 0 28px 4px rgba(255,199,0,.6)}}
+@keyframes floatUp{to{opacity:0;transform:translateY(-70px) scale(1.4)}}
+@keyframes sweep{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(220%) skewX(-20deg)}}
+@keyframes dash{to{background-position:0 -40px}}
+@keyframes flash{from{opacity:.75}to{opacity:0}}
+@keyframes drop{0%{opacity:0;transform:translateY(-60px) rotate(-4deg) scale(.9)}70%{transform:translateY(6px) rotate(1deg)}100%{opacity:1;transform:none}}
+.rv{animation:up .6s cubic-bezier(.2,.8,.2,1) both}
+.pre{opacity:0;transform:translateY(28px)}
+.shake{animation:shake .4s}
+body.shk .wrap{animation:shake .35s}
+
+/* welcome */
+.start{min-height:calc(100vh - 90px);display:grid;align-content:center;gap:22px;padding-top:30px;padding-bottom:30px;justify-items:start}
+.start h1{font-size:clamp(54px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 var(--mag),10px 10px 0 var(--violet)}
+.start h1 span{display:inline-block;opacity:0;animation:slam .55s cubic-bezier(.2,.8,.2,1) forwards}
+.start .tag{max-width:46ch;font-size:21px;color:var(--muted)}
+.press{font-family:var(--f-display);font-size:22px;letter-spacing:.2em;color:var(--gold);animation:pulse 1.1s infinite;text-transform:uppercase}
+.field{display:grid;gap:8px;width:100%;max-width:430px}
+.field label{font-family:var(--f-display);text-transform:uppercase;font-size:14px;letter-spacing:.1em;color:var(--cyan)}
+input[type=text]{font:700 24px var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);clip-path:var(--cut-s);padding:12px 16px;width:100%;text-transform:uppercase;letter-spacing:.05em}
+.hexes{display:flex;gap:10px;flex-wrap:wrap}
+.hexes button{width:54px;height:54px;border:0;padding:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);position:relative}
+.hexes button[aria-pressed="true"]::after{content:"";position:absolute;top:14px;right:14px;bottom:14px;left:14px;background:#fff;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+
+/* map */
+.hero{padding-top:26px;padding-bottom:8px;display:grid;gap:6px}
+.hero h1{font-size:clamp(30px,7vw,50px)}
+.hero p{margin:0;color:var(--muted);font-size:20px}
+.path{display:grid;gap:0;padding-top:16px;padding-bottom:16px;position:relative}
+.step{position:relative;display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:center}
+.step+.step{margin-top:26px}
+.step+.step::before{content:"";position:absolute;left:37px;top:-26px;height:26px;width:4px;background:repeating-linear-gradient(180deg,var(--line) 0 8px,transparent 8px 14px);background-size:4px 40px;animation:dash 1.2s linear infinite}
+.step.go+.step::before{background:repeating-linear-gradient(180deg,var(--gold) 0 8px,transparent 8px 14px)}
+.hex{width:76px;height:84px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:34px;color:#fff;position:relative}
+.step.cur .hex{background:var(--gold);color:var(--ink);animation:pulse 1.2s infinite}
+.step.go .hex{background:var(--lime);color:#00331A}
+.step.fin .hex{background:var(--violet)}
+.node{display:block;width:100%;text-align:left;border:0;background:none;padding:0;min-width:0;color:inherit}
+.node .panel{--acc:var(--line);transition:transform .12s}
+.step.cur .panel{--acc:var(--gold)}.step.go .panel{--acc:var(--lime)}.step.fin .panel{--acc:var(--violet)}
+.node:not([disabled]):hover .panel{transform:translateX(8px)}
+.node[disabled]{cursor:not-allowed;opacity:.5}
+.node h3{font-size:clamp(20px,4.6vw,28px)}
+.node small{display:block;color:var(--muted);font-size:16px;font-weight:600;margin-top:2px}
+.node .row2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stars{display:flex;gap:2px;flex:none}
+.stars .ic{width:28px;height:28px;fill:#2C2370;stroke:none}
+.stars .on .ic{fill:var(--gold);filter:drop-shadow(0 0 6px rgba(255,199,0,.8))}
+.sec-t{font-size:22px;padding-top:22px;color:var(--gold)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;padding-top:10px}
+.bdg{display:flex;align-items:center;gap:8px;background:var(--panel);clip-path:var(--cut-s);padding:8px 16px 8px 12px;font-family:var(--f-display);font-size:14px;text-transform:uppercase}
+.bdg .ic{width:24px;height:24px}
+.bdg.off{opacity:.35;filter:grayscale(1)}.bdg.on{color:var(--gold)}.bdg.on .ic{filter:drop-shadow(0 0 6px var(--gold))}
+
+/* level */
+.lh{padding-top:26px;padding-bottom:8px;display:grid;gap:8px}
+.lh h1{font-size:clamp(36px,9vw,72px);color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.stage{display:flex;gap:6px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:40;padding-top:10px;padding-bottom:10px;background:linear-gradient(180deg,var(--void) 70%,transparent)}
+.stage a{flex:1;text-align:center;text-decoration:none;background:var(--panel);border:2px solid var(--line);transform:skewX(-12deg);padding:8px 4px;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.stage a>*{display:inline-block;transform:skewX(12deg)}
+.stage a:hover{border-color:var(--gold)}
+.quest{--acc:var(--gold)}
+.quest b{font-family:var(--f-display);text-transform:uppercase;color:var(--gold);display:block;font-size:15px;letter-spacing:.1em}
+.quest span{font-size:21px}
+section{padding-top:22px;padding-bottom:6px;display:grid;gap:14px;scroll-margin-top:130px}
+section>h2{font-size:30px;display:flex;align-items:baseline;gap:12px}
+section>h2 small{font-family:var(--f-body);font-size:16px;color:var(--cyan);letter-spacing:.16em}
+.cprog{font-weight:700;color:var(--muted);letter-spacing:.05em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.flip{perspective:1000px;background:none;border:0;padding:0;text-align:left;color:inherit}
+.flip .in{display:grid;width:100%;height:100%;transition:transform .6s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.flip[aria-pressed="true"] .in{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:270px;backface-visibility:hidden;-webkit-backface-visibility:hidden;clip-path:var(--cut);padding:18px 18px 18px 22px;display:flex;flex-direction:column;gap:8px}
+.face.f{overflow:hidden;background:repeating-linear-gradient(135deg,#1C1450 0 14px,#241A66 14px 28px);justify-content:space-between;position:relative}
+.face.f::after{content:"";position:absolute;top:0;left:0;height:100%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);animation:sweep 3.2s infinite;pointer-events:none}
+.face.f .q{font-family:var(--f-display);font-size:72px;color:var(--cyan);line-height:1;text-shadow:0 0 22px rgba(25,211,255,.7)}
+.face.f h3{font-size:22px}
+.face.f .tap{font-size:14px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.face.b{background:linear-gradient(160deg,#1E5BFF,#6A2BE0);transform:rotateY(180deg);font-size:17.5px;line-height:1.3;overflow:hidden}
+.face.b h4{font-size:20px;color:var(--gold)}
+.face.b .ph{margin:-18px -18px 0 -22px;height:128px;flex:none;background:#0B0720;display:grid;place-items:center;position:relative;overflow:hidden}
+.face.b .ph img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.face.b .ph .ic{width:56px;height:56px;color:var(--cyan)}
+.face.b .like{background:rgba(11,7,32,.45);padding:8px 12px;font-weight:700;display:flex;gap:10px;align-items:center}
+.lk{width:86px;height:86px;object-fit:cover;flex:none;clip-path:var(--cut-s)}
+.face.b .like em{font-style:normal;color:var(--gold);font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;display:block}
+
+.w{--acc:var(--cyan);position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));clip-path:var(--cut);padding:20px 22px 22px 26px;display:grid;gap:14px;min-width:0}
+.w::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--acc)}
+.w h3{font-size:26px}
+.hint{margin:0;color:var(--muted)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.target{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(24px,5.5vw,36px);text-align:center;padding:30px 16px;min-height:120px;display:grid;place-items:center;background:linear-gradient(180deg,#0B0720,#150E3D);clip-path:var(--cut);overflow-wrap:anywhere;animation:drop .45s cubic-bezier(.2,1.2,.4,1) both;line-height:1.15}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.opt{position:relative;background:var(--panel);border:0;border-left:8px solid var(--c,var(--line));padding:14px 16px;text-align:left;font-family:var(--f-body);font-weight:700;font-size:19px;display:flex;gap:10px;align-items:center;min-height:60px;clip-path:var(--cut-s);transition:transform .1s,background .15s;animation:slideR .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+.opt:hover:not([disabled]){background:var(--panel2);transform:translateX(6px)}
+.opt:active:not([disabled]){transform:scale(.97)}
+.opt.ok{background:#0E5B37;border-left-color:var(--lime)}
+.opt.no{background:#6A1730;border-left-color:var(--red);animation:shake .4s}
+.opt .m{margin-left:auto;font-family:var(--f-display);font-size:22px}
+.opt.ok .m{color:var(--lime)}.opt.no .m{color:var(--red)}
+.cats{display:flex;flex-wrap:wrap;gap:12px}
+.cats .opt{flex:1 1 160px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:17px}
+.qtext{font-family:var(--f-display);font-size:clamp(20px,4.4vw,28px);line-height:1.25;margin:0;text-transform:none;animation:slideL .45s cubic-bezier(.2,.8,.2,1) both}
+.blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--gold);text-align:center;margin-left:2px;margin-right:2px;color:var(--gold)}
+.blank.f{color:var(--lime);border-color:var(--lime)}
+.pips{display:flex;gap:6px}
+.pips i{width:22px;height:10px;transform:skewX(-20deg);background:#2C2370;display:block}
+.pips i.ok{background:var(--lime)}.pips i.no{background:var(--red)}.pips i.cur{background:var(--gold);animation:pulse 1s infinite}
+.hud2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.score{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);color:var(--gold)}
+.meter{height:12px;width:140px;background:#0B0720;transform:skewX(-20deg);border:2px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mag),var(--gold));transition:width .25s}
+.combo{font-family:var(--f-display);text-transform:uppercase;color:var(--mag);font-size:20px;min-width:110px;display:flex;align-items:center;gap:6px}
+.combo.on{animation:pulse .35s}
+.timer{height:10px;background:#0B0720;transform:skewX(-20deg);overflow:hidden}
+.timer i{display:block;height:100%;width:100%;background:var(--violet)}
+.byte{display:flex;gap:12px;align-items:flex-start;min-height:64px}
+.byte svg{flex:none;width:62px;height:62px}
+.bubble{position:relative;background:#0B0720;padding:10px 16px;flex:1;min-width:0;border-left:5px solid var(--cyan);font-size:18px;line-height:1.3;animation:slideR .3s both}
+.bubble.ok{border-color:var(--lime)}.bubble.no{border-color:var(--red)}
+.result{display:grid;gap:14px;justify-items:start}
+.big{font-family:var(--f-display);font-size:72px;line-height:1;color:#fff;text-shadow:4px 4px 0 var(--mag)}
+.xpg{display:inline-block;background:var(--gold);color:var(--ink);font-family:var(--f-display);padding:4px 16px;transform:skewX(-10deg);animation:slam .5s both}
+.miss{display:grid;gap:6px;width:100%}
+.miss div{background:#3A1330;border-left:5px solid var(--red);padding:6px 12px;font-size:17px}
+
+/* boss arena */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;background:linear-gradient(180deg,#0B0720,#1A0F4A);clip-path:var(--cut);padding:14px 18px}
+.fighter{display:grid;gap:6px;justify-items:center;min-width:0}
+.fighter .nm{font-family:var(--f-display);font-size:14px;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.vs{font-family:var(--f-display);font-size:34px;color:var(--mag);text-shadow:3px 3px 0 #4A0A28}
+.hearts{display:flex;gap:4px}
+.hearts svg{width:26px;height:26px}
+.hp{display:flex;gap:4px;width:100%;max-width:200px}
+.hp i{flex:1;height:14px;background:var(--red);transform:skewX(-20deg);transition:background .2s,transform .3s}
+.hp i.lost{background:#2C1730;transform:skewX(-20deg) scaleY(.5)}
+.bossw{width:92px;height:92px}
+.hit{animation:shake .4s}
+.flashfx{position:fixed;top:0;right:0;bottom:0;left:0;z-index:70;pointer-events:none;animation:flash .4s forwards}
+.fl{position:fixed;z-index:80;pointer-events:none;font-family:var(--f-display);font-size:34px;color:var(--gold);text-shadow:3px 3px 0 #000;animation:floatUp .9s forwards}
+
+/* overlays */
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;z-index:90;display:grid;place-items:center;overflow:hidden;background:rgba(11,7,32,.0)}
+.ov .p1,.ov .p2{position:absolute;top:-10%;bottom:-10%;width:60%;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+.ov .p1{left:-10%;background:var(--mag);transform:translateX(-130%) skewX(-14deg)}
+.ov .p2{right:-10%;background:var(--violet);transform:translateX(130%) skewX(-14deg)}
+.ov.in .p1,.ov.in .p2{transform:translateX(0) skewX(-14deg)}
+.ov .tx{position:relative;text-align:center;display:grid;gap:10px;padding:20px}
+.ov .tx .a{font-family:var(--f-display);font-size:clamp(20px,5vw,30px);letter-spacing:.3em;color:var(--gold);opacity:0;animation:slideL .4s .3s forwards}
+.ov .tx .b{font-family:var(--f-display);font-size:clamp(44px,13vw,120px);line-height:.95;color:#fff;text-shadow:5px 5px 0 #000;opacity:0;animation:slam .5s .45s both;text-transform:uppercase}
+.ov .tx .c{font-size:22px;max-width:30ch;margin:0 auto;opacity:0;animation:up .5s .8s forwards}
+.ov.out{opacity:0;transition:opacity .35s}
+.ov.win .p1{background:var(--lime)}.ov.win .p2{background:var(--cyan)}.ov.win .tx .b{color:#fff}
+.ov.lose .p1{background:var(--red)}.ov.lose .p2{background:#6A1730}
+
+.stack{display:grid;gap:8px}
+.layer{padding:14px 18px;font-family:var(--f-display);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:58px;border:3px dashed var(--line);color:var(--muted);clip-path:var(--cut-s);font-size:17px}
+.layer small{font-family:var(--f-body);font-size:15px;text-transform:none;font-weight:600}
+.layer.placed{border-style:solid;border-color:transparent;color:#fff;animation:drop .45s both}
+.layer.l3{background:#7B4DFF}.layer.l2{background:#1E6BFF}.layer.l1{background:#0E9A55}.layer.l0{background:#E8590C}
+.layer.act{outline:4px solid var(--gold);transform:scale(1.03);animation:glow 1s infinite}
+.pool{display:flex;gap:10px;flex-wrap:wrap}.pool .opt{flex:1 1 200px}
+.flowtext{background:#0B0720;border-left:5px solid var(--gold);padding:14px 18px;min-height:78px}
+.boot{background:#04020E;color:#6BFFAE;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:15px;padding:14px 16px;min-height:150px;line-height:1.7;overflow-wrap:anywhere;border:2px solid var(--line)}
+.boot .e{color:#FF7B8A}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.apps button{background:var(--panel);border:0;clip-path:var(--cut-s);padding:14px 4px;display:grid;gap:4px;justify-items:center;font-family:var(--f-display);font-size:13px;text-transform:uppercase}
+.apps button .ic{width:34px;height:34px;color:var(--cyan)}
+.apps button[disabled]{opacity:.3;cursor:not-allowed}
+.apps button:not([disabled]){animation:drop .4s both}
+.sw{display:inline-flex;gap:10px;align-items:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px;background:var(--panel);border:2px solid var(--line);padding:8px 16px 8px 10px;transform:skewX(-10deg)}
+.sw i{width:42px;height:22px;background:var(--red);position:relative;display:block}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;transition:left .2s}
+.sw[aria-pressed="true"] i{background:var(--lime)}.sw[aria-pressed="true"] i::after{left:23px}
+.files{display:grid;gap:8px}
+.file{display:flex;align-items:center;gap:12px;background:#0B0720;padding:10px 14px;font-weight:700}
+.file .b2{flex:1;height:14px;background:#2C2370;transform:skewX(-20deg);overflow:hidden}
+.file .b2 i{display:block;height:100%;background:var(--cyan);transition:width .7s cubic-bezier(.3,1.2,.5,1)}
+.file .mb{font-family:var(--f-display);min-width:78px;text-align:right}
+.limit{display:flex;justify-content:space-between;font-family:var(--f-display);text-transform:uppercase;background:#0B0720;padding:12px 16px;border-left:6px solid var(--line)}
+.limit.okk{border-color:var(--lime);color:var(--lime)}.limit.bad{border-color:var(--red);color:var(--red)}
+
+/* leaderboard */
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tally div{background:var(--panel);clip-path:var(--cut-s);padding:10px 16px;font-weight:700;color:var(--muted);text-transform:uppercase;font-size:14px;letter-spacing:.06em}
+.tally b{display:block;font-family:var(--f-display);font-size:34px;color:#fff;letter-spacing:0}
+.board{display:grid;gap:10px;padding-top:16px}
+.pl{display:grid;grid-template-columns:54px 40px 1fr auto auto;gap:12px;align-items:center;background:var(--panel);clip-path:var(--cut-s);padding:10px 16px 10px 12px;animation:slideR .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms);min-width:0}
+.pl .rk{font-family:var(--f-display);font-size:34px;text-align:center;color:var(--muted)}
+.pl.r1{background:linear-gradient(90deg,#6B4B00,var(--panel));box-shadow:inset 6px 0 0 var(--gold)}.pl.r1 .rk{color:var(--gold);text-shadow:0 0 14px var(--gold)}
+.pl.r2{box-shadow:inset 6px 0 0 #C8D0E6}.pl.r2 .rk{color:#C8D0E6}
+.pl.r3{box-shadow:inset 6px 0 0 #E3A26B}.pl.r3 .rk{color:#E3A26B}
+.pl.me{outline:3px solid var(--cyan);outline-offset:-3px}
+.pl .nm{min-width:0;font-family:var(--f-display);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:18px}
+.pl .nm small{display:block;font-family:var(--f-body);font-size:14px;color:var(--muted);text-transform:none;font-weight:600}
+.pl .xp{font-family:var(--f-display);color:var(--gold);font-size:20px}
+.rm{background:none;border:2px solid var(--line);padding:2px 8px;font-size:12px;text-transform:uppercase}
+.note{background:#0B0720;border-left:5px solid var(--gold);padding:12px 16px;font-size:17px}
+body.lite .face.f::after{display:none}
+body.lite .bgboss svg,body.lite .brief .bz svg,body.lite .step.cur .hex{animation:none}
+body.lite *{filter:none!important}
+#errb{position:fixed;left:0;right:0;bottom:0;z-index:999;background:#FF4757;color:#fff;font:700 16px/1.3 Arial,sans-serif;padding:10px 14px}
+.mdtabs{display:flex;gap:8px;flex-wrap:wrap}
+.mdtabs .opt{flex:1 1 140px;justify-content:center;text-align:center;font-family:var(--f-display);text-transform:uppercase;font-size:14px}
+.mdtabs .opt[aria-pressed="true"]{background:var(--cyan);color:#001A22;border-left-color:#fff}
+.topo{background:#0B0720;padding:8px;clip-path:var(--cut-s)}
+.topo svg{width:100%;height:auto;max-height:400px;display:block;touch-action:manipulation}
+.face.b .ph svg{position:absolute;top:0;left:0;width:100%;height:100%;padding:6px}
+.slp svg{width:100%;height:auto;max-height:280px;display:block;padding:10px;background:#0B0720}
+.target svg{max-height:210px;width:auto;max-width:100%;display:block}
+#fx{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:85}
+.target img{max-height:240px;width:auto;max-width:100%;object-fit:contain;display:block}
+.target.pic{padding:10px}
+.ask{font-family:var(--f-display);font-size:clamp(20px,4.6vw,28px);text-transform:none;background:var(--gold);color:var(--ink);padding:12px 18px;clip-path:var(--cut-s);animation:slam .45s both}
+.shot{position:relative;line-height:0;max-width:640px;width:100%;margin:0 auto;border:3px solid var(--line);cursor:crosshair;overflow:hidden;touch-action:manipulation}
+.shot img{width:100%;height:auto;display:block;user-select:none;-webkit-user-drag:none}
+.rip{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid var(--red);border-radius:50%;pointer-events:none;animation:floatUp .7s forwards}
+.tgt{position:absolute;border:4px solid var(--lime);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(60,255,143,.8);pointer-events:none;animation:pulse .8s 3}
+.tgt.hint{border-color:var(--gold);box-shadow:0 0 0 3px #000,0 0 26px 6px rgba(255,199,0,.8)}
+.brief{background:#0B0720;position:fixed;top:0;right:0;bottom:0;left:0;z-index:95;background:radial-gradient(90% 60% at 50% 100%,color-mix(in srgb,var(--world,#2A1B7A) 70%,#000) 0%,rgba(7,4,20,.97) 70%);display:grid;align-items:end;padding:20px max(16px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px));animation:flash 0s;cursor:pointer}
+.brief .bx{max-width:860px;margin:0 auto;width:100%;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;animation:up .5s both}
+.bgboss{position:absolute;top:0;right:0;bottom:40%;left:0;display:grid;place-items:center;opacity:.28;pointer-events:none}
+.bgboss svg{width:min(60vw,420px);height:auto;animation:bob 3s ease-in-out infinite}
+.brief .bz svg{width:clamp(90px,22vw,170px);height:auto;animation:bob 2s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(25,211,255,.6))}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.brief .bt{background:#0B0720;border-left:6px solid var(--cyan);padding:16px 20px;clip-path:var(--cut);min-height:150px;display:grid;gap:8px;align-content:start}
+.brief .who{font-family:var(--f-display);font-size:14px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
+.brief p{margin:0;font-size:clamp(20px,4.4vw,28px);line-height:1.3}
+.brief .go{justify-self:end;font-family:var(--f-display);color:var(--gold);font-size:14px;letter-spacing:.14em;text-transform:uppercase;animation:pulse 1s infinite}
+.can{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:20px}
+.sl{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:start}
+.sl.one{grid-template-columns:1fr}
+@media (max-width:700px){.sl{grid-template-columns:1fr}}
+.pts2{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px;font-size:clamp(19px,3.8vw,23px);line-height:1.35}
+.pts2 li{padding-left:18px;position:relative;opacity:0;animation:slideL .5s cubic-bezier(.2,.8,.2,1) forwards}
+.pts2 li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.pts2 b{color:var(--gold)}
+.slp{margin:0;position:relative;background:#0B0720;clip-path:var(--cut-s);animation:drop .5s .2s both}
+.slp img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000}
+.slp .lk2{position:absolute;right:8px;bottom:44px;width:34%;max-height:none;border:3px solid var(--gold);object-fit:cover;height:34%;aspect-ratio:1;background:#000}
+.slp figcaption{padding:8px 14px;font-size:16px;color:var(--muted)}
+.qc{display:grid;gap:10px;background:#0B0720;padding:14px 16px;border-left:6px solid var(--gold)}
+.tick{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:var(--panel);border:0;border-left:6px solid var(--line);clip-path:var(--cut-s);padding:14px 16px;font-size:19px;font-weight:600}
+.tick .bx2{flex:none;width:28px;height:28px;border:3px solid var(--line);background:#0B0720;display:grid;place-items:center;transform:rotate(45deg) scale(.8)}
+.tick[aria-pressed="true"]{border-left-color:var(--lime)}
+.tick[aria-pressed="true"] .bx2{background:var(--lime);border-color:var(--lime)}
+textarea{width:100%;min-height:96px;font:600 19px/1.4 var(--f-body);color:var(--text);background:#0B0720;border:3px solid var(--line);padding:12px 14px;resize:vertical}
+.brief .skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:2px solid var(--line);color:var(--muted);font-family:var(--f-display);text-transform:uppercase;font-size:13px;padding:6px 14px}
+@media (max-width:700px){.xpbox{display:none}.logo{display:none}#nfs{display:none}.nv button{padding:6px 9px}.hud{justify-content:space-between}.nv button .lab{display:none}.arena{grid-template-columns:1fr 1fr}.vs{display:none}.pl{grid-template-columns:40px 34px 1fr auto}.pl .rm{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
+</style>
+
+<script>(function(){try{var d=document.createElement('div');d.style.cssText='display:flex;flex-direction:column;gap:1px';var x=document.createElement('div'),y=document.createElement('div');x.style.height='1px';y.style.height='1px';d.appendChild(x);d.appendChild(y);document.body.appendChild(d);var ok=d.scrollHeight===3;document.body.removeChild(d);if(!ok)document.documentElement.className+=' no-flexgap'}catch(e){}})();</script>
+<script>window.addEventListener('error',function(e){var d=document.getElementById('errb');if(!d){d=document.createElement('div');d.id='errb';document.body.appendChild(d)}d.textContent='Problem: '+(e.message||'unknown')+(e.lineno?' (line '+e.lineno+')':'')+'. Please screenshot this for your teacher.'});</script>
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="bar"><div class="wrap">
+  <button class="logo" id="logo" type="button">Network <b>Squad</b></button>
+  <div class="hud" id="hud"></div>
+</div></div>
+<main class="wrap" id="app"></main>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+const MCQ=[
+ [{q:'A network topology is the _____ of the computers and devices in a network.',o:['layout (shape)','price','colour','speed']},
+  {q:'Each computer or device in a network is called a _____.',o:['node','keyboard','folder','battery']},
+  {q:'Which of these is a type of network topology?',o:['Ring','Hammer','Pencil','Window']},
+  {q:'A network is two or more computers _____ together so they can share things.',o:['joined','painted','deleted','folded']},
+  {q:'The cables that join the computers in a network are called _____.',o:['links','icons','keys','files']}],
+ [{q:'In a bus topology, all the computers are connected to _____.',o:['one main cable','a central hub','a circle of cables','a satellite']},
+  {q:'The main cable in a bus topology is called the _____.',o:['bus (backbone)','hub','node','monitor']},
+  {q:'What can happen if the main cable of a bus network breaks?',o:['The whole network can stop','Only one computer stops','Nothing happens','The computers become faster']},
+  {q:'Which is an advantage of a bus topology?',o:['It is cheap and uses less cable','It never breaks','It is fastest with a thousand computers','It needs no cable']},
+  {q:'A disadvantage of a bus topology is that it _____ when many computers send data.',o:['slows down','speeds up','turns into a star','stops needing a cable']}],
+ [{q:'In a star topology, every computer connects to a _____.',o:['central hub or switch','main bus cable','ring of cables','keyboard']},
+  {q:'In a star network, one computer\'s cable breaks. What happens?',o:['Only that computer loses its connection','The whole network stops','The hub explodes','Every computer slows down']},
+  {q:'Which is an advantage of a star topology?',o:['It is easy to add a computer and find faults','It uses the least cable','It needs no hub','It costs nothing']},
+  {q:'A disadvantage of a star topology is that if the hub fails, _____.',o:['the whole network stops','nothing happens','only one computer stops','the cables get shorter']},
+  {q:'A star network usually needs _____ cable than a bus network.',o:['more','less','the same amount of','no']}],
+ [{q:'In a ring topology, each computer is connected to _____.',o:['two neighbours, making a circle','one main cable','a central hub','no other computer']},
+  {q:'In a ring topology, data travels _____.',o:['around the circle, from one computer to the next','to every computer at once through a hub','straight down a main cable','nowhere']},
+  {q:'Which is an advantage of a ring topology?',o:['Data moves in an orderly way and every computer gets a fair turn','It uses the most cable','It needs a hub','It never fails']},
+  {q:'A disadvantage of a ring topology is that if one computer or cable fails, _____.',o:['the whole ring can stop working','only that computer stops while all others work','nothing happens','the ring becomes a star']},
+  {q:'Which topology has a central hub or switch?',o:['Star','Bus','Ring','None of them']}]
+];
+const HW=[
+ {obj:['Explain what a computer network is.','Define network topology and name three types.'],th:['What is a computer network?','What is a network topology?','Name the three types of network topology you have learnt.'],asg:'List five devices (nodes) in your school or home that could be part of a network.',prj:'Draw a map of the computers in your school lab. Show how you think they are joined together.'},
+ {obj:['Describe a bus topology.','State advantages and disadvantages of a bus topology.'],th:['Describe a bus topology in your own words.','State two advantages of a bus topology.','State two disadvantages of a bus topology.'],asg:'Draw a bus topology with five computers. Label the main cable and the terminators.',prj:'Think of a road with bus stops. Write a short paragraph to explain how it is like a bus network.'},
+ {obj:['Describe a star topology.','State advantages and disadvantages of a star topology.'],th:['Describe a star topology in your own words.','State two advantages of a star topology.','State two disadvantages of a star topology.'],asg:'Draw a star topology with six computers and a hub. Label each part.',prj:'Find out which device at home or in school works like a hub or switch. Write what it connects.'},
+ {obj:['Describe a ring topology.','State advantages and disadvantages of a ring topology, and compare the three topologies.'],th:['Describe a ring topology in your own words.','State one advantage and one disadvantage of a ring topology.','Which topology would you choose for a small school lab? Give a reason.'],asg:'Draw a ring topology with six computers. Use arrows to show the direction of the data.',prj:'Make a table that compares bus, star and ring. Include one advantage and one disadvantage of each.'}
+];
+const ANS=[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+const WHY=[
+ ['Topology means the shape or layout of a network. It shows how the computers are arranged and joined.','Every computer, printer or phone on a network is called a node.','Bus, star and ring are the three types of topology in this lesson.','A network is two or more computers joined together so they can share files, printers and the internet.','The cables (or wireless signals) that join the nodes are called links.'],
+ ['In a bus topology every computer is connected to one main cable.','The main cable is called the bus or backbone.','Everything depends on the main cable. If it breaks, the whole network can stop.','A bus network is cheap because it uses less cable than other layouts.','All computers share one cable, so the network slows down when many send data.'],
+ ['In a star topology every computer has its own cable to a central hub or switch.','Each computer has its own cable, so only the computer with the broken cable is cut off.','Because each computer has its own cable, it is easy to add computers and to find which one has a fault.','The hub is the centre of everything. If it fails, no computer can talk to another.','Every computer needs its own cable to the hub, so a star uses more cable.'],
+ ['In a ring, each computer joins two neighbours and the cables form a circle.','Data passes from one computer to the next around the circle, in one direction.','Data moves in an orderly way, so computers do not crash into each other and each gets a fair turn.','The data must pass through every computer, so one break can stop the whole ring.','Only the star topology has a central hub or switch.']
+];
+const LEVELS=[
+ {id:1,name:'Network Basics',wp:'JSS 2 · Topic 1',topic:'What Is a Network Topology?',badge:'Network Starter',boss:['The Tangle','#FF2E88'],
+  mission:'A storm tangled the lab cables. Learn how computers are joined so you can sort them out.',
+  cards:[
+   {t:'Network',ic:'network',svg:'net',d:'A network is two or more computers joined together so they can share files, printers and the internet.',like:'Children holding hands in a line. Each one can pass a message to the next.'},
+   {t:'Node',ic:'laptop',svg:'net',d:'A node is any computer, printer or phone on the network.',like:'Each house on a street is a node. The street joins them.'},
+   {t:'Link',ic:'plug',svg:'net',d:'A link is a cable (or wireless signal) that joins the nodes.',like:'The road between two villages.'},
+   {t:'Topology',ic:'map',svg:'all',d:'Topology means the shape or layout of a network. It shows how the computers are arranged and joined.',like:'A map of your school. It shows where each building is and how the paths join them.'}]},
+ {id:2,name:'Bus Line',wp:'JSS 2 · Topic 2',topic:'Bus Topology',badge:'Bus Builder',boss:['Bus Breaker','#FFC700'],
+  mission:'All the computers hang on one long cable. Learn how a bus network works and what can go wrong.',
+  cards:[
+   {t:'Bus topology',ic:'list',svg:'bus',d:'All the computers connect to one main cable called the bus (or backbone).',like:'A danfo bus route. Every bus stop is on the same road.'},
+   {t:'Terminators',ic:'lock',svg:'bus',d:'A terminator sits at each end of the main cable. It stops the signal from bouncing back.',like:'The wall at the end of a corridor. It stops the ball rolling out.'},
+   {t:'Advantages',ic:'star',svg:'bus',d:'A bus network is cheap, easy to set up, uses less cable and is good for a small network.',like:'A short road with a few bus stops is cheap to build.'},
+   {t:'Disadvantages',ic:'shield',svg:'bus',d:'If the main cable breaks, the whole network can stop. It slows down with many computers, and faults are hard to find.',like:'If the road is blocked, no bus can pass.'}]},
+ {id:3,name:'Star Station',wp:'JSS 2 · Topic 3',topic:'Star Topology',badge:'Star Engineer',boss:['Hub Crasher','#19D3FF'],
+  mission:'Every computer connects to a hub in the middle. Learn how a star network works and what can go wrong.',
+  cards:[
+   {t:'Star topology',ic:'network',svg:'star',d:'Every computer connects to a central hub or switch. Each computer has its own cable.',like:'A village square. Every path leads to the middle.'},
+   {t:'Hub and switch',ic:'chip',svg:'star',d:'The hub (or switch) is the box in the middle. It passes data from one computer to another.',like:'A traffic warden at a junction. He sends each car the right way.'},
+   {t:'Advantages',ic:'star',svg:'star',d:'If one cable or computer fails, the others keep working. It is easy to add computers and easy to find faults.',like:'If one path to the square is blocked, the other paths still work.'},
+   {t:'Disadvantages',ic:'shield',svg:'star',d:'If the hub fails, the whole network stops. It needs more cable than a bus, and the hub costs money.',like:'If the village square is closed, nobody can meet.'}]},
+ {id:4,name:'Ring Road',wp:'JSS 2 · Topic 4',topic:'Ring Topology and Comparing Topologies',badge:'Ring Master',boss:['Loop Lord','#8A5CFF'],
+  mission:'The computers pass data around a circle. Learn how a ring works, then compare all three topologies.',
+  cards:[
+   {t:'Ring topology',ic:'gear',svg:'ring',d:'Each computer connects to two neighbours. Together they make a circle.',like:'Children sitting in a circle, passing a parcel.'},
+   {t:'One direction',ic:'map',svg:'ring',d:'Data travels in one direction around the ring. Each computer passes it to the next.',like:'Passing a bucket of water from hand to hand.'},
+   {t:'Advantages',ic:'star',svg:'ring',d:'Data moves in an orderly way. Every computer gets a fair turn. It works well even when the network is busy.',like:'Everyone in the circle gets a turn to hold the parcel.'},
+   {t:'Disadvantages',ic:'shield',svg:'ring',d:'If one computer or cable fails, the whole ring can stop. Faults are hard to find, and adding a computer disturbs the network.',like:'If one child drops out, the parcel stops moving.'},
+   {t:'Compare all three',ic:'list',svg:'all',d:'Bus: one main cable, cheap. Star: central hub, easy to fix. Ring: a circle, fair turns.',like:'Three ways to arrange the same school desks.'}]}
+];
+const TEACH={
+1:[
+ {h:'What is a computer network?',lines:['A **network** is two or more computers **joined together**.','They can share **files**, **printers** and the **internet**.','Example: the computers in your school lab.'],svg:'net',cap:'A small network: computers, a printer and a hub.',q:'A network is two or more computers...',o:['joined together','kept in a box','painted blue','switched off']},
+ {h:'Nodes and links',lines:['Each computer, printer or phone on the network is a **node**.','The cables (or wireless signals) that join them are called **links**.','A **hub** or **switch** is a box that joins many cables together.'],svg:'net',cap:'Nodes are the devices. Links are the lines between them.',q:'Each computer in a network is called a...',o:['node','link','hub','bus']},
+ {h:'What is a topology?',lines:['**Topology** means the **shape** or **layout** of a network.','It shows how the computers are arranged and how they are joined.','Think of a map of the computers and cables.'],svg:'',cap:'',q:'A network topology is the... of a network.',o:['layout (shape)','price','colour','name']},
+ {h:'Three types to learn',lines:['**Bus**: all computers on one main cable.','**Star**: all computers joined to a central hub.','**Ring**: computers joined in a circle.'],svg:'all',cap:'Bus, star and ring.',q:'Which one is a type of network topology?',o:['Ring','Hammer','Pencil','Window']},
+ {h:'Why does topology matter?',lines:['The layout changes the **cost** of a network.','It changes how **fast** the network works.','It also changes **what happens when something breaks**.','So people choose the layout that suits them.'],svg:'',cap:'',q:'The layout of a network can change...',o:['its cost and what happens when something breaks','the weather','the colour of the keyboard','your name']}
+],
+2:[
+ {h:'Bus topology',lines:['All the computers connect to **one main cable**.','The main cable is called the **bus** or **backbone**.','Think of a road with many bus stops. Every stop is on the same road.'],svg:'bus',cap:'Computers hang off one main cable.',q:'In a bus topology, all computers connect to...',o:['one main cable','a hub','a circle','a satellite']},
+ {h:'How a bus network works',lines:['A computer sends data onto the main cable.','The data travels along the cable.','Only the right computer takes it.','A **terminator** sits at each end. It stops the signal bouncing back.'],svg:'bus',cap:'The red blocks at each end are terminators.',q:'What does a terminator do?',o:['Stops the signal bouncing back','Adds more computers','Makes the cable longer','Switches on the hub']},
+ {h:'Advantages of a bus',lines:['It is **cheap**. It uses less cable.','It is **easy to set up**.','It is good for a **small** network.','It is easy to add one more computer.'],svg:'bus',cap:'Less cable means less money.',q:'Which is an advantage of a bus topology?',o:['It is cheap and uses less cable','It never breaks','It is fastest with a thousand computers','It needs no cable']},
+ {h:'Disadvantages of a bus',lines:['If the **main cable breaks**, the whole network can stop.','With many computers, data **slows down**. They all share one cable.','It is **hard to find** where a fault is.'],svg:'bus',cap:'One cut in the middle splits the network.',q:'If the main cable breaks in a bus network...',o:['the whole network can stop','nothing happens','only one computer stops','the computers become faster']},
+ {h:'Where is a bus used?',lines:['A bus is the simplest idea, so we learn it first.','It suits a **small network** with few computers.','Big networks use other layouts.'],svg:'',cap:'',q:'A bus topology is best for a...',o:['small network','network of thousands of computers','network with no computers','space station']}
+],
+3:[
+ {h:'Star topology',lines:['Every computer connects to a **central device**.','The central device is a **hub** or a **switch**.','Think of a village square. Every path leads to the middle.'],svg:'star',cap:'All computers connect to the hub in the middle.',q:'In a star topology, every computer connects to a...',o:['central hub or switch','main bus cable','ring of cables','keyboard']},
+ {h:'How a star network works',lines:['A computer sends its data to the hub.','The hub sends it to the right computer.','Each computer has its **own cable** to the hub.'],svg:'star',cap:'One cable for each computer.',q:'In a star network, each computer has...',o:['its own cable to the hub','one shared main cable','two cables to its neighbours','no cable']},
+ {h:'Advantages of a star',lines:['If **one cable or computer fails**, the others keep working.','It is easy to **add or remove** a computer.','It is easy to **find faults**.','It works well, even with many computers.'],svg:'star',cap:'One broken spoke cuts off only one computer.',q:'Which is an advantage of a star topology?',o:['It is easy to add a computer and find faults','It uses the least cable','It needs no hub','It costs nothing']},
+ {h:'Disadvantages of a star',lines:['If the **hub fails**, the whole network stops.','It needs **more cable** than a bus.','The hub costs money.'],svg:'star',cap:'Everything depends on the hub.',q:'If the hub of a star network fails...',o:['the whole network stops','nothing happens','only one computer stops','the cables get shorter']},
+ {h:'Star in real life',lines:['Most school and office networks use a star layout today.','Your home **Wi-Fi router** is like a hub. Every device connects to it.'],svg:'',cap:'',q:'A home Wi-Fi router works like a...',o:['hub in a star network','bus cable','ring','keyboard']}
+],
+4:[
+ {h:'Ring topology',lines:['Each computer connects to **two neighbours**.','Together they make a **circle**.','Like children in a circle, passing a parcel.'],svg:'ring',cap:'Each computer joins the next one.',q:'In a ring topology, each computer connects to...',o:['two neighbours','one main cable','a central hub','no other computer']},
+ {h:'How a ring network works',lines:['Data travels in **one direction** around the ring.','Each computer passes the data to the next one.','The computer it is meant for keeps it.'],svg:'ring',cap:'The arrows show which way data goes.',q:'In a ring, data travels...',o:['around the circle, one computer to the next','to every computer at once','straight down a main cable','nowhere']},
+ {h:'Advantages of a ring',lines:['Data moves in an **orderly** way. Computers do not crash into each other.','Every computer gets a **fair turn**.','It works well even when the network is busy.'],svg:'ring',cap:'Everyone gets a turn.',q:'Which is an advantage of a ring topology?',o:['Every computer gets a fair turn','It uses the most cable','It needs a hub','It never fails']},
+ {h:'Disadvantages of a ring',lines:['If **one computer or cable fails**, the whole ring can stop.','It is **hard to find** the fault.','Adding or removing a computer **disturbs** the network.'],svg:'ring',cap:'A break anywhere stops the data.',q:'If one computer in a simple ring fails...',o:['the whole ring can stop','only that computer stops while all others work','nothing happens','the ring becomes a star']},
+ {h:'Compare all three',lines:['**Bus**: one main cable. Cheap. One break stops all.','**Star**: central hub. Easy to fix. If the hub fails, all stop.','**Ring**: a circle. Fair turns. One break stops all.'],svg:'all',cap:'Bus, star and ring.',q:'Which topology uses a central hub?',o:['Star','Bus','Ring','All of them']},
+ {h:'Choose the best',lines:['Small, cheap lab with few computers: **bus**.','A lab where faults must be easy to fix: **star**.','A network where every computer needs a fair turn: **ring**.'],svg:'',cap:'',q:'A school wants a network that is easy to fix when one cable breaks. Best choice?',o:['Star','Bus','Ring','None of them']}
+]};
+const RECAP={
+1:['A network is two or more computers joined together.','A node is any device on the network. A link is the cable between them.','Topology is the layout of a network.','The three types are bus, star and ring.'],
+2:['Bus: all computers on one main cable, with terminators at the ends.','Advantages: cheap, easy to set up, uses less cable.','Disadvantages: one break can stop everything, slows down when busy, hard to find faults.'],
+3:['Star: every computer has its own cable to a central hub or switch.','Advantages: one failure does not stop the others, easy to add computers and find faults.','Disadvantages: hub failure stops everything, needs more cable.'],
+4:['Ring: computers in a circle, data goes one way.','Advantages: orderly data, fair turns.','Disadvantages: one failure can stop the ring, hard to fix.','Bus is cheap, star is easy to fix, ring is fair.']
+};
+
+const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+let TTS=null;
+async function speak(t){
+  if(!TTS||!S.voice)return;
+  try{if(MG)MG.gain.value=.3;await TTS.speak(t,{voice:'buttery'})}catch(e){}finally{if(MG)MG.gain.value=1}
+}
+function imgFail(i){if(!i.dataset.t){i.dataset.t=1;i.src=i.getAttribute("src").replace(".jpg",".png")}else i.remove()}
+const STORY={
+ 1:['Alert! A storm has knocked out the cables in the school computer lab. Nobody can share files or print.','The Tangle has knotted every cable into a big mess.','To fix it, you must learn how computers are joined together. Learn first, then fight!'],
+ 2:['The first fix is the bus line. All the computers hang on one long cable.','Bus Breaker keeps cutting it, and the whole line goes dark.','Learn how a bus network works, then beat him.'],
+ 3:['Next is the star room. Every computer connects to a hub in the middle.','Hub Crasher is trying to switch off the hub.','Learn how a star network works, then stop him.'],
+ 4:['The last network is a ring. Computers pass data around a circle.','Loop Lord has trapped the data in an endless loop.','Learn how the ring works. Break the loop and save the lab.']
+};
+const EPI={1:'The Tangle is untied. The cables are sorted.',2:'Bus Breaker is beaten. The bus line is back.',3:'Hub Crasher is gone. The hub is safe.',4:'Loop Lord is broken. The whole lab is connected again.'};
+
+function briefing(n){
+  return new Promise(res=>{
+    const lines=STORY[n];let li=0,ch=0,timer=null,typing=false;
+    const o=document.createElement('div');o.className='brief';
+    o.innerHTML=`<button class="skip" id="sk">Skip</button><div class="bgboss" aria-hidden="true">${bossSVG(LEVELS[n-1].boss[1],'idle')}</div><div class="bx"><div class="bz">${byteSVG('idle')}</div><div class="bt"><div class="who">Byte · Mission briefing</div><p id="bl" aria-live="polite"></p><div class="go">Tap to continue</div></div></div>`;
+    document.body.appendChild(o);const p=$('#bl',o);
+    const finish=()=>{clearInterval(timer);if(TTS)try{TTS.stop()}catch(e){}o.remove();res()};
+    function startLine(){ch=0;typing=true;p.textContent='';speak(lines[li]);clearInterval(timer);
+      timer=setInterval(()=>{ch++;p.textContent=lines[li].slice(0,ch);if(ch%3===0&&S.sfx)tone(900+Math.random()*200,now(),.03,'square',.03);if(ch>=lines[li].length){clearInterval(timer);typing=false}},26)}
+    o.onclick=e=>{if(e.target.id==='sk')return finish();if(typing){clearInterval(timer);p.textContent=lines[li];typing=false;return}li++;if(li>=lines.length)finish();else{sfx.tap();startLine()}};
+    startLine();
+  });
+}
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const IC={
+ code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-4-4l9-9z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',broom:'<path d="M14 3l6 6-5 2-3-3zM12 8L4 20h8l4-9"/>',zip:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v4M10 8h4M10 12h4M10 16h4"/>',cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17 18z"/>',chip:'<rect x="7" y="7" width="10" height="10"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',folder:'<path d="M3 6h6l2 2h10v11H3z"/>',screen:'<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>',lock:'<rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',users:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M16 14a5 5 0 0 1 6 5"/>',phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',network:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5L6 17M12 11.5l6 5.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',star:'<path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.6 5.6 21.5l1.7-7.2L2 9.6 9 9z"/>',flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',trophy:'<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/>',map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/>',music:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',sound:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',calc:'<rect x="5" y="3" width="14" height="18"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11h.01M16 15h.01"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',doc:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6"/>',bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',voice:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const COLS=['#FF2E88','#19D3FF','#3CFF8F','#FFC700','#8A5CFF','#FF7A1A'];
+const CATC=['#19D3FF','#FF2E88','#FFC700','#3CFF8F','#8A5CFF'];
+
+/* ---------- state ---------- */
+let S={};try{S=JSON.parse(localStorage.getItem('dt-net')||'{}')}catch(e){}
+S.cards=S.cards||{};S.teach=S.teach||{};S.think=S.think||{};S.task=S.task||{};S.games=S.games||{};S.boss=S.boss||{};S.final=S.final||0;S.best=S.best||0;
+const LITE_AUTO=/Silk|KF[A-Z]{2,}|Tablet/i.test(navigator.userAgent)||(navigator.deviceMemory&&navigator.deviceMemory<=2);
+if(S.lite===undefined)S.lite=!!LITE_AUTO;document.body.classList.toggle('lite',!!S.lite);
+if(S.music===undefined)S.music=true;if(S.sfx===undefined)S.sfx=S.sound!==false;
+const save=()=>{try{localStorage.setItem('dt-net',JSON.stringify(S))}catch(e){}};
+function xpOf(){
+  let x=0;
+  Object.values(S.cards).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.teach).forEach(a=>x+=a.filter(Boolean).length*5);
+  Object.values(S.think).forEach(a=>x+=a.filter(t=>t&&t.trim().length>8).length*10);
+  Object.values(S.task).forEach(o=>x+=(o.a?10:0)+(o.p?10:0));
+  Object.values(S.games).forEach(v=>x+=v);
+  Object.values(S.boss).forEach(v=>{x+=v*20;if(v===5)x+=50;if(v>=3)x+=100});
+  x+=S.final*15;if(S.final===10)x+=100;
+  return x;
+}
+const TITLES=['Newbie','Tech Cadet','Byte Hunter','System Pro','Tech Legend'];
+const lvlOf=x=>Math.floor(x/250)+1;
+const titleOf=x=>TITLES[Math.min(TITLES.length-1,lvlOf(x)-1)];
+function badges(){
+  const b=LEVELS.map((l,i)=>({n:l.badge,ic:['code','tool','gear','phone'][i],on:(S.boss[l.id]||0)>=3}));
+  b.push({n:'Perfect Score',ic:'star',on:Object.values(S.boss).some(v=>v===5)||S.final===10});
+  b.push({n:'Combo Master',ic:'flame',on:S.best>=5});
+  b.push({n:'Grand Champion',ic:'trophy',on:S.final>=8});
+  return b;
+}
+
+/* ---------- audio: sfx + chiptune music ---------- */
+let AC=null,MG=null,NB=null;
+function actx(){
+  if(AC)return AC;
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=1;MG.connect(AC.destination);
+    NB=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(e){AC=null}
+  return AC;
+}
+function tone(f,t,d,type='square',v=.08,dest){
+  const c=actx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);o.connect(g);g.connect(dest||MG);o.start(t);o.stop(t+d+.02);
+}
+function noise(t,d,v,hp){
+  const c=actx();if(!c)return;const s=c.createBufferSource();s.buffer=NB;const g=c.createGain(),f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp;
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+d);
+}
+const now=()=>AC?AC.currentTime:0;
+const sfx={
+  ok(){if(!S.sfx||!actx())return;const t=now();tone(659,t,.1);tone(880,t+.09,.1);tone(1175,t+.18,.2)},
+  no(){if(!S.sfx||!actx())return;const t=now();tone(220,t,.2,'sawtooth',.09);tone(150,t+.12,.3,'sawtooth',.09)},
+  tap(){if(!S.sfx||!actx())return;tone(520,now(),.06,'square',.05)},
+  flip(){if(!S.sfx||!actx())return;const t=now();tone(330,t,.08);tone(660,t+.07,.12)},
+  hit(){buzz(60);if(!S.sfx||!actx())return;const t=now();noise(t,.18,.25,300);tone(110,t,.2,'sawtooth',.12)},
+  win(){if(!S.sfx||!actx())return;const t=now();[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.3,'square',.08))},
+  lose(){if(!S.sfx||!actx())return;const t=now();[392,330,262,196].forEach((f,i)=>tone(f,t+i*.18,.35,'sawtooth',.08))},
+  whoosh(){if(!S.sfx||!actx())return;noise(now(),.35,.12,1500)},
+  up(){if(!S.sfx||!actx())return;const t=now();[392,523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,'triangle',.1))}
+};
+/* music: 16-step bar, Am F C G. "menu" is relaxed, "battle" adds drums and runs faster. */
+const MU={mode:'menu',step:0,next:0,timer:null,on:false};
+const ROOTS=[110,87.31,130.81,98],TRI=[[1,1.2,1.5],[1,1.25,1.5],[1,1.25,1.5],[1,1.25,1.5]];
+const MEL=[0,4,2,4, 5,4,2,0, 4,5,7,5, 4,2,0,2];
+const PENT=[440,523.25,587.33,659.25,783.99,880,1046.5,1174.66];
+function schedule(){
+  const c=actx();if(!c)return;const bpm=MU.mode==='battle'?142:112,sd=60/bpm/4;
+  while(MU.next<c.currentTime+.18){
+    const s=MU.step%64,bar=(s>>4)&3,p=s&15,t=MU.next,r=ROOTS[bar],v=MU.mode==='battle'?1:.7;
+    if(p%2===0)tone(r*2*(TRI[bar][(p/2|0)%3]),t,sd*1.6,'square',.025*v);
+    if(p%4===0||(MU.mode==='battle'&&p%4===2))tone(r,t,sd*1.8,'triangle',.11*v);
+    if(p%2===0&&(bar%2===1||MU.mode==='battle'))tone(PENT[MEL[p]%8],t,sd*1.4,'square',.03*v);
+    if(MU.mode==='battle'){if(p%4===0){tone(120,t,.1,'sine',.18);noise(t,.04,.06,5000)}if(p===4||p===12)noise(t,.12,.14,1200);if(p%2===1)noise(t,.03,.04,7000)}
+    else if(p%4===0)noise(t,.03,.03,6000);
+    MU.next+=sd;MU.step++;
+  }
+}
+function musicSet(mode){
+  MU.mode=mode;if(!S.music||MU.on)return;const c=actx();if(!c)return;
+  if(c.state==='suspended')c.resume();MU.on=true;MU.next=c.currentTime+.05;MU.timer=setInterval(schedule,40);
+}
+function musicStop(){clearInterval(MU.timer);MU.on=false}
+function musicSync(){if(S.music)musicSet(MU.mode);else musicStop()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)musicStop();else musicSync()});
+
+/* ---------- visuals: rain, particles, floaters, overlays ---------- */
+(function rain(){
+  const cv=$('#rain'),cx=cv.getContext('2d');let cols=[],W=0,H=0,last=0;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;cols=Array.from({length:Math.ceil(W/26)},()=>({y:Math.random()*H,s:2+Math.random()*3}))}
+  size();addEventListener('resize',size);
+  function draw(t){
+    if(document.body.classList.contains('lite')){if(t-last>500){last=t;cx.clearRect(0,0,W,H)}}else if(!document.hidden&&t-last>60){last=t;cx.clearRect(0,0,W,H);cx.font='700 16px monospace';
+      cols.forEach((c,i)=>{c.y+=c.s;if(c.y>H+20){c.y=-20;c.s=2+Math.random()*3}
+        for(let k=0;k<6;k++){cx.fillStyle=`rgba(25,211,255,${.5-k*.08})`;cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}
+    if(!RM)requestAnimationFrame(draw)}
+  if(RM){size();cx.font='700 16px monospace';cols.forEach((c,i)=>{for(let k=0;k<4;k++){cx.fillStyle='rgba(25,211,255,.2)';cx.fillText(Math.random()<.5?'0':'1',i*26,c.y-k*18)}})}else requestAnimationFrame(draw);
+})();
+function burst(n=80,x,y){
+  if(document.body.classList.contains('lite'))n=Math.ceil(n/3);
+  if(RM)return;const cv=$('#fx'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cs=['#FFC700','#19D3FF','#3CFF8F','#FF2E88','#8A5CFF','#fff'];x=x==null?innerWidth/2:x;y=y==null?innerHeight*.45:y;
+  const ps=Array.from({length:n},()=>({x,y,vx:(Math.random()-.5)*16,vy:-Math.random()*14-2,r:4+Math.random()*7,c:cs[Math.random()*6|0],a:Math.random()*6}));
+  let f=0;(function st(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.a+=.3;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);cx.restore()});if(++f<90)requestAnimationFrame(st);else cx.clearRect(0,0,cv.width,cv.height)})();
+}
+function floatTxt(txt,el,color){
+  const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};
+  const d=document.createElement('div');d.className='fl';d.textContent=txt;d.style.left=(r.left+r.width/2-30)+'px';d.style.top=(r.top-6)+'px';if(color)d.style.color=color;
+  document.body.appendChild(d);setTimeout(()=>d.remove(),950);
+}
+function flashFx(color){const d=document.createElement('div');d.className='flashfx';d.style.background=color;document.body.appendChild(d);setTimeout(()=>d.remove(),450)}
+function shakeScreen(){buzz(80);document.body.classList.add('shk');setTimeout(()=>document.body.classList.remove('shk'),380)}
+function overlay(kind,a,b,c,ms=2200){
+  return new Promise(res=>{
+    const o=document.createElement('div');o.className='ov '+(kind||'');o.innerHTML=`<div class="p1"></div><div class="p2"></div><div class="tx"><div class="a">${esc(a)}</div><div class="b">${esc(b)}</div>${c?`<div class="c">${esc(c)}</div>`:''}</div>`;
+    document.body.appendChild(o);sfx.whoosh();requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('in')));
+    let closed=false;const close=()=>{if(closed)return;closed=true;o.classList.add('out');setTimeout(()=>{o.remove();res()},350)};
+    o.onclick=close;setTimeout(close,ms);
+  });
+}
+function revealOnScroll(root){
+  if(!('IntersectionObserver'in window)||RM)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove('pre');e.target.classList.add('rv');io.unobserve(e.target)}}),{threshold:.08});
+  root.querySelectorAll('[data-rv]').forEach(el=>{const r=el.getBoundingClientRect();if(r.top>innerHeight){el.classList.add('pre');io.observe(el)}});
+  setTimeout(()=>root.querySelectorAll('.pre').forEach(el=>{el.classList.remove('pre')}),20000);
+}
+
+/* ---------- Byte the mascot ---------- */
+function byteSVG(m){
+  const mouth=m==='no'?'<path d="M20 43q6-5 12 0"/>':m==='ok'?'<path d="M19 40q7 8 14 0"/>':'<path d="M21 41h10"/>';
+  const eyes=m==='ok'?'<path d="M18 29q3-4 6 0M30 29q3-4 6 0"/>':'<circle cx="21" cy="29" r="3" fill="currentColor"/><circle cx="33" cy="29" r="3" fill="currentColor"/>';
+  return `<svg viewBox="0 0 54 58" aria-hidden="true"><path d="M27 4v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="4" r="3.5" fill="#FFC700"/><path d="M10 12h34l4 8v22l-6 6H12l-6-6V20z" fill="#19D3FF" stroke="#0A6F8C" stroke-width="3"/><rect x="12" y="19" width="30" height="26" fill="#fff"/><g style="color:#101B3B" stroke="#101B3B" stroke-width="2.5" fill="none" stroke-linecap="round">${eyes}${mouth}</g><rect x="1" y="26" width="5" height="10" fill="#FFC700"/><rect x="48" y="26" width="5" height="10" fill="#FFC700"/></svg>`;
+}
+const say=(el,mood,txt)=>{el.innerHTML=`${byteSVG(mood)}<div class="bubble ${mood==='idle'?'':mood}">${esc(txt)}</div>`};
+const CHEER=['Ehen! You sabi this one.','Correct! Keep going.','Sharp! That is how it is done.','Yes! Byte is proud of you.','Oya, na you be that!'];
+const OOPS=['Oops. No wahala, now you know.','Not this time. Read the reason.','Close. Learn from this one.','Tricky one. The next one is yours.'];
+const pick=a=>a[Math.random()*a.length|0];
+function bossSVG(color,mood){
+  const eye=mood==='dead'?'<path d="M30 40l12 12M42 40L30 52M62 40l12 12M74 40L62 52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>':`<path d="M28 44l18 6-18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/><path d="M76 44L58 50l18 6z" fill="${mood==='hit'?'#fff':'#FFE600'}"/>`;
+  return `<svg class="bossw" viewBox="0 0 104 104" aria-hidden="true"><path d="M20 22L10 4l24 10zM84 22l10-18-24 10z" fill="${color}"/><path d="M14 30l12-12h52l12 12v44l-12 14H26L14 74z" fill="${color}" stroke="#000" stroke-opacity=".35" stroke-width="3"/><path d="M26 34h52v36H26z" fill="#0B0720"/>${eye}<path d="M32 70l6-8 6 8 6-8 6 8 6-8 6 8" stroke="#fff" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>`;
+}
+const heart=on=>`<svg viewBox="0 0 24 24"><path d="M12 21l-8-8a5 5 0 0 1 8-6 5 5 0 0 1 8 6z" fill="${on?'#FF2E88':'#2C2370'}"/></svg>`;
+
+/* ---------- HUD + router ---------- */
+let lastLv=null;
+function paintHud(){
+  const x=xpOf(),lv=lvlOf(x);
+  if(S.name){
+    $('#hud').innerHTML=`<div class="xpbox"><div class="t"><span>${esc(titleOf(x))}</span><span>LV ${lv}</span></div><div class="xpbar"><i style="width:${(x%250)/250*100}%"></i></div></div><span class="score" style="font-size:18px">${x} XP</span>
+    <div class="nv"><button id="nm" aria-pressed="${route.cur==='map'||/^l\d/.test(route.cur)}">${ic('map')}<span class="lab">Map</span></button><button id="nmu" class="${S.music?'':'off'}" aria-label="Music" aria-pressed="${S.music}">${ic('music')}</button><button id="nsx" class="${S.sfx?'':'off'}" aria-label="Sound effects" aria-pressed="${S.sfx}">${ic('sound')}</button>${TTS?`<button id="nvo" class="${S.voice?'':'off'}" aria-label="Byte voice" aria-pressed="${!!S.voice}">${ic('voice')}</button>`:''}<button id="nlt" class="${S.lite?'':'off'}" aria-label="Lite mode for slow tablets" aria-pressed="${!!S.lite}">${ic('bolt')}</button>${document.documentElement.requestFullscreen?`<button id="nfs" aria-label="Full screen">${ic('full')}</button>`:''}</div>
+    <span class="av" style="background:${S.color}" title="${esc(S.name)}">${esc(S.name[0].toUpperCase())}</span>`;
+    $('#nm').onclick=()=>location.hash='map';
+    $('#nmu').onclick=()=>{S.music=!S.music;save();musicSync();paintHud()};$('#nsx').onclick=()=>{S.sfx=!S.sfx;save();sfx.tap();paintHud()};
+    const vo=$('#nvo');if(vo)vo.onclick=()=>{S.voice=!S.voice;save();paintHud();if(S.voice)speak('Hi! I am Byte. I will read the mission briefings to you.')};
+    $('#nlt').onclick=()=>{S.lite=!S.lite;document.body.classList.toggle('lite',!!S.lite);save();paintHud()};
+    const fs=$('#nfs');if(fs)fs.onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+  }else $('#hud').innerHTML='';
+  if(lastLv!==null&&lv>lastLv){sfx.up();burst(120);overlay('win','LEVEL UP',`LV ${lv}`,`You are now a ${titleOf(x)}`,2000)}
+  lastLv=lv;
+}
+const app=$('#app');
+function route(){
+  const h=location.hash.slice(1)||'map';route.cur=h;
+  if(!S.name||!route.started){start();return}
+  const m=h.match(/^l([1-4])$/);
+  if(m)level(+m[1]);else if(h==='final')finalRound();else mapView();
+  window.scrollTo(0,0);paintHud();
+}
+addEventListener('hashchange',()=>{if(route.started)route()});
+$('#logo').onclick=()=>{if(route.started)location.hash='map'};
+
+/* ---------- start screen ---------- */
+function start(){
+  paintHud();
+  let color=S.color||COLS[1];
+  const title='NETWORK SQUAD'.split(' ');
+  app.innerHTML=`<div class="start"><h1 aria-label="Network Squad">${title.map((w,wi)=>`<div>${[...w].map((ch,i)=>`<span style="animation-delay:${(wi*6+i)*70}ms">${ch}</span>`).join('')}</div>`).join('')}</h1>
+  <p class="tag">Beat the levels. Defeat the bosses. Collect XP and badges. Learn how computers talk to each other.</p>
+  ${S.name?`<div class="press">Welcome back, ${esc(S.name)}</div><button class="btn" id="go"><span>Press start</span></button>`:`<div class="field"><label for="nick">Choose a nickname</label><input id="nick" type="text" maxlength="14" autocomplete="off" placeholder="EXAMPLE: CODEKING"></div>
+  <div class="field"><label>Pick your colour</label><div class="hexes" id="cl">${COLS.map(c=>`<button style="background:${c}" data-c="${c}" aria-label="colour ${c}" aria-pressed="${c===color}"></button>`).join('')}</div></div>
+  <button class="btn" id="go"><span>Press start</span></button>`}
+  <div class="byte" id="by" style="max-width:520px"></div></div>`;
+  say($('#by'),'idle',S.name?'Sound is on. Tap the music buttons at the top if you want it quiet.':'I am Byte. Use a nickname, not your full name. Turn your sound on for the full game.');
+  app.querySelectorAll('#cl button').forEach(b=>b.onclick=()=>{color=b.dataset.c;sfx.tap();app.querySelectorAll('#cl button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+  $('#go').onclick=async()=>{
+    if(!S.name){const n=$('#nick').value.trim();if(!n){say($('#by'),'no','Type a nickname first.');$('#nick').focus();return}S.name=n;S.color=color;save()}
+    actx();if(AC&&AC.state==='suspended')AC.resume();musicSet('menu');sfx.win();burst(90);
+    route.started=true;lastLv=lvlOf(xpOf());
+    await overlay('', 'Welcome', S.name, 'Four levels. Four bosses. One champion.',1900);
+    location.hash==='#map'?route():location.hash='map';
+  };
+}
+
+/* ---------- map ---------- */
+const done=l=>(S.boss[l]||0)>=3;
+const starsFor=l=>{const b=S.boss[l]||0;return b>=5?3:b>=4?2:b>=3?1:0};
+const stars=n=>`<span class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<span class="${n>=i?'on':''}">${ic('star')}</span>`).join('')}</span>`;
+function mapView(){
+  musicSet('menu');MU.mode='menu';document.title='Network Squad';setWorld();
+  const x=xpOf();const allDone=LEVELS.every(l=>done(l.id));
+  const cur=LEVELS.findIndex(l=>!done(l.id));
+  app.innerHTML=`<div class="hero rv"><div class="eyebrow">${esc(titleOf(x))} · Level ${lvlOf(x)} · ${x} XP</div><h1><span class="skew">Choose your mission, ${esc(S.name)}</span></h1><p>Clear a level to unlock the next one.</p></div>
+  <div class="path">${LEVELS.map((l,i)=>{const locked=i>0&&!done(LEVELS[i-1].id);const cls=done(l.id)?'go':i===cur?'cur':'';
+    return `<div class="step ${cls} rv" style="animation-delay:${i*120}ms"><div class="hex">${locked?ic('lock'):l.id}</div><button class="node" data-l="${l.id}" ${locked?'disabled':''}><div class="panel"><div class="row2"><div><h3>${esc(l.name)}</h3><small>${esc(l.wp)} · ${esc(l.topic)}</small></div>${stars(starsFor(l.id))}</div></div></button></div>`}).join('')}
+  <div class="step fin ${allDone?'cur':''} rv" style="animation-delay:520ms"><div class="hex">${allDone?ic('trophy'):ic('lock')}</div><button class="node" id="fin" ${allDone?'':'disabled'}><div class="panel"><h3>Grand Challenge</h3><small>10 mixed questions, 25 seconds each. Unlocks after all four bosses. Best: ${S.final}/10</small></div></button></div></div>
+  <h2 class="sec-t">Your badges</h2><div class="badges">${badges().map(b=>`<span class="bdg ${b.on?'on':'off'}">${ic(b.ic)}${esc(b.n)}</span>`).join('')}</div>`;
+  app.querySelectorAll('.node[data-l]').forEach(b=>b.onclick=()=>{sfx.tap();location.hash='l'+b.dataset.l});
+  $('#fin').onclick=()=>{sfx.tap();location.hash='final'};
+}
+
+/* ---------- level ---------- */
+async function level(n){
+  const L=LEVELS[n-1];document.title=L.name+' · Network Squad';
+  S.cards[n]=S.cards[n]||L.cards.map(()=>false);
+  app.innerHTML='';window.scrollTo(0,0);
+  musicSet('menu');MU.mode='menu';
+  paintHud();
+  setWorld(L.boss[1]);
+  await overlay('',`Level ${n}`,L.name,'',1500);
+  if(location.hash!=='#l'+n)return;
+  await briefing(n);
+  if(location.hash!=='#l'+n)return;
+  const W=widgetsFor(n);
+  S.teach[n]=S.teach[n]||TEACH[n].map(()=>false);
+  S.think[n]=S.think[n]||HW[n-1].th.map(()=>'');
+  S.task[n]=S.task[n]||{a:false,p:false};
+  app.innerHTML=`<div class="lh rv"><div class="eyebrow">${esc(L.wp)} · ${esc(L.topic)}</div><h1><span class="skew">${esc(L.name)}</span></h1></div>
+  <nav class="stage"><a href="#" data-s="learn"><span>Learn</span></a><a href="#" data-s="cards"><span>Cards</span></a><a href="#" data-s="play"><span>Play</span></a><a href="#" data-s="boss"><span>Boss</span></a><a href="#" data-s="home"><span>Home</span></a></nav>
+  <div class="panel quest rv"><b>By the end you can</b><ul class="can">${HW[n-1].obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
+  <section id="s-learn"><h2 data-rv><span class="skew">Stage 1</span><small>LEARN WITH BYTE</small></h2><div class="w" id="teach" style="--acc:var(--lime)"></div></section>
+  <section id="s-cards"><h2 data-rv><span class="skew">Stage 2</span><small>REVIEW CARDS</small></h2><div class="cprog" id="cp"></div><div class="cards">${L.cards.map((c,i)=>`<button class="flip" data-rv data-i="${i}" aria-pressed="${!!S.cards[n][i]}" aria-label="${esc(c.t)}. Tap to reveal."><div class="in"><div class="face f"><span class="q">?</span><div><h3>${esc(c.t)}</h3><span class="tap">Tap to reveal · +5 XP</span></div></div><div class="face b"><div class="ph">${c.svg?topoSVG(c.svg):(c.img?`<img src="img/${c.img}.jpg" alt="" onerror="imgFail(this)">`:'')}${c.svg?'':ic(c.ic)}</div><h4>${esc(c.t)}</h4><span>${esc(c.d)}</span><span class="like">${c.li?`<img class="lk" src="img/${c.li}.jpg" alt="" onerror="imgFail(this)">`:''}<span><em>Think of it like</em>${esc(c.like)}</span></span></div></div></button>`).join('')}</div></section>
+  <section id="s-play"><h2 data-rv><span class="skew">Stage 3</span><small>PLAY</small></h2><div id="ws" style="display:grid;gap:18px"></div></section>
+  <section id="s-boss"><h2 data-rv><span class="skew">Stage 4</span><small>BOSS BATTLE</small></h2><div class="w" id="bossbox" style="--acc:var(--mag)"></div></section>
+  <section id="s-home"><h2 data-rv><span class="skew">Stage 5</span><small>CLASS WORK AND HOMEWORK</small></h2>
+    ${HW[n-1].th.map((q,k)=>`<div class="w" style="--acc:var(--gold)"><label for="th${k}" class="qtext">${esc(q)}</label><textarea id="th${k}" data-k="${k}" placeholder="Write your answer in your own words. +10 XP">${esc(S.think[n][k]||'')}</textarea></div>`).join('')}
+    <button class="tick" data-t="a" aria-pressed="${S.task[n].a}"><span class="bx2"></span><span><b>Assignment.</b> ${esc(HW[n-1].asg)}</span></button>
+    <button class="tick" data-t="p" aria-pressed="${S.task[n].p}"><span class="bx2"></span><span><b>Project.</b> ${esc(HW[n-1].prj)}</span></button></section>
+  <div class="row" style="padding-top:14px">${n>1?`<a class="btn gh" href="#l${n-1}"><span>Back</span></a>`:'<span></span>'}<a class="btn cy" href="#map"><span>Back to map</span></a></div>`;
+  app.querySelectorAll('.stage a').forEach(a=>a.onclick=e=>{e.preventDefault();sfx.tap();$('#s-'+a.dataset.s).scrollIntoView({behavior:RM?'auto':'smooth'})});
+  const cp=()=>{$('#cp').textContent=`Cards revealed: ${S.cards[n].filter(Boolean).length} of ${L.cards.length}`};cp();
+  app.querySelectorAll('.flip').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;const open=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!open);sfx.flip();
+    if(!open&&!S.cards[n][i]){S.cards[n][i]=true;save();cp();floatTxt('+5 XP',b,'#FFC700');burst(25,b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+60);paintHud()}});
+  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{S.think[n][+t.dataset.k]=t.value;save();clearTimeout(t._t);t._t=setTimeout(paintHud,800)});
+  app.querySelectorAll('.tick').forEach(b=>b.onclick=()=>{const k=b.dataset.t;S.task[n][k]=!S.task[n][k];b.setAttribute('aria-pressed',S.task[n][k]);sfx.ok();save();paintHud()});
+  teachPlayer($('#teach'),n);
+  const ws=$('#ws');W.forEach((fn,gi)=>{const d=document.createElement('div');d.className='w';d.dataset.rv='';d.style.setProperty('--acc',CATC[gi%5]);ws.appendChild(d);fn(d,n,gi)});
+  boss($('#bossbox'),n);
+  revealOnScroll(app);
+}
+
+/* ---------- MCQ runner: used by boss battles and the grand challenge ---------- */
+function mcqRun(el,qs,opt){
+  let i=0,score=0,hearts=3,hist=[],timer=null;
+  const bs=opt.boss;
+  function pips(){return `<div class="pips">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`}
+  function arena(mood){
+    if(!bs)return '';
+    return `<div class="arena"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span><div class="hearts" id="ht">${[0,1,2].map(k=>heart(k<hearts)).join('')}</div></div><div class="vs">VS</div><div class="fighter" id="bf">${bossSVG(bs[1],mood||'idle')}<span class="nm" style="color:${bs[1]}">${esc(bs[0])}</span><div class="hp" aria-label="Boss health">${qs.map((_,k)=>`<i class="${k<score?'lost':''}" style="background:${k<score?'':bs[1]}"></i>`).join('')}</div></div></div>`;
+  }
+  function draw(){
+    clearInterval(timer);
+    if(i>=qs.length||hearts<=0)return opt.done(score,qs.length,el,hearts<=0);
+    const q=qs[i];
+    el.innerHTML=`${arena()}<div class="hud2"><span class="eyebrow">${bs?'Round':'Question'} ${i+1} of ${qs.length}</span>${pips()}</div>${opt.time?'<div class="timer" aria-hidden="true"><i id="tm"></i></div>':''}
+    <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</p>
+    <div class="opts">${q.opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
+    <div class="byte" id="by"></div><div id="nx"></div>`;
+    say($('#by',el),'idle',opt.time?'Be quick, but think!':bs?'Answer right to hit the boss. Three wrong answers and you lose.':'Take your time.');
+    const lock=(good,btn)=>{
+      clearInterval(timer);
+      el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(q.opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});
+      const right=q.opts.find(x=>x.ok).t;$('#qt',el).innerHTML=esc(q.q).replace(/_{3,}/,`<span class="blank f">${esc(right)}</span>`);
+      hist[i]=good;
+      if(good){score++;sfx.ok();if(bs){sfx.hit();const f=$('#bf',el);f&&(f.innerHTML=bossSVG(bs[1],'hit')+f.innerHTML.slice(f.innerHTML.indexOf('</svg>')+6));f&&f.classList.add('hit');floatTxt('HIT!',f,'#3CFF8F');flashFx('rgba(60,255,143,.25)');
+        const seg=el.querySelectorAll('.hp i')[score-1];seg&&(seg.classList.add('lost'),seg.style.background='')}else{floatTxt('+1',btn,'#3CFF8F')}}
+      else{hearts--;sfx.no();shakeScreen();flashFx('rgba(255,71,87,.3)');if(bs){const h=$('#ht',el);h&&(h.innerHTML=[0,1,2].map(k=>heart(k<hearts)).join(''))}}
+      say($('#by',el),good?'ok':'no',(good?pick(CHEER):pick(OOPS))+' '+q.why);
+      const last=i===qs.length-1||hearts<=0;
+      $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${last?'See result':'Next'}</span></button>`;
+      const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+    };
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];if(!o.ok){b.classList.add('no');b.querySelector('.m').textContent='✗'}lock(o.ok,b)});
+    if(opt.time){const t0=Date.now();timer=setInterval(()=>{const f=1-(Date.now()-t0)/(opt.time*1000);const tm=$('#tm',el);if(tm)tm.style.width=Math.max(0,f*100)+'%';if(f<=0){clearInterval(timer);lock(false)}},100)}
+  }
+  draw();
+}
+function mkQ(l,k){const m=MCQ[l][k];return {q:m.q,opts:shuffle(m.o.map((t,j)=>({t,ok:j===ANS[l][k]}))),why:WHY[l][k]}}
+
+function boss(el,n){
+  const l=n-1,L=LEVELS[l];
+  function intro(){
+    el.innerHTML=`<div class="arena" style="margin-bottom:6px"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span></div><div class="vs">VS</div><div class="fighter">${bossSVG(L.boss[1],'idle')}<span class="nm" style="color:${L.boss[1]}">${esc(L.boss[0])}</span></div></div>
+    <p class="hint">5 rounds. Each right answer hits the boss. You have 3 lives. Land 3 hits to win, 5 hits for three stars.</p>
+    <div><button class="btn mg" id="fight"><span>Fight!</span></button></div>`;
+    $('#fight',el).onclick=async()=>{actx();await overlay('lose','Boss battle',L.boss[0],'Answer right to hit. Three wrong answers and you lose.',1700);musicSet('battle');MU.mode='battle';fight()};
+  }
+  function fight(){
+    const qs=shuffle([0,1,2,3,4]).map(k=>mkQ(l,k));
+    el.innerHTML='<div id="bq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#bq',el),qs,{boss:L.boss,done:async(score,total,box,dead)=>{
+      MU.mode='menu';
+      const prev=S.boss[n]||0,first=!done(n);const before=xpOf();S.boss[n]=Math.max(prev,score);save();
+      const gain=xpOf()-before,ok=score>=3;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Battle report</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Rematch</span></button>${ok&&n<4?`<a class="btn" href="#l${n+1}"><span>Next level</span></a>`:''}${ok&&n===4?`<a class="btn" href="#final"><span>Grand Challenge</span></a>`:''}</div></div>`;
+      say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! The boss never had a chance.':ok?'Boss defeated! Next level unlocked. Fight again for more stars.':'You were beaten this time. Reveal the cards again, play the games and come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';intro()};
+      if(ok){sfx.win();burst(130)}else sfx.lose();
+      paintHud();
+      await overlay(ok?'win':'lose',ok?'Victory':'Defeated',ok?'Boss down':'Try again',ok?EPI[n]:'',2400);
+      musicSet('menu');
+    }});
+  }
+  intro();
+}
+
+/* ---------- sort game ---------- */
+function sortGame(def){
+  return (el,n,gi)=>{
+    let deck,i,pts,ok,combo,miss,best;const key=n+'.'+gi;
+    function start(){deck=shuffle(def.items).slice(0,def.n||8);i=0;pts=0;ok=0;combo=0;miss=[];best=0;draw()}
+    function draw(){
+      if(i>=deck.length)return finish();
+      const it=deck[i];
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Target ${i+1} of ${deck.length}</span><span class="combo ${combo>=2?'on':''}">${combo>=2?ic('flame')+' Combo x'+combo:''}</span><div class="meter" aria-hidden="true"><i style="width:${Math.min(combo,5)*20}%"></i></div><span class="score">${pts}</span></div>
+      <div class="target ${(it.img||it.svg)?'pic':''}" aria-live="polite">${it.svg?topoSVG(it.svg):it.img?`<img src="img/${it.img}.jpg" alt="Picture to identify">`:esc(it.t)}</div>
+      <div class="cats">${def.cats.map((c,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}">${esc(c.n)}</button>`).join('')}</div>
+      <div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle',def.prompt||'Pick the right team. Fast answers in a row build your combo.');
+      el.querySelectorAll('.cats .opt').forEach(b=>b.onclick=()=>{
+        const k=+b.dataset.k,right=k===it.c;
+        el.querySelectorAll('.cats .opt').forEach((x,j)=>{x.disabled=true;if(j===it.c)x.classList.add('ok')});
+        if(right){combo++;best=Math.max(best,combo);ok++;const g=10+Math.min(combo-1,5)*2;pts+=g;sfx.ok();floatTxt('+'+g,b,'#FFC700');if(combo===3||combo===5||combo===8)burst(50,innerWidth/2,innerHeight/2)}
+        else{b.classList.add('no');combo=0;miss.push(it);sfx.no();shakeScreen()}
+        say($('#by',el),right?'ok':'no',(right?pick(CHEER):pick(OOPS))+' '+def.cats[it.c].n+': '+def.cats[it.c].info);
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===deck.length-1?'Finish':'Next'}</span></button>`;
+        const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true});
+      });
+    }
+    function finish(){
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);S.best=Math.max(S.best,best);save();
+      if(ok===deck.length){sfx.win();burst(90)}else if(ok>=deck.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${deck.length}</span></div><span class="score">${pts} points · best combo x${best}</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}
+      ${miss.length?`<div class="miss">${miss.map(m=>`<div>${esc(m.t)} belongs with <b>${esc(def.cats[m.c].n)}</b></div>`).join('')}</div>`:'<p style="margin:0;font-weight:700;color:var(--lime)">Flawless run.</p>'}
+      <button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
+    }
+    start();
+  };
+}
+
+/* ---------- special widgets ---------- */
+function stackGame(el,n,gi){
+  const layers=[['Hardware','The touchable parts: screen, keyboard, processor','l0'],['Operating system','System software that runs the hardware','l1'],['Application software','Word, Excel, browsers','l2'],['You, the user','Tapping, typing and clicking','l3']];
+  let placed=0,mistakes=0;
+  function draw(fin){
+    const pool=layers.map((l,i)=>[l,i]).filter(([,i])=>i>=placed);
+    el.innerHTML=`<h3><span class="skew">Build the stack</span></h3><p class="hint">A computer works in layers. Tap the layers one at a time, starting from the very bottom.</p>
+    <div class="stack">${layers.slice().reverse().map((l,ri)=>{const i=3-ri;return `<div class="layer ${i<placed?'placed '+l[2]:''}"><span>${i<placed?l[0]:'Empty slot'}</span><small>${i<placed?l[1]:'Layer '+(i+1)+' from the bottom'}</small></div>`}).join('')}</div>
+    ${fin?'':`<div class="pool">${shuffle(pool).map(([l,i])=>`<button class="opt" style="--c:${CATC[i]}" data-i="${i}">${l[0]}</button>`).join('')}</div>`}<div class="byte" id="by"></div>`;
+    say($('#by',el),fin?'ok':'idle',fin?'Perfect stack! You talk to apps, apps talk to the operating system, and the operating system controls the hardware.':'Think: what must exist first before anything else can run?');
+    el.querySelectorAll('.pool .opt').forEach(b=>b.onclick=()=>{
+      if(+b.dataset.i===placed){placed++;sfx.ok();if(placed===4){const pts=Math.max(10,40-mistakes*10),prev=S.games[n+'.'+gi]||0;S.games[n+'.'+gi]=Math.max(prev,pts);save();burst(70);sfx.win();draw(true);paintHud();return}draw(false)}
+      else{mistakes++;b.classList.add('no');sfx.no();shakeScreen();say($('#by',el),'no','Not yet. Which layer sits underneath everything else?')}
+    });
+  }
+  draw(false);
+}
+function flowGame(el,n,gi){
+  const steps=[[3,'You tap the Word icon.'],[2,'Word (application software) asks the operating system for a place to run.'],[1,'The operating system gives Word some memory and tells the processor to start it.'],[0,'The hardware does the work. The screen lights up with a blank page.'],[1,'The operating system sends the picture to the screen. You see Word, ready to type. Without the OS in the middle, none of this would happen.']];
+  let k=0;
+  function draw(){
+    const act=steps[k][0];
+    el.innerHTML=`<h3><span class="skew">Follow a tap</span></h3><p class="hint">What happens inside the computer when you open Word? Step through it.</p>
+    <div class="stack">${[3,2,1,0].map(i=>{const L=[['Hardware','l0'],['Operating system','l1'],['Application software','l2'],['You','l3']][i];return `<div class="layer placed ${L[1]} ${i===act?'act':''}"><span>${L[0]}</span></div>`}).join('')}</div>
+    <div class="flowtext" aria-live="polite">Step ${k+1} of ${steps.length}. ${steps[k][1]}</div>
+    <div class="row"><button class="btn gh" id="pv" ${k?'':'disabled'}><span>Back</span></button><button class="btn" id="nx"><span>${k<steps.length-1?'Next step':'Start again'}</span></button></div>`;
+    $('#pv',el).onclick=()=>{sfx.tap();k--;draw()};
+    $('#nx',el).onclick=()=>{sfx.tap();if(k<steps.length-1){k++;if(k===steps.length-1&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=15;save();floatTxt('+15 XP',$('#nx',el),'#FFC700');burst(40);paintHud()}}else k=0;draw()};
+  }
+  draw();
+}
+function compressGame(el,n,gi){
+  const F=[['Class photos',18],['Project video',30],['Notes (Word)',4]];let comp=false;const sel=[true,true,true];
+  function draw(){
+    const size=f=>comp?f*0.45:f;const tot=F.reduce((a,f,i)=>a+(sel[i]?size(f[1]):0),0);const ok=tot<=25&&sel.some(Boolean);
+    el.innerHTML=`<h3><span class="skew">Squeeze the files</span></h3><p class="hint">You must email your project, but the email limit is 25 MB. Keep all three files ticked, then press Compress.</p>
+    <div class="files">${F.map((f,i)=>`<label class="file"><input type="checkbox" data-i="${i}" ${sel[i]?'checked':''} style="width:22px;height:22px;accent-color:#19D3FF"><span style="flex:0 0 130px">${f[0]}</span><span class="b2"><i style="width:${size(f[1])/30*100}%"></i></span><span class="mb">${size(f[1]).toFixed(1)} MB</span></label>`).join('')}</div>
+    <div class="limit ${comp?(ok?'okk':'bad'):''}"><span>Total ${tot.toFixed(1)} MB</span><span>Limit 25 MB</span></div>
+    <div class="row" style="justify-content:flex-start"><button class="btn cy" id="cz"><span>${comp?'Un-compress':'Compress'}</span></button></div><div class="byte" id="by"></div>`;
+    say($('#by',el),comp?(ok?'ok':'no'):'idle',comp?(ok?'It fits! File compression reduces size so files are easier to store or share. (Real results vary by file type.)':'Still too big. Tick all your files, then compress.'):'Right now the total is too big. Which utility program helps?');
+    el.querySelectorAll('input').forEach(c=>c.onchange=()=>{sel[+c.dataset.i]=c.checked;sfx.tap();draw()});
+    $('#cz',el).onclick=()=>{comp=!comp;sfx.flip();draw();const t=F.reduce((a,f)=>a+f[1]*.45,0);if(comp&&t<=25&&sel.every(Boolean)&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();burst(60);sfx.win();paintHud()}};
+  }
+  draw();
+}
+function bootGame(el,n,gi){
+  let os=true,state='off',timers=[];
+  const logs=[['BIOS check ... OK',0],['Loading operating system ...',500],['Memory ready ... OK',1000],['Keyboard and mouse found ... OK',1500],['Screen ready ... OK',2000],['Welcome! Your desktop is ready.',2500]];
+  function draw(lines){
+    el.innerHTML=`<h3><span class="skew">Power on</span></h3><p class="hint">Turn the operating system off, press power, and see what happens to the apps.</p>
+    <div class="row"><button class="sw" id="os" aria-pressed="${os}"><i></i>Operating system installed</button><button class="btn" id="pw"><span>Press power</span></button></div>
+    <div class="boot" id="bt" aria-live="polite">${lines||'Computer is off.'}</div>
+    <div class="apps">${[['doc','Word'],['globe','Browser'],['calc','Calculator'],['camera','Camera']].map(a=>`<button data-a="${a[1]}" ${state==='on'?'':'disabled'}>${ic(a[0])}${a[1]}</button>`).join('')}</div><div class="byte" id="by"></div>`;
+    say($('#by',el),state==='err'?'no':state==='on'?'ok':'idle',state==='err'?'Without an operating system, the computer cannot start up or run any application. The hardware is fine, but nothing manages it.':state==='on'?'The operating system started everything: memory, keyboard, screen and apps.':'Try it both ways.');
+    $('#os',el).onclick=()=>{os=!os;state='off';timers.forEach(clearTimeout);sfx.tap();draw()};
+    $('#pw',el).onclick=run;
+    el.querySelectorAll('.apps button').forEach(b=>b.onclick=()=>{sfx.ok();say($('#by',el),'ok',b.dataset.a+' is open. The OS gave it memory and let it use the screen.')});
+  }
+  function run(){
+    timers.forEach(clearTimeout);state='boot';sfx.whoosh();
+    if(!os){state='err';sfx.no();shakeScreen();draw('Power on ...<br>Looking for an operating system ...<br><span class="e">ERROR: No operating system found. Cannot start.</span>');mark();return}
+    const acc=[];draw('Power on ...');
+    logs.forEach(([t,d],k)=>timers.push(setTimeout(()=>{acc.push(t);sfx.tap();$('#bt',el)&&($('#bt',el).innerHTML='Power on ...<br>'+acc.join('<br>'));if(k===logs.length-1){state='on';sfx.ok();draw('Power on ...<br>'+acc.join('<br>'));mark()}},d+200)));
+  }
+  function mark(){S.bootSeen=S.bootSeen||{};S.bootSeen[os?'on':'off']=true;if(S.bootSeen.on&&S.bootSeen.off&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();paintHud();burst(60);sfx.win()}}
+  draw();
+}
+
+function teachPlayer(el,n){
+  const T=TEACH[n];let i=0,tries=0,answered=false;
+  const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  function draw(){
+    if(i>=T.length)return recap();
+    const t=T[i];tries=0;answered=false;
+    const opts=shuffle(t.o.map((x,j)=>({x,ok:j===0})));
+    el.innerHTML=`<div class="hud2"><span class="eyebrow">Lesson ${i+1} of ${T.length}</span><div class="pips">${T.map((_,k)=>`<i class="${S.teach[n][k]?'ok':k===i?'cur':''}"></i>`).join('')}</div></div>
+    <div class="sl ${(t.img||t.svg)?'':'one'}"><div class="slt"><h3><span class="skew">${esc(t.h)}</span></h3><ul class="pts2">${t.lines.map((l,k)=>`<li style="animation-delay:${k*220}ms">${md(l)}</li>`).join('')}</ul></div>
+    ${(t.img||t.svg)?`<figure class="slp">${t.svg?topoSVG(t.svg):`<img src="img/${t.img}.jpg" alt="">`}${t.li?`<img class="lk2" src="img/${t.li}.jpg" alt="">`:''}<figcaption>${esc(t.cap)}</figcaption></figure>`:''}</div>
+    <div class="qc"><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>
+    <div class="byte" id="by"></div>
+    <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
+    say($('#by',el),'idle','Read the points, then answer the quick check.');
+    el.querySelectorAll('.qc .opt').forEach(b=>b.onclick=()=>{
+      if(answered)return;const o=opts[+b.dataset.k];
+      if(o.ok){answered=true;b.classList.add('ok');b.querySelector('.m').textContent='✓';el.querySelectorAll('.qc .opt').forEach(x=>x.disabled=true);sfx.ok();
+        if(!S.teach[n][i]&&tries===0){S.teach[n][i]=true;save();floatTxt('+5 XP',b,'#FFC700');paintHud()}
+        say($('#by',el),'ok',pick(CHEER));$('#nx',el).disabled=false;$('#nx',el).focus({preventScroll:true})}
+      else{tries++;b.classList.add('no');b.disabled=true;b.querySelector('.m').textContent='✗';sfx.no();say($('#by',el),'no','Not that one. Read the points again and try another answer.');
+        if(tries>=2){answered=true;el.querySelectorAll('.qc .opt').forEach((x,k)=>{x.disabled=true;if(opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});say($('#by',el),'no','The right answer is "'+opts.find(x=>x.ok).x+'". Now you know it.');$('#nx',el).disabled=false}}
+    });
+    $('#pv',el).onclick=()=>{sfx.tap();i--;draw();el.scrollIntoView({block:'nearest'})};
+    $('#nx',el).onclick=()=>{sfx.tap();i++;draw();el.scrollIntoView({block:'nearest'})};
+  }
+  function recap(){
+    const got=S.teach[n].filter(Boolean).length;
+    sfx.win();burst(50);
+    el.innerHTML=`<div class="eyebrow">Lesson complete</div><h3><span class="skew">What you learned</span></h3><ul class="pts2">${RECAP[n].map((l,k)=>`<li style="animation-delay:${k*220}ms">${esc(l)}</li>`).join('')}</ul>
+    <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="again"><span>Read again</span></button><button class="btn" id="go2"><span>Flip the cards</span></button></div>`;
+    say($('#by',el),'ok',`You got ${got} of ${T.length} quick checks right on the first try. Now flip the review cards, then play the games.`);
+    $('#again',el).onclick=()=>{i=0;draw()};$('#go2',el).onclick=()=>{sfx.tap();$('#s-cards').scrollIntoView({behavior:RM?'auto':'smooth'})};
+  }
+  draw();
+}
+function hotGame(def){
+  return (el,n,gi)=>{
+    let q,i,pts,ok;const key=n+'.'+gi;
+    function start(){q=shuffle(def.targets).slice(0,def.n||5);i=0;pts=0;ok=0;draw()}
+    function draw(){
+      if(i>=q.length)return finish();
+      const t=q[i];let tries=0,solved=false;
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><p class="hint">${esc(def.intro)}</p>
+      <div class="hud2"><span class="eyebrow">Mission ${i+1} of ${q.length}</span><span class="score">${pts}</span></div>
+      <div class="ask">${esc(t.prompt)}</div><div class="shot" id="sh"><img src="img/${t.img}.jpg" alt="Screenshot. Tap the right spot." draggable="false" onload="this.parentNode.style.maxWidth=Math.min(640,500*this.naturalWidth/this.naturalHeight)+'px'"></div><div class="byte" id="by"></div><div id="nx"></div>`;
+      say($('#by',el),'idle','Tap the exact spot on the picture.');
+      const sh=$('#sh',el),im=$('img',sh);
+      const mark=(cls)=>t.rects.forEach(r=>{const d=document.createElement('div');d.className='tgt '+cls;d.style.cssText=`left:${r[0]}%;top:${r[1]}%;width:${r[2]-r[0]}%;height:${r[3]-r[1]}%`;sh.appendChild(d)});
+      const end=(good)=>{solved=true;
+        $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${i===q.length-1?'Finish':'Next'}</span></button>`;const nb=$('#n',el);nb.onclick=()=>{sfx.tap();i++;draw()};nb.focus({preventScroll:true})};
+      sh.onclick=e=>{
+        if(solved)return;const r=im.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+        const hit=t.rects.some(a=>x>=a[0]&&x<=a[2]&&y>=a[1]&&y<=a[3]);
+        if(hit){const g=tries===0?15:tries===1?8:3;pts+=g;ok++;mark('');sfx.ok();floatTxt('+'+g,sh,'#FFC700');say($('#by',el),'ok',pick(CHEER)+' '+t.why);end(true)}
+        else{tries++;sfx.no();shakeScreen();const d=document.createElement('div');d.className='rip';d.style.left=x+'%';d.style.top=y+'%';sh.appendChild(d);setTimeout(()=>d.remove(),750);
+          if(tries>=2){mark('hint');say($('#by',el),'no','That glowing spot is the answer. '+t.why);end(false)}else say($('#by',el),'no','Not there. Look again. '+(t.hint||''))}
+      };
+    }
+    function finish(){
+      const prev=S.games[key]||0,gain=Math.max(0,pts-prev);S.games[key]=Math.max(prev,pts);save();
+      if(ok===q.length){sfx.win();burst(90)}else if(ok>=q.length/2)sfx.ok();
+      el.innerHTML=`<h3><span class="skew">${esc(def.title)}</span></h3><div class="result"><div class="eyebrow">Result</div><div class="big">${ok}<span style="font-size:30px"> / ${q.length}</span></div><span class="score">${pts} points</span>${gain>0?`<span class="xpg">+${gain} XP</span>`:`<span class="hint">Beat your best of ${prev} points to earn more XP.</span>`}<button class="btn" id="re"><span>Play again</span></button></div>`;
+      $('#re',el).onclick=start;paintHud();
+    }
+    start();
+  };
+}
+const P=(label,img,c)=>({t:label,img,c});
+const HS=[
+ // [img, prompt, rects (percent x0,y0,x1,y1), why]
+];
+/* ---------- topology drawings and the network lab ---------- */
+const SVGF='font-family="Rajdhani,Arial,sans-serif" font-weight="700"';
+function pcSvg(x,y,label,col,sel){
+  col=col||'#19D3FF';
+  return `<g transform="translate(${x-13},${y-11})">${sel?'<rect x="-5" y="-5" width="36" height="32" rx="4" fill="none" stroke="#FFC700" stroke-width="3"/>':''}<rect width="26" height="17" rx="2" fill="#0B0720" stroke="${col}" stroke-width="2"/><rect x="3" y="3" width="20" height="11" fill="${col}" opacity=".3"/><rect x="10" y="17" width="6" height="3" fill="#B5AAEA"/><rect x="6" y="20" width="14" height="2.5" fill="#B5AAEA"/>${label?`<text x="30" y="13" font-size="10" fill="#F4F0FF" ${SVGF}>${label}</text>`:''}</g>`;
+}
+function hubSvg(x,y,off,sel){
+  return `<g transform="translate(${x-20},${y-12})">${sel?'<rect x="-5" y="-5" width="50" height="34" rx="4" fill="none" stroke="#FFC700" stroke-width="3"/>':''}<rect width="40" height="24" rx="3" fill="${off?'#3A1330':'#FFC700'}" stroke="${off?'#FF4757':'#8E6A00'}" stroke-width="2"/><text x="20" y="16" text-anchor="middle" font-size="11" fill="${off?'#FF4757':'#1B1200'}" ${SVGF}>${off?'OFF':'HUB'}</text></g>`;
+}
+function TOPO(type){
+  const nodes=[],edges=[];
+  const pc=(i,x,y)=>nodes.push({id:'pc'+i,x:Math.round(x),y:Math.round(y),k:'pc',label:'PC'+i});
+  if(type==='bus'){
+    [[70,48],[170,48],[270,48],[70,182],[170,182],[270,182]].forEach((p,i)=>pc(i+1,p[0],p[1]));
+    [70,170,270].forEach((x,i)=>nodes.push({id:'j'+i,x,y:115,k:'j'}));
+    edges.push({id:'b0',a:'j0',b:'j1',kind:'bus'},{id:'b1',a:'j1',b:'j2',kind:'bus'});
+    [0,1,2,0,1,2].forEach((j,i)=>edges.push({id:'d'+(i+1),a:'pc'+(i+1),b:'j'+j,kind:'drop'}));
+  }else if(type==='star'){
+    nodes.push({id:'hub',x:160,y:115,k:'hub',label:'HUB'});
+    for(let i=0;i<6;i++){const a=(i*60-90)*Math.PI/180;pc(i+1,160+115*Math.cos(a),115+78*Math.sin(a))}
+    for(let i=1;i<=6;i++)edges.push({id:'s'+i,a:'pc'+i,b:'hub',kind:'spoke'});
+  }else{
+    for(let i=0;i<6;i++){const a=(i*60-90)*Math.PI/180;pc(i+1,160+110*Math.cos(a),115+76*Math.sin(a))}
+    for(let i=1;i<=6;i++)edges.push({id:'r'+i,a:'pc'+i,b:'pc'+(i%6+1),kind:'ring',dir:true});
+  }
+  return {nodes,edges};
+}
+function drawTopo(type,o){
+  o=o||{};const T=TOPO(type),N={};T.nodes.forEach(n=>N[n.id]=n);let s='';
+  if(type==='bus'){
+    s+='<line x1="26" y1="115" x2="70" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/><line x1="270" y1="115" x2="294" y2="115" stroke="#FFC700" stroke-width="5" stroke-linecap="round"/><rect x="16" y="104" width="9" height="22" fill="#FF4757"/><rect x="295" y="104" width="9" height="22" fill="#FF4757"/>';
+  }
+  T.edges.forEach(e=>{
+    const a=N[e.a],b=N[e.b],cut=o.cut&&o.cut[e.id];
+    const col=cut?'#FF4757':e.kind==='bus'?'#FFC700':'#19D3FF',w=e.kind==='bus'?5:3;
+    s+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"${cut?' stroke-dasharray="3 7"':''}/>`;
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+    if(e.dir&&!cut){const ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;s+=`<path d="M-6,-6 L7,0 L-6,6 Z" fill="#3CFF8F" transform="translate(${mx},${my}) rotate(${ang})"/>`}
+    if(cut)s+=`<text x="${mx}" y="${my+6}" text-anchor="middle" font-size="20" fill="#FF4757" ${SVGF}>✕</text>`;
+    if(o.hit)s+=`<line class="hit" data-e="${e.id}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="rgba(0,0,0,0.001)" stroke-width="24" style="cursor:pointer"/>`;
+  });
+  T.nodes.forEach(n=>{
+    if(n.k==='j'){s+=`<circle cx="${n.x}" cy="${n.y}" r="4" fill="#FFC700"/>`;return}
+    const off=o.off&&o.off[n.id],sel=o.sel===n.id;
+    const g=n.k==='hub'?hubSvg(n.x,n.y,off,sel):pcSvg(n.x,n.y,o.labels===false?'':n.label,off?'#FF4757':'#19D3FF',sel);
+    s+=o.hit?`<g class="nd" data-n="${n.id}" style="cursor:pointer;${off?'opacity:.55':''}">${g}</g>`:g;
+  });
+  return s;
+}
+function topoSVG(type){
+  if(type==='all'){
+    return `<svg viewBox="0 0 480 140" role="img" aria-label="Bus, star and ring topologies">${['bus','star','ring'].map((t,i)=>`<g transform="translate(${i*160+2},0) scale(.49)">${drawTopo(t,{labels:false})}</g><text x="${i*160+80}" y="134" text-anchor="middle" font-size="15" fill="#FFC700" ${SVGF}>${t.toUpperCase()}</text>`).join('')}</svg>`;
+  }
+  if(type==='net'){
+    const p=(x,y)=>`<line x1="160" y1="115" x2="${x}" y2="${y}" stroke="#19D3FF" stroke-width="3"/>`;
+    return `<svg viewBox="0 0 320 230" role="img" aria-label="A small network"><g>${p(60,55)}${p(260,55)}${p(60,175)}${p(260,175)}${pcSvg(60,55,'PC',null)}${pcSvg(260,55,'Laptop',null)}${pcSvg(60,175,'PC',null)}<g transform="translate(240,165)"><rect width="40" height="20" rx="3" fill="#0B0720" stroke="#8A5CFF" stroke-width="2"/><rect x="6" y="-8" width="28" height="8" fill="#8A5CFF" opacity=".5"/><text x="20" y="35" text-anchor="middle" font-size="10" fill="#F4F0FF" ${SVGF}>Printer</text></g>${hubSvg(160,115)}</g></svg>`;
+  }
+  return `<svg viewBox="0 0 320 230" role="img" aria-label="${type} topology">${drawTopo(type,{})}</svg>`;
+}
+function findPath(T,src,dst,cut,off){
+  const adj={};T.nodes.forEach(n=>adj[n.id]=[]);
+  T.edges.forEach(e=>{if(cut[e.id]||off[e.a]||off[e.b])return;adj[e.a].push(e.b);if(!e.dir)adj[e.b].push(e.a)});
+  if(off[src]||off[dst])return null;
+  const prev={};prev[src]=null;const q=[src];
+  while(q.length){const u=q.shift();if(u===dst)break;adj[u].forEach(v=>{if(!(v in prev)){prev[v]=u;q.push(v)}})}
+  if(!(dst in prev))return null;
+  const p=[];for(let u=dst;u!==null;u=prev[u])p.unshift(u);return p;
+}
+function labFor(type){
+  return (el,n,gi)=>{
+    const T=TOPO(type),N={};T.nodes.forEach(x=>N[x.id]=x);
+    let mode='send',src=null,cut={},off={},busy=false,seenOK=false,seenFail=false,msg='';
+    const NAME={bus:'Bus network lab',star:'Star network lab',ring:'Ring network lab'}[type];
+    const HINT={send:'Tap a computer to send FROM. Then tap another computer to send TO.',cut:'Tap a cable to cut it. Tap it again to repair it.',off:type==='star'?'Tap a computer or the hub to switch it off. Tap again to switch it on.':'Tap a computer to switch it off. Tap again to switch it on.'};
+    const label=id=>N[id].label;
+    function explainFail(a,b){
+      const anyCut=Object.keys(cut).some(k=>cut[k]),anyOff=Object.keys(off).some(k=>off[k]);
+      if(type==='star'&&off.hub)return 'The hub is switched off, so no computer can reach another. In a star network, if the hub fails, the whole network stops.';
+      if(type==='star'){const bad=[a,b].filter(id=>cut['s'+id.slice(2)]||off[id]);return (bad.length?label(bad[0])+' is cut off because its cable is cut or it is switched off. ':'')+'In a star network only the computer with the broken part is cut off. The others still work, so try sending between two other computers.'}
+      if(type==='bus')return 'The main cable is cut between these two computers, so the network is split in two. In a bus network one break in the main cable can stop everything.';
+      return 'The data has to go around the ring, one computer after the next. One cut or one computer that is off breaks the ring, so the message cannot get through.';
+    }
+    function render(){
+      el.className='w';
+      el.innerHTML=`<h3><span class="skew">${NAME}</span></h3><p class="hint">Send messages, then break things and see what happens.</p>
+      <div class="mdtabs" id="md">${[['send','Send a message'],['cut','Cut a cable'],['off',type==='star'?'Switch off a device':'Switch off a computer']].map(m=>`<button class="opt" data-m="${m[0]}" aria-pressed="${mode===m[0]}">${m[1]}</button>`).join('')}</div>
+      <div class="eyebrow" id="hn">${esc(HINT[mode])}${mode==='send'&&src?' From: '+label(src):''}</div>
+      <div class="topo"><svg id="sv" viewBox="0 0 320 230" role="img" aria-label="${type} network. Tap computers and cables.">${drawTopo(type,{hit:true,cut,off,sel:src})}</svg></div>
+      <div class="byte" id="by"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="rp"><span>Repair everything</span></button></div>`;
+      say($('#by',el),msg.startsWith('ok:')?'ok':msg.startsWith('no:')?'no':'idle',msg?msg.slice(3):'Start with "Send a message". Then try cutting a cable.');
+      el.querySelectorAll('#md .opt').forEach(b=>b.onclick=()=>{if(busy)return;mode=b.dataset.m;src=null;sfx.tap();render()});
+      $('#rp',el).onclick=()=>{if(busy)return;cut={};off={};src=null;msg='ok:Everything is repaired.';sfx.ok();render()};
+      const sv=$('#sv',el);
+      sv.onclick=e=>{
+        if(busy)return;
+        const nd=e.target.closest('.nd'),hit=e.target.closest('.hit');
+        if(mode==='cut'&&hit){const id=hit.dataset.e;cut[id]=!cut[id];sfx.tap();msg=cut[id]?'no:Cable cut. Now try sending a message.':'ok:Cable repaired.';render();return}
+        if(mode==='off'&&nd){const id=nd.dataset.n;off[id]=!off[id];sfx.tap();msg=off[id]?'no:'+label(id)+' is off.':'ok:'+label(id)+' is back on.';render();return}
+        if(mode==='send'&&nd){
+          const id=nd.dataset.n;if(N[id].k==='hub'){msg='idle:The hub passes messages along. Choose two computers.';render();return}
+          if(!src){src=id;sfx.tap();render();return}
+          if(src===id){src=null;render();return}
+          send(src,id);
+        }
+      };
+    }
+    function send(a,b){
+      busy=true;const path=findPath(T,a,b,cut,off);src=null;
+      const sv=$('#sv',el);
+      if(!path){
+        sfx.no();shakeScreen();seenFail=true;msg='no:Message from '+label(a)+' to '+label(b)+' failed. '+explainFail(a,b);busy=false;render();check();return;
+      }
+      const pts=path.map(id=>N[id]);let len=[0];for(let i=1;i<pts.length;i++)len.push(len[i-1]+Math.hypot(pts[i].x-pts[i-1].x,pts[i].y-pts[i-1].y));
+      const total=len[len.length-1],dur=Math.max(900,Math.min(2400,total*7));
+      const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','8');dot.setAttribute('fill','#3CFF8F');dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','2');sv.appendChild(dot);
+      const t0=Date.now();sfx.whoosh();
+      (function step(){
+        const f=Math.min(1,(Date.now()-t0)/dur),d=f*total;let i=1;while(i<len.length-1&&len[i]<d)i++;
+        const k=(d-len[i-1])/((len[i]-len[i-1])||1);dot.setAttribute('cx',pts[i-1].x+(pts[i].x-pts[i-1].x)*k);dot.setAttribute('cy',pts[i-1].y+(pts[i].y-pts[i-1].y)*k);
+        if(f<1)setTimeout(step,30);else{
+          const route=path.filter(id=>N[id].k!=='j').map(label).join(' → ');
+          seenOK=true;sfx.ok();msg='ok:Message arrived! '+route+'.';busy=false;render();check();
+        }
+      })();
+    }
+    function check(){
+      if(seenOK&&seenFail&&!S.games[n+'.'+gi]){S.games[n+'.'+gi]=20;save();burst(70);sfx.win();floatTxt('+20 XP',$('#sv',el),'#FFC700');paintHud()}
+    }
+    render();
+  };
+}
+
+/* ---------- games per level ---------- */
+const C=(n,info)=>({n,info});
+const I=(arr,c)=>arr.map(t=>({t,c}));
+const SV=(label,svg,c)=>({t:label,svg,c});
+const G=(title,intro,cats,items,n,prompt)=>sortGame({title,intro,cats,items,n,prompt});
+const TOPCATS=()=>[C('Bus','all computers on one main cable.'),C('Star','all computers joined to a central hub.'),C('Ring','computers joined in a circle, data going one way.')];
+const PROCON=(title,intro,items)=>G(title,intro,[C('Advantage','a good thing about this topology.'),C('Disadvantage','a weakness of this topology.')],items,items.length>8?8:items.length,'Is it an advantage or a disadvantage?');
+function widgetsFor(n){
+  return {
+  1:[
+   G('Node, link or hub?','Sort each item.',[C('Node','a device on the network, like a computer, printer or phone.'),C('Link','a cable or wireless signal that joins devices.'),C('Hub or switch','a box that joins many cables together.')],[...I(['Desktop computer','Laptop','Printer','Smartphone'],0),...I(['Network cable','Wi-Fi signal','Fibre cable'],1),...I(['Hub','Switch','A box with many cables plugged in'],2)],9),
+   G('Match the meaning','Which word does each description match?',[C('Network','two or more computers joined together.'),C('Node','one device on the network.'),C('Link','a cable or signal between devices.'),C('Topology','the layout (shape) of a network.')],[...I(['Two or more computers joined together','Computers sharing files and a printer'],0),...I(['One computer on the network','A printer on the network'],1),...I(['A cable between two computers','A Wi-Fi signal that joins devices'],2),...I(['The layout (shape) of a network','How computers are arranged and joined'],3)],8),
+   G('Name the topology','Look at the picture or read the clue.',TOPCATS(),[SV('Bus picture','bus',0),SV('Star picture','star',1),SV('Ring picture','ring',2),...I(['One long main cable'],0),...I(['A central hub in the middle'],1),...I(['Computers joined in a circle'],2)],6,'Which topology is this?')],
+  2:[
+   labFor('bus'),
+   PROCON('Bus: advantage or disadvantage?','Think about a bus network.',[...I(['It is cheap','It uses less cable','It is easy to set up','Good for a small network'],0),...I(['If the main cable breaks, the whole network can stop','It slows down when many computers send data','Faults are hard to find'],1)]),
+   G('Name the topology','Look at the picture or read the clue.',TOPCATS(),[SV('Bus picture','bus',0),SV('Star picture','star',1),SV('Ring picture','ring',2),...I(['One long main cable','Terminators at both ends','Like a road with bus stops'],0),...I(['A central hub in the middle'],1),...I(['Data goes around in one direction'],2)],8,'Which topology is this?')],
+  3:[
+   labFor('star'),
+   PROCON('Star: advantage or disadvantage?','Think about a star network.',[...I(['If one cable breaks, the other computers keep working','Easy to add a new computer','Easy to find faults','Works well with many computers'],0),...I(['If the hub fails, the whole network stops','Needs more cable','The hub costs money'],1)]),
+   G('Bus, star or ring?','Which topology does each clue describe?',TOPCATS(),[...I(['If the hub fails, everything stops','Easy to add a computer and find faults','Needs more cable than a bus','A home Wi-Fi router works like this'],1),...I(['If the main cable breaks, everything stops','Terminators at both ends'],0),...I(['Computers pass data to their neighbours','Fair turns for every computer'],2)],9)],
+  4:[
+   labFor('ring'),
+   PROCON('Ring: advantage or disadvantage?','Think about a ring network.',[...I(['Data moves in an orderly way','Every computer gets a fair turn','Works well when the network is busy'],0),...I(['If one computer fails, the whole ring can stop','Faults are hard to find','Adding a computer disturbs the network'],1)]),
+   G('Compare all three','Bus, star or ring?',TOPCATS(),[...I(['The cheapest layout','One main cable with terminators','Slows down when many computers send data'],0),...I(['The easiest to fix','A central hub','If the hub fails, all stop'],1),...I(['Every computer gets a fair turn','One break in the circle stops it','Data goes one way around'],2)],10),
+   G('Best choice?','Which topology suits each situation?',TOPCATS(),[...I(['A tiny lab with 3 computers and not much money','The cheapest and simplest network'],0),...I(['An office where faults must be fixed quickly','A school that adds new computers often'],1),...I(['Every computer must get a fair turn','Data must move in order'],2)],6,'Which topology fits best?')]
+  }[n];
+}
+
+/* ---------- grand challenge ---------- */
+async function finalRound(){
+  document.title='Grand Challenge · Network Squad';paintHud();
+  app.innerHTML='';await overlay('lose','Final round','Grand Challenge','10 questions. 25 seconds each.',2000);
+  if(location.hash!=='#final')return;
+  musicSet('battle');MU.mode='battle';
+  app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1><span class="skew">Grand Challenge</span></h1></div><div class="panel quest"><b>Beat the clock</b><span>10 mixed questions. Get 8 or more for the Grand Champion badge.</span></div><div class="w" id="fb" style="margin-top:16px;--acc:var(--violet)"></div><div class="row" style="padding-top:14px"><a class="btn gh" href="#map"><span>Back to map</span></a></div>`;
+  const el=$('#fb');
+  function go(){
+    const all=[];for(let l=0;l<4;l++)for(let k=0;k<5;k++)all.push([l,k]);
+    const qs=shuffle(all).slice(0,10).map(([l,k])=>mkQ(l,k));
+    el.innerHTML='<div id="fq" style="display:grid;gap:14px"></div>';
+    mcqRun($('#fq'),qs,{time:25,done:async(score,total,box)=>{
+      const before=xpOf();S.final=Math.max(S.final,score);save();const gain=xpOf()-before;MU.mode='menu';
+      box.innerHTML=`<div class="result"><div class="eyebrow">Grand Challenge</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Play again</span></button><a class="btn" href="#map"><span>Back to map</span></a></div></div>`;
+      say($('#by2',box),score>=8?'ok':'idle',score>=8?'Grand Champion! You really understand this. Check the leaderboard.':'Good try. Replay the levels you found hard, then come back.');
+      $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';go()};
+      if(score>=8){sfx.win();burst(150)}else sfx.ok();paintHud();
+    }});
+  }
+  go();
+}
+
+route();
+</script>
