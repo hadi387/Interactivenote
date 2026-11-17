@@ -410,6 +410,7 @@ body.lite #teach .sl{animation:none}
 .pt code{font:700 16px ui-monospace,Consolas,monospace;padding:3px 8px;background:#010E12;border:2px solid var(--line);text-transform:none}
 .r-open{color:#2FE6C8}.r-close{color:#FF8A1E}.r-content{color:#FFE14A}.r-attr{color:#4DA3FF}.r-sel{color:#2FE6C8}.r-prop{color:#B8FF3D}.r-val{color:#FFE14A}
 .cc{overflow:auto;max-height:260px}
+.ghost.hid{color:#9ED9D2;border-style:dotted;font-size:clamp(15px,3vw,18px)}
 .sheet{border-collapse:collapse;width:100%;font-family:var(--f-body);font-size:clamp(15px,2.6vw,18px)}
 .sheet th,.sheet td{border:1px solid var(--line);padding:6px 10px;text-align:left;background:#031C22;color:var(--text)}
 .sheet th{background:var(--panel2);color:var(--muted);font-family:var(--f-display);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
@@ -684,7 +685,7 @@ const EASY={
 (function(){
   const P=(a,b,c)=>[a,b,c];
   const PAGE2='<!DOCTYPE html>\n<html>\n<head>\n  <title>My School</title>\n</head>\n<body>\n  <h1>My School</h1>\n  <p>We learn every day.</p>\n</body>\n</html>';
-  const H1={h:'Build a page line by line',kind:'Code coach',type:'coach',lang:'html',base:'',lines:['You will type a real web page, one line at a time.','After each line you see what it does.'],easy:'You will write a real web page. One line at a time. The page shows on the right.',
+  const H1={h:'Build a page line by line',kind:'Code coach',type:'coach',lang:'html',base:'',freeFrom:4,lines:['You will type a real web page, one line at a time.','At first you copy. Later you write from memory.'],easy:'You will write a real web page. One line at a time. The page shows on the right.',
    win:'You built a whole page from nothing.',end:'Your page is finished. Every web page you visit is built like this.',
    steps:[
     {say:'Every page starts by telling the browser what kind of page it is.',add:'<!DOCTYPE html>',hint:'Start with <!DOCTYPE then a space then html and >.',parts:[P('<!DOCTYPE html>','open','Says: this is a modern HTML page. It shows nothing on the screen.')]},
@@ -699,7 +700,7 @@ const EASY={
     {say:'Close the body. We are finished with the visible part.',add:'</body>',ind:1,parts:[P('</body>','close','Closes the visible part.')]},
     {say:'Last line. Close the html tag.',add:'</html>',parts:[P('</html>','close','Closes the whole page. Done!')],why:'The pattern: open the tag, put the content inside, close the tag.'}
    ]};
-  const H2={h:'Lists, links and bold text',kind:'Code coach',type:'coach',lang:'html',base:PAGE2,before:'</body>',lines:['The page already exists.','Add new things inside the body, one line at a time.'],easy:'Add more things to your page. Headings, lists and links.',
+  const H2={h:'Lists, links and bold text',kind:'Code coach',type:'coach',lang:'html',base:PAGE2,before:'</body>',freeFrom:2,lines:['The page already exists.','Add new things inside the body, one line at a time.'],easy:'Add more things to your page. Headings, lists and links.',
    win:'You added a heading, a list, bold text and a link.',end:'Your page now has a heading, a list, bold text and a link.',
    steps:[
     {say:'Add a smaller heading. h2 is the second biggest.',add:'<h2>Our subjects</h2>',ind:1,hint:'<h2> then Our subjects then </h2>.',parts:[P('<h2>','open','Heading level 2.'),P('Our subjects','content','The heading text.'),P('</h2>','close','Closes it.')],why:'h1 is the biggest. h6 is the smallest.'},
@@ -712,7 +713,7 @@ const EASY={
     {say:'Your turn. Add a heading level 3 with any words you like.',show:'<h3>your words</h3>',re:/^<h3>[^<>]+<\/h3>$/i,reMsg:'Use <h3>, then your words, then </h3>.',ind:1,sample:'<h3>Thank you</h3>',parts:[P('<h3>...</h3>','content','Your own heading.')],why:'You now know headings, paragraphs, lists, bold and links.'}
    ]};
   const PAGEC='<!DOCTYPE html>\n<html>\n<head>\n  <title>My School</title>\n</head>\n<body>\n  <h1>My School</h1>\n  <p>Welcome to our school.</p>\n  <p class="note">Come and see our lab.</p>\n</body>\n</html>';
-  const C1={h:'Style it one rule at a time',kind:'Code coach',type:'coach',lang:'css',base:'',page:PAGEC,lines:['The page is plain. You will style it.','Type one CSS rule at a time and watch the page change.'],easy:'Type one CSS rule at a time. After each one, the page changes.',
+  const C1={h:'Style it one rule at a time',kind:'Code coach',type:'coach',lang:'css',base:'',freeFrom:3,page:PAGEC,lines:['The page is plain. You will style it.','Type one CSS rule at a time and watch the page change.'],easy:'Type one CSS rule at a time. After each one, the page changes.',
    win:'You styled a page with CSS.',end:'The page now has colour, size, borders and spacing.',
    steps:[
     {say:'First rule: make every h1 red. Type the rule exactly.',add:'h1 { color: red; }',hint:'h1, then a space, then { color: red; }',parts:[P('h1','sel','The selector. It says WHICH thing to style.'),P('{ }','attr','Curly brackets hold the rule.'),P('color','prop','The property. What to change.'),P(': red','val','The value. How to change it.'),P(';','attr','The semicolon ends the line.')],why:'Selector, property, value. Every rule has these three.'},
@@ -2067,7 +2068,7 @@ function xlTypeGrid(cell){
 /* ---------- code coach: type the code one line at a time, with a live preview ---------- */
 const COACH_KEYS={html:['<','>','/','"','=',' '],css:['{','}',':',';','#','.','%']};
 function codeCoach(t,box,ctx){
-  const S=t.steps,lang=t.lang;let k=0,tries=0,state='ask',code=t.base,lastLine=-1,hintShown=false;
+  const S=t.steps,lang=t.lang;let k=0,tries=0,state='ask',code=t.base,lastLine=-1,hintShown=false,peek=false;
   const nH=s=>s.replace(/[“”]/g,'"').replace(/\s+/g,' ').replace(/\s*([<>=\/])\s*/g,'$1').trim().toLowerCase();
   const nC=s=>s.replace(/[“”]/g,'"').replace(/\s+/g,'').toLowerCase();
   const norm=lang==='css'?nC:nH;
@@ -2104,21 +2105,21 @@ function codeCoach(t,box,ctx){
     if(k>=S.length){box.innerHTML=`<div class="twocol"><pre class="code" style="margin:0">${codeHtml()}</pre><div id="cph"></div></div><div class="xinfo"><b>${esc(t.end||'You wrote it all yourself!')}</b></div>`;preview();ctx.done(true,t.win||'You typed every line yourself.');return}
     const st=S[k];
     const pips=S.map((_,i)=>`<i class="${i<k?'ok':i===k?'cur':''}"></i>`).join('');
-    const ask=state==='ask';
+    const ask=state==='ask',free=t.freeFrom!=null&&k>=t.freeFrom&&!st.re,hide=free&&!peek;
     box.innerHTML=`<div class="hud2"><span class="eyebrow">Step ${k+1} of ${S.length}</span><div class="pips">${pips}</div></div>
     <div class="twocol"><div><pre class="code cc" id="cc" style="margin:0;min-height:150px">${codeHtml()}</pre></div><div id="cph"></div></div>
     <div class="xinfo coachsay" style="margin-top:10px"><b>${esc(st.say)}</b></div>
-    ${ask?`<div class="ghost" aria-label="Code to type">${st.re?esc(st.show):esc(st.add)}</div>
-    <div class="ctrls" style="margin-top:8px"><label style="flex:1 1 300px">${st.re?'Your line':'Type it here'}<input id="ci" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="width:100%;font-family:ui-monospace,Consolas,monospace"></label><button class="btn mg" id="cck"><span>Check</span></button></div>
+    ${ask?(hide?`<div class="ghost hid">No copying. Write it from your memory.<br><button class="lnk" id="cpk">Stuck? Show the answer</button></div>`:`<div class="ghost" aria-label="Code to type">${st.re?esc(st.show):esc(st.add)}</div>`)+`
+    <div class="ctrls" style="margin-top:8px"><label style="flex:1 1 300px">${st.re||hide?'Your line':'Type it here'}<input id="ci" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="width:100%;font-family:ui-monospace,Consolas,monospace"></label><button class="btn mg" id="cck"><span>Check</span></button></div>
     <div class="keys">${COACH_KEYS[lang].map(c=>`<button class="stp key" data-k="${esc(c)}" aria-label="insert ${esc(c)}">${esc(c)}</button>`).join('')}</div>
-    <div class="xinfo" id="cm" aria-live="polite" style="min-height:44px">${tries?'':'Copy the line exactly. Use the little keys if the keyboard is hard.'}</div>
-    <div class="row" style="justify-content:flex-start"><button class="lnk" id="chn">Need a hint?</button>${tries>=2&&!st.re?'<button class="lnk" id="cty">Type it for me</button>':''}</div>`
+    <div class="xinfo" id="cm" aria-live="polite" style="min-height:44px">${tries?'':''+(hide?'Write the line yourself. Use the little keys if the keyboard is hard.':'Copy the line exactly. Use the little keys if the keyboard is hard.')+''}</div>
+    <div class="row" style="justify-content:flex-start"><button class="lnk" id="chn">Need a hint?</button>${tries>=2&&!st.re&&!hide?'<button class="lnk" id="cty">Type it for me</button>':''}</div>`
     :`<div class="why ex"><em>What you just wrote</em>${(st.parts||[]).map(p=>`<div class="pt"><code class="r-${p[1]}">${esc(p[0])}</code><span>${esc(p[2])}</span></div>`).join('')}${st.why?`<p style="margin:8px 0 0">${esc(st.why)}</p>`:''}</div>
     <div class="row" style="justify-content:flex-start"><button class="btn" id="cnx"><span>${k===S.length-1?'Finish':'Next line'}</span></button></div>`}`;
     preview();
     const cc=$('#cc',box);if(cc&&lastLine>=0){cc.scrollTop=cc.scrollHeight}
-    if(!ask){$('#cnx',box).onclick=()=>{sfx.tap();k++;tries=0;state='ask';hintShown=false;draw()};return}
-    const inp=$('#ci',box);
+    if(!ask){$('#cnx',box).onclick=()=>{sfx.tap();k++;tries=0;state='ask';hintShown=false;peek=false;draw()};return}
+    const inp=$('#ci',box);const pk=$('#cpk',box);if(pk)pk.onclick=()=>{peek=true;sfx.flip();const v=inp.value;draw();$('#ci',box).value=v};
     box.querySelectorAll('.key').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{const s=inp.selectionStart==null?inp.value.length:inp.selectionStart,e2=inp.selectionEnd==null?s:inp.selectionEnd;inp.value=inp.value.slice(0,s)+b.dataset.k+inp.value.slice(e2);inp.selectionStart=inp.selectionEnd=s+1;inp.focus();sfx.tap()}});
     const ok=v=>{insertLine(st.re?v.trim():st.add,st.ind);state='explain';sfx.ok();burst(30);if(typeof ctx.say==='function')ctx.say('ok','Good. Now read what it means.');draw()};
     const go=()=>{
@@ -2126,8 +2127,8 @@ function codeCoach(t,box,ctx){
       if(st.re?st.re.test(v.trim()):(norm(v)===norm(st.add)||(st.alt||[]).some(a=>norm(a)===norm(v)))){ok(v);return}
       tries++;sfx.no();shakeScreen();
       const m=st.re?(st.reMsg||'Not quite. Follow the pattern in the dotted box.'):diag(v,st.add);
-      $('#cm',box).innerHTML='<b>Not quite.</b> '+esc(m)+(tries>=2&&!st.re?' You can tap Type it for me.':'');
-      if(tries>=2&&!$('#cty',box)){const r=box.querySelector('.row');const b=document.createElement('button');b.className='lnk';b.id='cty';b.textContent='Type it for me';r.appendChild(b);b.onclick=()=>{inp.value=st.add;sfx.tap()}}
+      $('#cm',box).innerHTML='<b>Not quite.</b> '+esc(m)+(tries>=2&&!st.re&&!hide?' You can tap Type it for me.':hide?' You can tap Show the answer.':'');
+      if(tries>=2&&!hide&&!$('#cty',box)){const r=box.querySelector('.row');const b=document.createElement('button');b.className='lnk';b.id='cty';b.textContent='Type it for me';r.appendChild(b);b.onclick=()=>{inp.value=st.add;sfx.tap()}}
     };
     $('#cck',box).onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};
     $('#chn',box).onclick=()=>{sfx.flip();$('#cm',box).innerHTML='<b>Hint:</b> '+esc(st.hint||'Copy each character from the dotted box, in the same order.')};
