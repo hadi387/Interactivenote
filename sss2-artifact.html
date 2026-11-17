@@ -376,6 +376,40 @@ body.lite #teach .sl{animation:none}
 .wav{position:absolute;width:48px;transform:translate(-50%,0);animation:bob 1.8s ease-in-out infinite alternate;pointer-events:none}
 .wav svg{width:100%;height:auto}
 #dsc svg{display:block;width:100%;height:auto;max-height:360px}
+.xlwin{border:3px solid #1D6F42;background:#fff;margin:10px 0;color:#111}
+.xlt{background:#1D6F42;color:#fff;display:flex;align-items:center;gap:6px;padding:5px 10px;font:700 14px Arial,sans-serif}
+.xlt b{margin-left:8px}
+.xld{width:10px;height:10px;border-radius:50%;background:#B7E2C6;display:inline-block}
+.xlr{display:flex;background:#F3F3F3;border-bottom:1px solid #D4D4D4;font:13px Arial,sans-serif;color:#333;overflow:hidden}
+.xlr span{padding:5px 12px}
+.xlr .on{background:#fff;border-bottom:3px solid #1D6F42;font-weight:700}
+.xlf{display:flex;align-items:center;gap:8px;background:#fff;border-bottom:1px solid #D4D4D4;padding:5px 8px;font:14px Arial,sans-serif}
+.xnb{min-width:46px;text-align:center;border:1px solid #BBB;padding:3px 6px;font-weight:700;background:#fff;color:#111}
+.xfx{color:#1D6F42;font-style:italic;font-weight:700;padding:0 4px;border-left:1px solid #BBB}
+.xfb{flex:1;font:14px ui-monospace,Consolas,monospace;color:#111;min-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xlf input{flex:1;min-width:0;font:15px ui-monospace,Consolas,monospace;background:#fff;color:#111;border:1px solid #1D6F42;padding:6px 8px;text-transform:none}
+.xlf .btn{padding:6px 14px;font-size:14px}
+.xlg{overflow:auto;background:#fff}
+.xlwin .scrollbox{border:0;max-height:300px}
+.xlwin .sheet{margin:0;font:15px Arial,sans-serif;color:#111}
+.xlwin .sheet th,.xlwin .sheet td{background:#fff;color:#111;border:1px solid #D4D4D4;padding:4px 10px;text-transform:none;letter-spacing:0;font-family:Arial,sans-serif;font-size:15px}
+.xlwin .sheet thead th,.xlwin .sheet tbody th{background:#E6E6E6;color:#444;font-weight:400;text-align:center}
+.xlwin .sheet td.xh{font-weight:700;background:#F7F7F7}
+.xlwin .sheet tr.hl td,.xlwin .sheet tr.hl th,.xlwin .sheet td.hl{background:#DFF3E3;color:#111}
+.xlwin .sheet tr.sel td{background:#DFF3E3;color:#111}
+.xlwin .sheet tr.tot td,.xlwin .sheet tr.tot th{background:#F2F2F2}
+.xlwin .sheet td.xsel{outline:3px solid #1D6F42;outline-offset:-2px}
+.xlwin .sheet td{cursor:cell}
+.xlwin .sheet .fx{color:#1D6F42}
+.xlwin .sheet .pvp.on{background:#FFE9A8!important;outline:3px solid #1D6F42}
+.ghost{font:700 clamp(16px,3.4vw,22px) ui-monospace,Consolas,monospace;color:#B8FF3D;border:3px dashed var(--line);padding:12px 14px;background:#010E12;margin-top:10px;overflow-wrap:anywhere;text-transform:none}
+.keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.keys .key{width:44px;height:44px;font:800 20px ui-monospace,Consolas,monospace}
+.cnew{background:rgba(255,225,74,.28);color:#FFE14A;display:inline-block;min-width:100%}
+.pt{display:flex;gap:12px;align-items:baseline;margin:6px 0;flex-wrap:wrap}
+.pt code{font:700 16px ui-monospace,Consolas,monospace;padding:3px 8px;background:#010E12;border:2px solid var(--line);text-transform:none}
+.r-open{color:#2FE6C8}.r-close{color:#FF8A1E}.r-content{color:#FFE14A}.r-attr{color:#4DA3FF}.r-sel{color:#2FE6C8}.r-prop{color:#B8FF3D}.r-val{color:#FFE14A}
+.cc{overflow:auto;max-height:260px}
 .sheet{border-collapse:collapse;width:100%;font-family:var(--f-body);font-size:clamp(15px,2.6vw,18px)}
 .sheet th,.sheet td{border:1px solid var(--line);padding:6px 10px;text-align:left;background:#031C22;color:var(--text)}
 .sheet th{background:var(--panel2);color:var(--muted);font-family:var(--f-display);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
@@ -644,6 +678,56 @@ const EASY={
   // move plain-words text onto the slides so inserting does not shift it
   Object.keys(TEACH).forEach(n=>{TEACH[n].forEach((t,i)=>{if(!t.easy&&EASY[n]&&EASY[n][i])t.easy=EASY[n][i]});delete EASY[n]});
   ADD.forEach(a=>{const T=TEACH[a[0]],i=T.findIndex(t=>key(t)===a[1]);if(i<0)throw new Error('anim anchor missing '+a[1]);T.splice(i,0,a[2])});
+})();
+
+/* guided code lessons, spliced in as 'coach' slides */
+(function(){
+  const P=(a,b,c)=>[a,b,c];
+  const PAGE2='<!DOCTYPE html>\n<html>\n<head>\n  <title>My School</title>\n</head>\n<body>\n  <h1>My School</h1>\n  <p>We learn every day.</p>\n</body>\n</html>';
+  const H1={h:'Build a page line by line',kind:'Code coach',type:'coach',lang:'html',base:'',lines:['You will type a real web page, one line at a time.','After each line you see what it does.'],easy:'You will write a real web page. One line at a time. The page shows on the right.',
+   win:'You built a whole page from nothing.',end:'Your page is finished. Every web page you visit is built like this.',
+   steps:[
+    {say:'Every page starts by telling the browser what kind of page it is.',add:'<!DOCTYPE html>',hint:'Start with <!DOCTYPE then a space then html and >.',parts:[P('<!DOCTYPE html>','open','Says: this is a modern HTML page. It shows nothing on the screen.')]},
+    {say:'Next, open the html tag. Every other tag lives inside it.',add:'<html>',hint:'Just the word html inside angle brackets.',parts:[P('<html>','open','The opening tag of the whole page.')],why:'Think of it as the outside wall of a house.'},
+    {say:'Now open the head. This part holds hidden information about the page.',add:'<head>',ind:1,parts:[P('<head>','open','Opens the head. Nothing in here is shown on the page itself.')]},
+    {say:'Put a title inside the head. Watch the little tab above the preview.',add:'<title>My School</title>',ind:2,hint:'<title> then My School then </title>.',parts:[P('<title>','open','Opening tag. It starts the title.'),P('My School','content','The content. This text goes on the browser tab.'),P('</title>','close','Closing tag. The slash means: the title ends here.')],why:'Most tags come in pairs: an opening tag and a closing tag with a slash.'},
+    {say:'Close the head, because we are finished with the hidden part.',add:'</head>',ind:1,hint:'Same as <head> but with a slash after the <.',parts:[P('</head>','close','Closes the head. Same word, plus a slash.')]},
+    {say:'Now open the body. Everything people SEE goes inside the body.',add:'<body>',ind:1,parts:[P('<body>','open','Opens the visible part of the page.')]},
+    {say:'Add a big heading. h1 is the biggest heading.',add:'<h1>Welcome</h1>',ind:2,hint:'<h1> then Welcome then </h1>.',parts:[P('<h1>','open','Opens a big heading.'),P('Welcome','content','This text appears big on the page.'),P('</h1>','close','Closes the heading.')],why:'Look at the preview. The word Welcome appeared.'},
+    {say:'Add a paragraph. p is for normal text.',add:'<p>We love learning.</p>',ind:2,hint:'<p> then the sentence then </p>.',parts:[P('<p>','open','Opens a paragraph.'),P('We love learning.','content','Normal sized text.'),P('</p>','close','Closes the paragraph.')]},
+    {say:'Your turn. Write your own paragraph about your favourite subject. Start with <p> and end with </p>.',show:'<p>I like ... because ...</p>',re:/^<p>[^<>]+<\/p>$/i,reMsg:'Start with <p>, then your sentence, then </p>. Do not forget the slash.',ind:2,sample:'<p>I like Maths because it is fun.</p>',hint:'Example: <p>I like ICT because it is fun.</p>',parts:[P('<p>...</p>','content','Your own sentence, inside a paragraph tag.')],why:'You wrote HTML without copying. That is the real skill.'},
+    {say:'Close the body. We are finished with the visible part.',add:'</body>',ind:1,parts:[P('</body>','close','Closes the visible part.')]},
+    {say:'Last line. Close the html tag.',add:'</html>',parts:[P('</html>','close','Closes the whole page. Done!')],why:'The pattern: open the tag, put the content inside, close the tag.'}
+   ]};
+  const H2={h:'Lists, links and bold text',kind:'Code coach',type:'coach',lang:'html',base:PAGE2,before:'</body>',lines:['The page already exists.','Add new things inside the body, one line at a time.'],easy:'Add more things to your page. Headings, lists and links.',
+   win:'You added a heading, a list, bold text and a link.',end:'Your page now has a heading, a list, bold text and a link.',
+   steps:[
+    {say:'Add a smaller heading. h2 is the second biggest.',add:'<h2>Our subjects</h2>',ind:1,hint:'<h2> then Our subjects then </h2>.',parts:[P('<h2>','open','Heading level 2.'),P('Our subjects','content','The heading text.'),P('</h2>','close','Closes it.')],why:'h1 is the biggest. h6 is the smallest.'},
+    {say:'Start a list. ul means unordered list, a list with dots.',add:'<ul>',ind:1,parts:[P('<ul>','open','Opens the list.')]},
+    {say:'Add the first list item. li means list item.',add:'<li>Maths</li>',ind:2,hint:'<li> then Maths then </li>.',parts:[P('<li>','open','Opens one item.'),P('Maths','content','The item text.'),P('</li>','close','Closes the item.')],why:'Every item in a list gets its own li.'},
+    {say:'Add a second item.',add:'<li>ICT</li>',ind:2,parts:[P('<li>ICT</li>','content','A second item. Look at the preview. The dots appear.')]},
+    {say:'Close the list.',add:'</ul>',ind:1,parts:[P('</ul>','close','Closes the list.')]},
+    {say:'Make one word bold. Use the b tag inside a paragraph.',add:'<p>We are <b>very</b> proud.</p>',ind:1,hint:'The <b> and </b> go around just one word.',parts:[P('<p>','open','Opens the paragraph.'),P('<b>very</b>','attr','b makes the word inside bold.'),P('</p>','close','Closes the paragraph.')],why:'A tag can sit inside another tag.'},
+    {say:'Add a link. The a tag makes a link. The href part says where it goes.',add:'<a href="https://www.google.com">Search</a>',ind:1,hint:'href is the attribute. Its value goes in quotation marks.',parts:[P('<a','open','a stands for anchor, which is a link.'),P('href="https://www.google.com"','attr','href says where the link goes. The address is in quotation marks.'),P('>Search</a>','content','Search is the words people tap. </a> closes the link.')],why:'An attribute is extra information inside the opening tag.'},
+    {say:'Your turn. Add a heading level 3 with any words you like.',show:'<h3>your words</h3>',re:/^<h3>[^<>]+<\/h3>$/i,reMsg:'Use <h3>, then your words, then </h3>.',ind:1,sample:'<h3>Thank you</h3>',parts:[P('<h3>...</h3>','content','Your own heading.')],why:'You now know headings, paragraphs, lists, bold and links.'}
+   ]};
+  const PAGEC='<!DOCTYPE html>\n<html>\n<head>\n  <title>My School</title>\n</head>\n<body>\n  <h1>My School</h1>\n  <p>Welcome to our school.</p>\n  <p class="note">Come and see our lab.</p>\n</body>\n</html>';
+  const C1={h:'Style it one rule at a time',kind:'Code coach',type:'coach',lang:'css',base:'',page:PAGEC,lines:['The page is plain. You will style it.','Type one CSS rule at a time and watch the page change.'],easy:'Type one CSS rule at a time. After each one, the page changes.',
+   win:'You styled a page with CSS.',end:'The page now has colour, size, borders and spacing.',
+   steps:[
+    {say:'First rule: make every h1 red. Type the rule exactly.',add:'h1 { color: red; }',hint:'h1, then a space, then { color: red; }',parts:[P('h1','sel','The selector. It says WHICH thing to style.'),P('{ }','attr','Curly brackets hold the rule.'),P('color','prop','The property. What to change.'),P(': red','val','The value. How to change it.'),P(';','attr','The semicolon ends the line.')],why:'Selector, property, value. Every rule has these three.'},
+    {say:'Second rule: make every paragraph blue.',add:'p { color: blue; }',parts:[P('p','sel','Selects every paragraph.'),P('color: blue;','prop','Same property, new value.')]},
+    {say:'Change the colour of the whole page with body.',add:'body { background-color: lightyellow; }',hint:'background-color has a dash in the middle.',parts:[P('body','sel','Selects the whole visible page.'),P('background-color: lightyellow;','prop','Colours the background.')]},
+    {say:'Centre the heading.',add:'h1 { text-align: center; }',parts:[P('text-align: center;','prop','Moves the text to the middle.')]},
+    {say:'Make the paragraph text bigger.',add:'p { font-size: 22px; }',parts:[P('font-size: 22px;','prop','px means pixels. A bigger number makes bigger text.')]},
+    {say:'Style just ONE paragraph. The note paragraph has a class. A dot selects a class.',add:'.note { font-weight: bold; }',hint:'Start with a dot, then the class name note.',parts:[P('.note','sel','The dot means: select the thing whose class is note.'),P('font-weight: bold;','prop','Makes the text thick.')],why:'A class lets you style some items and not others.'},
+    {say:'Put a border around the heading.',add:'h1 { border: 3px solid green; }',parts:[P('border: 3px solid green;','prop','Three things: thickness, style and colour.')]},
+    {say:'Add space inside the paragraphs.',add:'p { padding: 10px; }',parts:[P('padding: 10px;','prop','Padding is empty space inside the edge of the box.')]},
+    {say:'Your turn. Write any CSS rule. Use a selector, curly brackets, a property, a colon, a value and a semicolon.',show:'h1 { color: purple; }',re:/^[a-z0-9.#]+\s*\{\s*[a-z-]+\s*:\s*[^;{}]+;\s*\}$/i,reMsg:'Follow the pattern: selector { property: value; }',sample:'h1 { color: purple; }',parts:[P('selector { property: value; }','prop','Your own rule.')],why:'You can now change how any part of a page looks.'}
+   ]};
+  const ADD2=[[5,'html/skeleton',H1],[5,'html/editor',H2],[6,'css/play',C1]];
+  const key=t=>(t.type||'')+(t.mode?'/'+t.mode:'');
+  ADD2.forEach(a=>{const T=TEACH[a[0]],i=T.findIndex(t=>key(t)===a[1]);if(i<0)throw new Error('coach anchor '+a[1]);T.splice(i,0,a[2])});
 })();
 
 const setWorld=c=>document.body.style.setProperty('--world',c||'#0E6B66');
@@ -1489,15 +1573,15 @@ function slideExtra(t,box,ctx){
     }
     if(t.mode==='type'){
       const tasks=[
-        {p:'Write a formula for cell C2 that shows Pass if B2 is 50 or more, otherwise Fail.',a:['=IF(B2>=50,"PASS","FAIL")']},
-        {p:'Cell B2 holds an average. Write a formula that shows Promoted if it is 50 or above, otherwise Not Promoted.',a:['=IF(B2>=50,"PROMOTED","NOT PROMOTED")']},
-        {p:'Write a formula that counts how many scores in B2:B11 are below 50.',a:['=COUNTIF(B2:B11,"<50")']}];
+        {cell:'C2',p:'Write a formula for cell C2 that shows Pass if B2 is 50 or more, otherwise Fail.',a:['=IF(B2>=50,"PASS","FAIL")']},
+        {cell:'C2',p:'Cell B2 holds an average. Write a formula that shows Promoted if it is 50 or above, otherwise Not Promoted.',a:['=IF(B2>=50,"PROMOTED","NOT PROMOTED")']},
+        {cell:'D2',p:'Write a formula that counts how many scores in B2:B11 are below 50.',a:['=COUNTIF(B2:B11,"<50")']}];
       let k=0,msg='';
       const norm=s=>s.replace(/[“”]/g,'"').replace(/\s+/g,'').toUpperCase();
       const draw=()=>{
         if(k>=tasks.length){box.innerHTML='<div class="xinfo"><b>All three formulas are correct!</b> You can write IF and COUNTIF from memory.</div>';return}
         box.innerHTML=`<div class="eyebrow">Task ${k+1} of ${tasks.length}</div><div class="xinfo" style="margin-top:4px">${esc(tasks[k].p)}</div>
-        <div class="ctrls" style="margin-top:8px"><label style="flex:1 1 300px">Your formula<input id="ty" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%;font-family:ui-monospace,Consolas,monospace" placeholder="=..."></label><button class="btn mg" id="ck"><span>Check</span></button></div>
+        ${xlTypeGrid(tasks[k].cell)}
         <div class="xinfo" aria-live="polite">${msg||'Start with an equals sign. Put text in quotation marks. Separate the parts with commas.'}</div>`;
         const go=()=>{
           const v=$('#ty',box).value,n=norm(v);
@@ -1934,6 +2018,129 @@ slideExtra=function(t,box,ctx){if(t.type==='anim')return animExtra(t,box,ctx);re
 
 const TPB=()=>`<button class="btn ${S.tp?'cy':'gh'}" id="tpv"><span>Teacher preview: ${S.tp?'ON, everything open':'OFF'}</span></button>`;
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#tpv');if(b){S.tp=!S.tp;save();sfx.tap();mapView()}});
+
+/* ---------- Excel-style window around every sheet ---------- */
+const XL_TITLE='<div class="xlt"><span class="xld"></span><span class="xld"></span><span class="xld"></span><b>Book1 - Excel</b></div><div class="xlr"><span>File</span><span class="on">Home</span><span>Insert</span><span>Formulas</span><span>Data</span></div>';
+const colL=i=>String.fromCharCode(65+i);
+function xlify(box){
+  box.querySelectorAll('table.sheet').forEach(tb=>{
+    if(tb.closest('.xlwin'))return;
+    const anchor=tb.parentNode.classList.contains('scrollbox')?tb.parentNode:tb;
+    const th=tb.tBodies[0]&&tb.tBodies[0].rows[0]&&tb.tBodies[0].rows[0].cells[0];
+    const gutter=!!(th&&th.tagName==='TH'&&/^\d+$/.test(th.textContent.trim()));
+    const head=tb.tHead&&tb.tHead.rows[0];
+    if(head){
+      const hasL=[].some.call(head.cells,c=>/^[A-Z]\b/.test(c.textContent.trim())&&c.textContent.trim().length<=2||/^[A-Z]:/.test(c.textContent.trim()));
+      if(!hasL){
+        const n=head.cells.length,tr=document.createElement('tr');tr.className='xlc';
+        let h='';for(let i=0;i<n;i++)h+='<th>'+(gutter&&i===0?'':colL(i-(gutter?1:0)))+'</th>';
+        tr.innerHTML=h;tb.tHead.insertBefore(tr,head);
+      }
+    }
+    const F=(()=>{const c=box.querySelector('.code');const x=c?c.textContent.trim():'';return x.charAt(0)==='='?x.split('→')[0].trim():''})();
+    const w=document.createElement('div');w.className='xlwin';
+    w.innerHTML=XL_TITLE+'<div class="xlf"><span class="xnb">B2</span><span class="xfx">fx</span><span class="xfb"></span></div><div class="xlg"></div>';
+    anchor.parentNode.insertBefore(w,anchor);w.querySelector('.xlg').appendChild(anchor);
+    const nb=w.querySelector('.xnb'),fb=w.querySelector('.xfb');
+    const sel=td=>{
+      w.querySelectorAll('.xsel').forEach(x=>x.classList.remove('xsel'));td.classList.add('xsel');
+      const tr=td.parentNode,idx=td.cellIndex-(gutter?1:0);
+      const rn=gutter?tr.cells[0].textContent.trim():String((tb.tHead?tb.tHead.rows.length:0)+tr.rowIndex);
+      nb.textContent=colL(Math.max(0,idx))+rn;
+      fb.textContent=td.dataset.f||(F&&td.querySelector('b')?F:td.textContent.trim());
+    };
+    tb.addEventListener('click',e=>{const td=e.target.closest('td,th');if(td&&td.closest('tbody'))sel(td)});
+    const first=tb.querySelector('td b')?tb.querySelector('td b').parentNode:null;
+    if(first){sel(first)}else if(F){fb.textContent=F;nb.textContent='C2'}else{nb.textContent='A1';fb.textContent=''}
+  });
+}
+function xlWatch(box){
+  const obs=new MutationObserver(()=>{obs.disconnect();try{xlify(box)}catch(e){}obs.observe(box,{childList:true})});
+  xlify(box);obs.observe(box,{childList:true});
+}
+function xlTypeGrid(cell){
+  const N=['Name','Ada','Bayo','Chi','Dayo','Efe','Femi','Gift','Hauwa','Ify','Jide'],V=['Score',72,48,50,35,66,49,81,57,44,63];
+  return `<div class="xlwin">${XL_TITLE}<div class="xlf"><span class="xnb">${cell}</span><span class="xfx">fx</span><input id="ty" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="type your formula here" aria-label="Formula bar"><button class="btn mg" id="ck"><span>Check</span></button></div>
+  <div class="xlg"><div class="scrollbox"><table class="sheet"><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody>${N.map((n,i)=>`<tr><th>${i+1}</th><td${i?'':' class="xh"'}>${n}</td><td class="${i?'num':'xh'}">${V[i]}</td><td${i?'':' class="xh"'}>${i?'':'Result'}</td><td></td></tr>`).join('')}</tbody></table></div></div></div>`;
+}
+
+/* ---------- code coach: type the code one line at a time, with a live preview ---------- */
+const COACH_KEYS={html:['<','>','/','"','=',' '],css:['{','}',':',';','#','.','%']};
+function codeCoach(t,box,ctx){
+  const S=t.steps,lang=t.lang;let k=0,tries=0,state='ask',code=t.base,lastLine=-1,hintShown=false;
+  const nH=s=>s.replace(/[“”]/g,'"').replace(/\s+/g,' ').replace(/\s*([<>=\/])\s*/g,'$1').trim().toLowerCase();
+  const nC=s=>s.replace(/[“”]/g,'"').replace(/\s+/g,'').toLowerCase();
+  const norm=lang==='css'?nC:nH;
+  const insertLine=(add,ind)=>{
+    const pad=new Array((ind||0)+1).join('  ');
+    if(lang==='css'){code=code+(code&&!/\n$/.test(code)?'\n':'')+add+'\n';lastLine=code.split('\n').length-2;return}
+    const mk=t.before;const lines=add.split('\n').map(l=>pad+l).join('\n');
+    if(mk&&code.indexOf(mk)>=0){const i=code.indexOf(mk);const pre=code.slice(0,i),post=code.slice(i);code=pre+lines+'\n'+post;lastLine=pre.split('\n').length-1}
+    else{code=code+(code?'\n':'')+lines;lastLine=code.split('\n').length-1}
+  };
+  const diag=(v,exp)=>{
+    const c=(s,r)=>(s.match(r)||[]).length;
+    if(!v.trim())return 'Type the code first. Copy it letter by letter from the dotted box.';
+    if(lang==='html'){
+      if(c(v,/</g)!==c(exp,/</g)||c(v,/>/g)!==c(exp,/>/g))return 'Check the angle brackets. Every tag starts with < and ends with >.';
+      if(c(v,/\//g)!==c(exp,/\//g))return 'Check the slash. A closing tag has a / after the <, like </p>.';
+      if(c(v,/"/g)!==c(exp,/"/g))return 'Check the quotation marks. They come in pairs.';
+    }else{
+      if(c(v,/\{/g)!==c(exp,/\{/g)||c(v,/\}/g)!==c(exp,/\}/g))return 'Check the curly brackets. { opens the rule and } closes it.';
+      if(c(v,/;/g)!==c(exp,/;/g))return 'Check the semicolon. Every property ends with ;';
+      if(c(v,/:/g)!==c(exp,/:/g))return 'Check the colon. It sits between the property and its value.';
+    }
+    const a=norm(v),b=norm(exp);let i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;
+    return 'Nearly there. Look again at the part that starts here: "'+exp.slice(Math.max(0,Math.min(i,exp.length-1))).slice(0,14)+'..."';
+  };
+  const preview=()=>{
+    const host=$('#cph',box);if(!host)return;
+    const html=lang==='css'?(t.page.replace('</head>','<style>\n'+code+'</style>\n</head>')):code;
+    const d=new DOMParser().parseFromString(html,'text/html');
+    host.innerHTML='<div class="bmock"><div class="btab" id="cbt">'+esc(d.title.trim()||'(no title)')+'</div><div id="cfh"></div></div>';makeFrame($('#cfh',host),html);
+  };
+  const codeHtml=()=>code.split('\n').map((l,i)=>`<span class="${i===lastLine&&state==='explain'?'cnew':''}">${esc(l)||' '}</span>`).join('\n');
+  const draw=()=>{
+    if(k>=S.length){box.innerHTML=`<div class="twocol"><pre class="code" style="margin:0">${codeHtml()}</pre><div id="cph"></div></div><div class="xinfo"><b>${esc(t.end||'You wrote it all yourself!')}</b></div>`;preview();ctx.done(true,t.win||'You typed every line yourself.');return}
+    const st=S[k];
+    const pips=S.map((_,i)=>`<i class="${i<k?'ok':i===k?'cur':''}"></i>`).join('');
+    const ask=state==='ask';
+    box.innerHTML=`<div class="hud2"><span class="eyebrow">Step ${k+1} of ${S.length}</span><div class="pips">${pips}</div></div>
+    <div class="twocol"><div><pre class="code cc" id="cc" style="margin:0;min-height:150px">${codeHtml()}</pre></div><div id="cph"></div></div>
+    <div class="xinfo coachsay" style="margin-top:10px"><b>${esc(st.say)}</b></div>
+    ${ask?`<div class="ghost" aria-label="Code to type">${st.re?esc(st.show):esc(st.add)}</div>
+    <div class="ctrls" style="margin-top:8px"><label style="flex:1 1 300px">${st.re?'Your line':'Type it here'}<input id="ci" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="width:100%;font-family:ui-monospace,Consolas,monospace"></label><button class="btn mg" id="cck"><span>Check</span></button></div>
+    <div class="keys">${COACH_KEYS[lang].map(c=>`<button class="stp key" data-k="${esc(c)}" aria-label="insert ${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <div class="xinfo" id="cm" aria-live="polite" style="min-height:44px">${tries?'':'Copy the line exactly. Use the little keys if the keyboard is hard.'}</div>
+    <div class="row" style="justify-content:flex-start"><button class="lnk" id="chn">Need a hint?</button>${tries>=2&&!st.re?'<button class="lnk" id="cty">Type it for me</button>':''}</div>`
+    :`<div class="why ex"><em>What you just wrote</em>${(st.parts||[]).map(p=>`<div class="pt"><code class="r-${p[1]}">${esc(p[0])}</code><span>${esc(p[2])}</span></div>`).join('')}${st.why?`<p style="margin:8px 0 0">${esc(st.why)}</p>`:''}</div>
+    <div class="row" style="justify-content:flex-start"><button class="btn" id="cnx"><span>${k===S.length-1?'Finish':'Next line'}</span></button></div>`}`;
+    preview();
+    const cc=$('#cc',box);if(cc&&lastLine>=0){cc.scrollTop=cc.scrollHeight}
+    if(!ask){$('#cnx',box).onclick=()=>{sfx.tap();k++;tries=0;state='ask';hintShown=false;draw()};return}
+    const inp=$('#ci',box);
+    box.querySelectorAll('.key').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{const s=inp.selectionStart==null?inp.value.length:inp.selectionStart,e2=inp.selectionEnd==null?s:inp.selectionEnd;inp.value=inp.value.slice(0,s)+b.dataset.k+inp.value.slice(e2);inp.selectionStart=inp.selectionEnd=s+1;inp.focus();sfx.tap()}});
+    const ok=v=>{insertLine(st.re?v.trim():st.add,st.ind);state='explain';sfx.ok();burst(30);if(typeof ctx.say==='function')ctx.say('ok','Good. Now read what it means.');draw()};
+    const go=()=>{
+      const v=inp.value;
+      if(st.re?st.re.test(v.trim()):(norm(v)===norm(st.add)||(st.alt||[]).some(a=>norm(a)===norm(v)))){ok(v);return}
+      tries++;sfx.no();shakeScreen();
+      const m=st.re?(st.reMsg||'Not quite. Follow the pattern in the dotted box.'):diag(v,st.add);
+      $('#cm',box).innerHTML='<b>Not quite.</b> '+esc(m)+(tries>=2&&!st.re?' You can tap Type it for me.':'');
+      if(tries>=2&&!$('#cty',box)){const r=box.querySelector('.row');const b=document.createElement('button');b.className='lnk';b.id='cty';b.textContent='Type it for me';r.appendChild(b);b.onclick=()=>{inp.value=st.add;sfx.tap()}}
+    };
+    $('#cck',box).onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};
+    $('#chn',box).onclick=()=>{sfx.flip();$('#cm',box).innerHTML='<b>Hint:</b> '+esc(st.hint||'Copy each character from the dotted box, in the same order.')};
+    const cty=$('#cty',box);if(cty)cty.onclick=()=>{inp.value=st.add;sfx.tap()};
+  };
+  draw();
+}
+const _se1=slideExtra;
+slideExtra=function(t,box,ctx){
+  if(t.type==='coach')return codeCoach(t,box,ctx);
+  _se1(t,box,ctx);
+  if(t.type==='handsum'||t.type==='pivot'||t.type==='pivotparts'||t.type==='budget'||t.type==='whatif'||(t.type==='formula'&&t.mode!=='type'))xlWatch(box);
+};
 
 /* ---------- play-stage games ---------- */
 const C=(n,info)=>({n,info});
