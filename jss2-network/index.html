@@ -683,7 +683,7 @@ const TITLES=['Newbie','Tech Cadet','Byte Hunter','System Pro','Tech Legend'];
 const lvlOf=x=>Math.floor(x/250)+1;
 const titleOf=x=>TITLES[Math.min(TITLES.length-1,lvlOf(x)-1)];
 function badges(){
-  const b=LEVELS.map((l,i)=>({n:l.badge,ic:['code','tool','gear','phone'][i],on:(S.boss[l.id]||0)>=3}));
+  const b=LEVELS.map((l,i)=>({n:l.badge,ic:l.bic||['code','tool','gear','phone','star','trophy'][i]||'star',on:(S.boss[l.id]||0)>=3}));
   b.push({n:'Perfect Score',ic:'star',on:Object.values(S.boss).some(v=>v===5)||S.final===10});
   b.push({n:'Combo Master',ic:'flame',on:S.best>=5});
   b.push({n:'Grand Champion',ic:'trophy',on:S.final>=8});
@@ -825,8 +825,8 @@ const app=$('#app');
 function route(){
   const h=location.hash.slice(1)||'map';route.cur=h;
   if(!S.name||!route.started){start();return}
-  const m=h.match(/^l([1-4])$/);
-  if(m)level(+m[1]);else if(h==='final')finalRound();else if(h==='battle'&&typeof battleMode==='function')battleMode();else if(h==='board'&&typeof teacherBoard==='function')teacherBoard();else mapView();
+  const m=h.match(/^l(\d+)$/);
+  if(m&&+m[1]>=1&&+m[1]<=LEVELS.length)level(+m[1]);else if(h==='final')finalRound();else if(h==='battle'&&typeof battleMode==='function')battleMode();else if(h==='board'&&typeof teacherBoard==='function')teacherBoard();else mapView();
   window.scrollTo(0,0);paintHud();
 }
 addEventListener('hashchange',()=>{if(route.started)route()});
@@ -986,7 +986,7 @@ function boss(el,n){
       MU.mode='menu';
       const prev=S.boss[n]||0,first=!done(n);const before=xpOf();S.boss[n]=Math.max(prev,score);save();
       const gain=xpOf()-before,ok=score>=3;
-      box.innerHTML=`<div class="result"><div class="eyebrow">Battle report</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Rematch</span></button>${ok&&n<4?`<a class="btn" href="#l${n+1}"><span>Next level</span></a>`:''}${ok&&n===4?`<a class="btn" href="#final"><span>Grand Challenge</span></a>`:''}</div></div>`;
+      box.innerHTML=`<div class="result"><div class="eyebrow">Battle report</div><div class="big">${score}<span style="font-size:30px"> / ${total}</span></div>${stars(score>=5?3:score>=4?2:score>=3?1:0)}${gain>0?`<span class="xpg">+${gain} XP</span>`:''}<div class="byte" id="by2" style="width:100%"></div><div class="row" style="justify-content:flex-start"><button class="btn gh" id="re"><span>Rematch</span></button>${ok&&n<LEVELS.length?`<a class="btn" href="#l${n+1}"><span>Next level</span></a>`:''}${ok&&n===LEVELS.length?`<a class="btn" href="#final"><span>Grand Challenge</span></a>`:''}</div></div>`;
       say($('#by2',box),ok?'ok':'no',score===5?'PERFECT! The boss never had a chance.':ok?'Boss defeated! Next level unlocked. Fight again for more stars.':'You were beaten this time. Reveal the cards again, play the games and come back.');
       $('#re',box).onclick=()=>{musicSet('battle');MU.mode='battle';intro()};
       if(ok){sfx.win();burst(130)}else sfx.lose();
@@ -1891,7 +1891,7 @@ async function finalRound(){
   app.innerHTML=`<div class="lh"><div class="eyebrow">All levels</div><h1><span class="skew">Grand Challenge</span></h1></div><div class="panel quest"><b>Beat the clock</b><span>10 mixed questions. Get 8 or more for the Grand Champion badge.</span></div><div class="w" id="fb" style="margin-top:16px;--acc:var(--violet)"></div><div class="row" style="padding-top:14px"><a class="btn gh" href="#map"><span>Back to map</span></a></div>`;
   const el=$('#fb');
   function go(){
-    const all=[];for(let l=0;l<4;l++)for(let k=0;k<5;k++)all.push([l,k]);
+    const all=[];for(let l=0;l<LEVELS.length;l++)for(let k=0;k<MCQ[l].length;k++)all.push([l,k]);
     const qs=shuffle(all).slice(0,10).map(([l,k])=>mkQ(l,k));
     el.innerHTML='<div id="fq" style="display:grid;gap:14px"></div>';
     mcqRun($('#fq'),qs,{time:25,done:async(score,total,box)=>{
