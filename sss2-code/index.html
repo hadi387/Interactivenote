@@ -337,6 +337,9 @@ body.lite *{filter:none!important}
 .pod .p3 .st{height:75px;background:linear-gradient(180deg,#E3A26B,#7A4A1E);color:#2B1500}
 .pod .nm2{font-size:15px;word-wrap:break-word;overflow-wrap:anywhere}
 .codebox{font:700 5vw ui-monospace,Consolas,monospace;font:700 clamp(20px,5vw,34px) ui-monospace,Consolas,monospace;letter-spacing:.06em;background:#0B0720;border:3px dashed var(--gold);padding:14px 18px;color:var(--gold);word-break:break-all;text-transform:none}
+.why.easy{background:rgba(255,199,0,.16);border-left-color:var(--gold);margin-top:8px}
+.chk{display:flex;grid-gap:10px;gap:10px;align-items:center;font-size:19px;font-weight:700}
+.chk input{width:24px;height:24px;accent-color:#19D3FF}
 .sheet{border-collapse:collapse;width:100%;font-family:var(--f-body);font-size:2.6vw;font-size:clamp(15px,2.6vw,18px)}
 .sheet th,.sheet td{border:1px solid var(--line);padding:6px 10px;text-align:left;background:#0B0720;color:var(--text)}
 .sheet th{background:var(--panel2);color:var(--muted);font-family:var(--f-display);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
@@ -448,6 +451,7 @@ html.no-flexgap .vill>*{margin:0 12px 12px 0}
 html.no-flexgap .score-row>*{margin:0 10px 10px 0}
 html.no-flexgap .bti>*+*{margin-left:12px}
 html.no-flexgap .pod>*+*{margin-left:10px}
+html.no-flexgap .chk>*+*{margin-left:10px}
 html.no-flexgap .ctrls>*{margin:0 12px 12px 0}
 html.no-flexgap .tick>*+*{margin-left:14px}</style></head><body>
 
@@ -624,6 +628,15 @@ const RECAP={
 4:['Scenario analysis (what-if analysis) means changing inputs to see how results change.','Formulas recalculate automatically when an input changes.','It helps you plan for different possible situations.'],
 5:['HTML is the standard language for the structure of web pages.','The basic tags are html, head, title and body. Headings are h1 to h6 and paragraphs are p.','Most tags come in pairs with a closing tag that has a slash.'],
 6:['CSS controls how an HTML page looks.','A rule has a selector and property-value pairs, such as color:blue;','Inline CSS, internal CSS and external CSS are the three ways to apply CSS.']
+};
+
+const EASY={
+1:['A pivot table is a tool that turns a very long list into a small, easy table.','Doing it by hand is like counting every bag of rice in a big market, one by one. It is slow!','Rows go down the side. Columns go across the top. Values are the numbers. Filters show only some of the data.','Which class scored higher in Maths? Make a guess, then watch the computer work it out.','Choose what goes down the side and what goes across the top. The table changes by itself.','The pivot table only looks at your data. Your original list stays the same, like looking in a mirror.','It saves a teacher a lot of time when there are many classes and many subjects.','Rows = side. Columns = top. Values = the numbers. Filters = show only some.'],
+2:['A formula can make a decision, like a gateman who lets you in only if you have an ID.','IF asks: is the score 50 or more? If yes, write Pass. If no, write Fail.','A formula starts with =. Words go inside quotes. Commas go between the parts.','49 is not 50 or more, so the answer is Fail.','VLOOKUP is like finding a name in a phone book and reading the number next to it.','SUMIF adds only some numbers. COUNTIF counts only some. Both need a condition.','Pass or Fail? Use IF. A grade from a table? VLOOKUP. Add some? SUMIF. Count some? COUNTIF.','Copy the pattern =IF(B2>=50,"Pass","Fail") and change the words to fit the question.','IF decides. VLOOKUP searches. SUMIF adds. COUNTIF counts.'],
+3:['A financial model is a plan for your money, written in numbers.','Income comes in. Expenses go out. Balance is what is left.','Take the income and subtract the expenses. A positive answer means you have money left.','Press + and − and watch the totals change. You do not have to calculate it yourself.','First add the new expense to the old expenses. Then subtract the total from the income.','Planning shows you a problem before it happens.','Balance = income minus expenses.'],
+4:['What if means: what would happen if one thing changed?','Slide the income up and down and see how much money is left.','The sheet works out the answer for you. You never retype it.','Use balance = income − expenses with the new income.','Compare the normal plan, less income and more expenses side by side.','Profit is the money from selling minus what it cost. Change the price and see what happens.','Anywhere a number can change, you can ask: what if?','Fancy tools do the same job, with many what-ifs at once.','Change one input and watch the results change by themselves.'],
+5:['HTML is the secret code that tells a browser what to show on a page.','Every line has a job. Tap them one by one.','Every page starts the same way, like every letter starts with Dear.','Tags come in pairs: an opening tag and a closing tag. The closing tag has a slash.','The title tag is the name on the browser tab, like the name on a gate.','h1 is the biggest heading. h6 is the smallest.','Type a title, a heading and a paragraph. The page appears on the right.','html holds everything. head holds information. body holds what you can see.'],
+6:['CSS is the paint and clothes for a web page.','It is the same page with and without style. Switch CSS on and off.','A rule says three things: who to style, what to change, and how.','Inline is in one tag. Internal is in the head. External is in a separate file.','p means all the paragraphs. The heading is not a paragraph, so it stays black.','Press the buttons to add styles, then watch the page change.','CSS controls how a page looks. A rule has a selector and property-value pairs.']
 };
 
 const setWorld=c=>document.body.style.setProperty('--world',c||'#2A1B7A');
@@ -960,12 +973,12 @@ function setupStages(){
 
 /* ---------- MCQ runner: used by boss battles and the grand challenge ---------- */
 function mcqRun(el,qs,opt){
-  let i=0,score=0,hearts=3,hist=[],timer=null;
+  let i=0,score=0,hearts=5,hist=[],timer=null;
   const bs=opt.boss;
   function pips(){return `<div class="pips">${qs.map((_,k)=>`<i class="${hist[k]===undefined?(k===i?'cur':''):hist[k]?'ok':'no'}"></i>`).join('')}</div>`}
   function arena(mood){
     if(!bs)return '';
-    return `<div class="arena"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span><div class="hearts" id="ht">${[0,1,2].map(k=>heart(k<hearts)).join('')}</div></div><div class="vs">VS</div><div class="fighter" id="bf">${bossSVG(bs[1],mood||'idle')}<span class="nm" style="color:${bs[1]}">${esc(bs[0])}</span><div class="hp" aria-label="Boss health">${qs.map((_,k)=>`<i class="${k<score?'lost':''}" style="background:${k<score?'':bs[1]}"></i>`).join('')}</div></div></div>`;
+    return `<div class="arena"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span><div class="hearts" id="ht">${[0,1,2,3,4].map(k=>heart(k<hearts)).join('')}</div></div><div class="vs">VS</div><div class="fighter" id="bf">${bossSVG(bs[1],mood||'idle')}<span class="nm" style="color:${bs[1]}">${esc(bs[0])}</span><div class="hp" aria-label="Boss health">${qs.map((_,k)=>`<i class="${k<score?'lost':''}" style="background:${k<score?'':bs[1]}"></i>`).join('')}</div></div></div>`;
   }
   function draw(){
     clearInterval(timer);
@@ -975,7 +988,7 @@ function mcqRun(el,qs,opt){
     <p class="qtext" id="qt">${esc(q.q).replace(/_{3,}/,'<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</p>
     <div class="opts">${q.opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.t)}</span><span class="m"></span></button>`).join('')}</div>
     <div class="byte" id="by"></div><div id="nx"></div>`;
-    say($('#by',el),'idle',opt.time?'Be quick, but think!':bs?'Answer right to hit the boss. Three wrong answers and you lose.':'Take your time.');
+    say($('#by',el),'idle',opt.time?'Be quick, but think!':bs?'Answer right to hit the boss. Five wrong answers and you lose.':'Take your time.');
     const lock=(good,btn)=>{
       clearInterval(timer);
       el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(q.opts[k].ok){x.classList.add('ok');x.querySelector('.m').textContent='✓'}});
@@ -983,7 +996,7 @@ function mcqRun(el,qs,opt){
       hist[i]=good;
       if(good){score++;sfx.ok();if(bs){sfx.hit();const f=$('#bf',el);f&&(f.innerHTML=bossSVG(bs[1],'hit')+f.innerHTML.slice(f.innerHTML.indexOf('</svg>')+6));f&&f.classList.add('hit');floatTxt('HIT!',f,'#3CFF8F');flashFx('rgba(60,255,143,.25)');
         const seg=el.querySelectorAll('.hp i')[score-1];seg&&(seg.classList.add('lost'),seg.style.background='')}else{floatTxt('+1',btn,'#3CFF8F')}}
-      else{hearts--;sfx.no();shakeScreen();flashFx('rgba(255,71,87,.3)');if(bs){const h=$('#ht',el);h&&(h.innerHTML=[0,1,2].map(k=>heart(k<hearts)).join(''))}}
+      else{hearts--;sfx.no();shakeScreen();flashFx('rgba(255,71,87,.3)');if(bs){const h=$('#ht',el);h&&(h.innerHTML=[0,1,2,3,4].map(k=>heart(k<hearts)).join(''))}}
       say($('#by',el),good?'ok':'no',(good?pick(CHEER):pick(OOPS))+' '+q.why);
       const last=i===qs.length-1||hearts<=0;
       $('#nx',el).innerHTML=`<button class="btn" id="n"><span>${last?'See result':'Next'}</span></button>`;
@@ -1000,9 +1013,9 @@ function boss(el,n){
   const l=n-1,L=LEVELS[l];
   function intro(){
     el.innerHTML=`<div class="arena" style="margin-bottom:6px"><div class="fighter"><span class="av" style="background:${S.color};width:70px;height:70px;font-size:28px">${esc(S.name[0].toUpperCase())}</span><span class="nm">${esc(S.name)}</span></div><div class="vs">VS</div><div class="fighter">${bossSVG(L.boss[1],'idle')}<span class="nm" style="color:${L.boss[1]}">${esc(L.boss[0])}</span></div></div>
-    <p class="hint">5 rounds. Each right answer hits the boss. You have 3 lives. Land 3 hits to win, 5 hits for three stars.</p>
+    <p class="hint">5 rounds. Each right answer hits the boss. You have 5 lives. Land 3 hits to win, 5 hits for three stars.</p>
     <div><button class="btn mg" id="fight"><span>Fight!</span></button></div>`;
-    $('#fight',el).onclick=async()=>{actx();await overlay('lose','Boss battle',L.boss[0],'Answer right to hit. Three wrong answers and you lose.',1700);musicSet('battle');MU.mode='battle';fight()};
+    $('#fight',el).onclick=async()=>{actx();await overlay('lose','Boss battle',L.boss[0],'Answer right to hit. Five wrong answers and you lose.',1700);musicSet('battle');MU.mode='battle';fight()};
   }
   function fight(){
     const qs=shuffle([0,1,2,3,4]).map(k=>mkQ(l,k));
@@ -1135,6 +1148,7 @@ function teachPlayer(el,n){
     const t=T[i];tries=0;answered=false;fin=false;
     const hasQ=!!t.q,N=t.lines.length;let shown=1,busy=false,ended=false;
     const opts=hasQ?shuffle(t.o.map((x,j)=>({x,ok:j===0}))):[];
+    const EZ=(typeof EASY!=='undefined'&&EASY[n]&&EASY[n][i])||t.easy||'';
     const V=(typeof VILL!=='undefined'&&VILL[n])||null,BOSS=LEVELS[n-1].boss;
     const power=()=>Math.round(100*(T.length-S.teach[n].filter(Boolean).length)/T.length);
     const villHtml=()=>`<div class="vill"><span class="vsv" id="vsv">${bossSVG(BOSS[1],'idle')}</span><div class="vb"><b style="color:${BOSS[1]}">${esc(BOSS[0])}</b><span id="vt"></span></div><div class="vpw" title="Villain power"><span>VILLAIN POWER</span><i><b id="vpb" style="width:${power()}%"></b></i></div></div>`;
@@ -1146,10 +1160,12 @@ function teachPlayer(el,n){
     <div id="sx" hidden></div>
     ${hasQ?`<div class="qc" id="qc" hidden><div class="eyebrow">Quick check · +5 XP</div><p class="qtext">${esc(t.q)}</p><div class="opts">${opts.map((o,k)=>`<button class="opt" style="--i:${k};--c:${CATC[k%5]}" data-k="${k}"><span>${esc(o.x)}</span><span class="m"></span></button>`).join('')}</div></div>`:''}
     <div class="tease" id="ts" hidden></div>
+    ${EZ?'<div class="row" style="justify-content:flex-start;padding-top:6px"><button class="lnk" id="es">Say it simply</button></div><div class="why easy" id="eb" hidden></div>':''}
     <div class="byte" id="by"></div>
     <div class="joke" id="jk" hidden></div>
     <div class="row"><button class="btn gh" id="pv" ${i?'':'disabled'}><span>Back</span></button><button class="btn" id="nx" disabled><span>${i===T.length-1?'Finish':'Next'}</span></button></div>`;
     const lis=el.querySelectorAll('.pts2 li');
+    const es=$('#es',el);if(es)es.onclick=()=>{const eb=$('#eb',el);eb.innerHTML='<em>In simple words</em>'+md(EZ);eb.hidden=false;sfx.flip()};
     const vsay=(txt,mood)=>{if(!V)return;const vt=$('#vt',el),sv=$('#vsv',el);if(!vt)return;vt.textContent=txt;sv.innerHTML=bossSVG(BOSS[1],mood||'idle');if(mood==='hit'){sv.classList.remove('hit');void sv.offsetWidth;sv.classList.add('hit')}};
     if(V)vsay(t.taunt||V.start[i%V.start.length],'idle');
     const label=()=>{$('#dc span',el).textContent=shown<N?'Next clue ('+(shown+1)+' of '+N+')':'Done'};
@@ -1285,8 +1301,46 @@ function makeFrame(host,html,onload){
   host.innerHTML='<iframe class="pfr" sandbox="allow-same-origin" title="Page preview"></iframe>';
   const fr=host.querySelector('iframe');if(onload)fr.onload=()=>onload(fr);fr.srcdoc=html;return fr;
 }
+const E1='<!DOCTYPE html>\n<html>\n<head>\n<title>My First Page</title>\n</head>\n<body>\n\n</body>\n</html>';
+const E2=E1.replace('\n\n</body>','\n<h1>Welcome</h1>\n</body>');
+const E3=E2.replace('</h1>\n</body>','</h1>\n<p>My name is Tola and I love computers.</p>\n</body>');
+const C1='h1 {\n  color: red;\n  font-size: 24px;\n}\n';
+const C2=C1+'\np {\n  color: blue;\n}\n';
+const C3=C2+'\nbody {\n  background-color: lightyellow;\n}\n\nh1 {\n  text-align: center;\n}\n';
+const GH={
+ 'Show the AVERAGE score':{h:['Rows and columns decide the layout. Put Class in Rows.','Put Subject in Columns and choose Average for the values.'],a:s=>{s.rf='c';s.cf='s';s.agg='avg';s.filt='all'}},
+ 'Show the TOTAL score of':{h:['This time the groups are subjects and terms.','Rows = Subject, Columns = Term, Values = Sum.'],a:s=>{s.rf='s';s.cf='t';s.agg='sum';s.filt='all'}},
+ 'Use the filter to show':{h:['Keep Class in Rows, Subject in Columns and Average.','Now set the Filter to Term 1.'],a:s=>{s.rf='c';s.cf='s';s.agg='avg';s.filt='1'}},
+ 'Make the sheet show Pas':{h:['The test is: B2 is at least 50.','Choose >= , type 50, then Pass for TRUE and Fail for FALSE.'],a:s=>{s.op='>=';s.thr=50;s.tt='Pass';s.ff='Fail'}},
+ 'Now change it to show P':{h:['Keep the same test: at least 50.','Change the TRUE word to Promoted and the FALSE word to Not Promoted.'],a:s=>{s.op='>=';s.thr=50;s.tt='Promoted';s.ff='Not Promoted'}},
+ 'Find a score that gets ':{h:['Look at the grade table. B starts at 60.','Try typing 65.'],a:s=>{s.score=65}},
+ 'Find the LOWEST score t':{h:['Look at the table. Where does grade C start?','C starts at 50. Type 50.'],a:s=>{s.score=50}},
+ 'Use SUMIF to total only':{h:['SUMIF adds. The condition is: at least 50.','Choose SUMIF, then >= and 50.'],a:s=>{s.fn='SUMIF';s.op='>=';s.val=50}},
+ 'Use COUNTIF to count ho':{h:['COUNTIF counts. Failed means below 50.','Choose COUNTIF, then < and 50.'],a:s=>{s.fn='COUNTIF';s.op='<';s.val=50}},
+ 'Make the budget show a ':{h:['A surplus means income is bigger than expenses.','Press + beside Pocket money a few times.'],a:s=>{s.inc[0][1]=9000}},
+ 'Now make it show a DEFI':{h:['A deficit means expenses are bigger than income.','Press − beside Pocket money and Allowance until the income is small.'],a:s=>{s.inc[0][1]=2000;s.inc[1][1]=1000}},
+ 'Finally, adjust the amo':{h:['Balance = income − expenses. The expenses add up to ₦11,000.','So the income must be ₦13,000. Try Pocket money ₦9,000 and Allowance ₦4,000.'],a:s=>{s.inc[0][1]=9000;s.inc[1][1]=4000}},
+ 'Find a selling price th':{h:['Profit = (price − cost) × 200 − 2,000.','Try a price of ₦55.'],a:s=>{s.price=55}},
+ 'The price of flour rise':{h:['First set the cost to ₦40.','Then raise the price to ₦65.'],a:s=>{s.cost=40;s.price=65}},
+ 'Give the page the titl':{h:['The title goes inside the head tag.','Press the <title> button and type My First Page between the tags.'],t:E1},
+ 'Add a heading (h1) tha':{h:['A heading uses the h1 tag. It goes inside the body.','Press the <h1> button and type Welcome between the tags.'],t:E2},
+ 'Add a paragraph (p) wi':{h:['A paragraph uses the p tag. It goes inside the body.','Press the <p> button and write a sentence between the tags.'],t:E3},
+ 'Make all h1 headings r':{h:['The selector is h1. Inside the curly brackets write color: red; and font-size: 24px;','Tap inside the h1 rule, then press the COLOR: RED and 24PX buttons.'],t:C1},
+ 'Make all paragraphs blu':{h:['The selector is p. Write color: blue; inside its curly brackets.','Tap inside the p rule, then press the COLOR: BLUE button.'],t:C2},
+ 'Give the page a light b':{h:['You need two rules: body for the background and h1 for centring.','Write background-color: lightyellow; in body and text-align: center; in h1.'],t:C3}
+};
+const ghKey=g=>Object.keys(GH).filter(k=>g.text.indexOf(k)===0)[0]||'';
+function hintBar(goals){return GH[ghKey(goals[0])]?'<div class="row" style="justify-content:flex-start;gap:16px;padding-top:4px"><button class="lnk" data-hint>Need a hint?</button><button class="lnk" data-show>Show me how</button></div>':''}
+/* hints escalate; "Show me how" fills in the answer for the current goal */
+function bindHints(box,goals,done,S2,ta,recheck,setMsg){
+  const hb=box.querySelector('[data-hint]'),sb=box.querySelector('[data-show]');
+  const cur=()=>done.indexOf(false);
+  bindHints.hi=bindHints.hi||{};
+  if(hb)hb.onclick=()=>{const i=cur();if(i<0)return;const g=GH[ghKey(goals[i])];if(!g)return;const k=ghKey(goals[i]),n=bindHints.hi[k]||0;bindHints.hi[k]=n+1;sfx.tap();setMsg('<b>Hint '+(Math.min(n,g.h.length-1)+1)+':</b> '+esc(g.h[Math.min(n,g.h.length-1)])+(n>=g.h.length-1?' <i>Still stuck? Press "Show me how".</i>':''))};
+  if(sb)sb.onclick=()=>{const i=cur();if(i<0)return;const g=GH[ghKey(goals[i])];if(!g)return;sfx.flip();if(g.t&&ta){ta.value=g.t;ta.dispatchEvent(new Event('input',{bubbles:true}))}else if(g.a)g.a(S2);recheck()};
+}
 function goalList(goals,done){
-  return `<div class="goals">${goals.map((g,i)=>`<div class="gl ${done[i]?'ok':(done.indexOf(false)===i?'cur':'')}"><span class="gk">${done[i]?'✓':i+1}</span><span>${esc(g.text)}</span></div>`).join('')}</div>`;
+  return `<div class="goals">${goals.map((g,i)=>`<div class="gl ${done[i]?'ok':(done.indexOf(false)===i?'cur':'')}"><span class="gk">${done[i]?'✓':i+1}</span><span>${esc(g.text)}</span></div>`).join('')}</div>`+hintBar(goals);
 }
 /* run goals in order; returns true when all are done */
 function runGoals(goals,done,state,say){
@@ -1368,6 +1422,7 @@ function slideExtra(t,box,ctx){
         const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You built three pivot tables from one set of data.')};
       ['rf','cf','ag','fl'].forEach(id=>$('#'+id,box).onchange=upd);
       $('#raw',box).onclick=()=>{showRaw=!showRaw;draw()};
+      bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You built three pivot tables from one set of data.')},m=>{msg=m;draw()});
     };
     draw();return;
   }
@@ -1390,6 +1445,7 @@ function slideExtra(t,box,ctx){
         const upd=()=>{S2.op=$('#op',box).value;S2.thr=$('#th',box).value;S2.tt=$('#tt',box).value;S2.ff=$('#ff',box).value;
           const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'IF made the sheet decide for every student at once.')};
         ['op','th','tt','ff'].forEach(id=>$('#'+id,box).onchange=upd);
+        bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'IF made the sheet decide for every student at once.')},m=>{msg=m;draw()});
       };
       draw();return;
     }
@@ -1403,6 +1459,7 @@ function slideExtra(t,box,ctx){
         <table class="sheet"><thead><tr><th></th><th>E: From score</th><th>F: Grade</th></tr></thead><tbody>${G.map((x,i)=>`<tr class="${x[1]===g?'hl':''}"><th>${i+2}</th><td class="num">${x[0]}</td><td>${x[1]}</td></tr>`).join('')}</tbody></table>
         <div class="xinfo" aria-live="polite">${msg||'The lookup finds the matching row in column E and returns the grade from column F.'}</div>`;
         $('#sc',box).onchange=()=>{S2.score=$('#sc',box).value;sfx.tap();const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'A lookup turns a score into a grade by searching a table.')};
+        bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'A lookup turns a score into a grade by searching a table.')},m=>{msg=m;draw()});
       };
       draw();return;
     }
@@ -1417,6 +1474,7 @@ function slideExtra(t,box,ctx){
         <div class="xinfo" aria-live="polite">${msg||'The highlighted rows meet the condition. They are the only ones used.'}</div>`;
         const upd=()=>{S2.fn=$('#fn',box).value;S2.op=$('#op',box).value;S2.val=$('#vl',box).value;sfx.tap();const all=runGoals(goals,done,S2,mm=>{msg='<b>Goal complete!</b> '+mm});draw();if(all)ctx.done(true,'SUMIF adds and COUNTIF counts, but only for what meets the condition.')};
         ['fn','op','vl'].forEach(id=>$('#'+id,box).onchange=upd);
+        bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,mm=>{msg='<b>Goal complete!</b> '+mm});draw();if(all)ctx.done(true,'SUMIF adds and COUNTIF counts, but only for what meets the condition.')},m=>{msg=m;draw()});
       };
       draw();return;
     }
@@ -1467,6 +1525,7 @@ function slideExtra(t,box,ctx){
       <div class="xinfo" aria-live="polite">${msg||(t.mode==='build'?'Use + and − to change the amounts. The totals and the balance update by themselves.':'Tap Income, Expenses or Balance.')}</div>
       <div class="row" style="justify-content:flex-start"><button class="btn gh" id="fxb"><span>${showF?'Show the numbers':'Show the formulas'}</span></button></div>`;
       $('#fxb',box).onclick=()=>{showF=!showF;sfx.tap();draw()};
+      if(t.mode==='build')bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You balanced a budget by changing the inputs.')},m=>{msg=m;draw()});
       box.querySelectorAll('.stp').forEach(b=>b.onclick=()=>{const a=S2[b.dataset.g][+b.dataset.i];a[1]=Math.max(0,a[1]+(+b.dataset.d));sfx.tap();
         const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You balanced a budget by changing the inputs.')});
       box.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{hl=b.dataset.h;sfx.tap();msg={inc:'<b>Income</b> is the money you expect to receive: pocket money and allowance here.',exp:'<b>Expenses</b> are the money you expect to spend: transport, feeding, data and school materials.',bal:'<b>Balance</b> = total income minus total expenses (=B4-B10). Positive is a surplus. Negative is a deficit.'}[hl];draw()});
@@ -1510,6 +1569,7 @@ function slideExtra(t,box,ctx){
         <div class="xinfo" aria-live="polite">${msg||'Change the price or the cost and watch the profit update.'}</div>`;
         const upd=()=>{S2.price=+$('#pr',box).value;S2.cost=+$('#co',box).value;const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You tested a what-if for a real business.')};
         $('#pr',box).oninput=upd;$('#co',box).oninput=upd;
+        bindHints(box,goals,done,S2,null,()=>{const all=runGoals(goals,done,S2,m=>{msg='<b>Goal complete!</b> '+m});draw();if(all)ctx.done(true,'You tested a what-if for a real business.')},m=>{msg=m;draw()});
       };
       draw();return;
     }
@@ -1565,7 +1625,7 @@ function slideExtra(t,box,ctx){
         code=ta.value;const d=new DOMParser().parseFromString(code,'text/html');
         $('#bt',box).textContent=d.title.trim()||'(no title)';makeFrame($('#fh',box),code);
         const all=runGoals(goals,done,d,m=>{$('#ms',box).innerHTML='<b>Goal complete!</b> '+m});
-        $('#gl',box).innerHTML=goalList(goals,done);if(all)ctx.done(true,'You wrote a real web page. Open it in a browser and it works.');
+        $('#gl',box).innerHTML=goalList(goals,done);bindHints(box,goals,done,null,ta,upd,m=>{$('#ms',box).innerHTML=m});if(all)ctx.done(true,'You wrote a real web page. Open it in a browser and it works.');
       };
       const ins=tag=>{const s=ta.selectionStart,e=ta.selectionEnd,o='<'+tag+'>',c='</'+tag+'>';ta.value=ta.value.slice(0,s)+o+c+ta.value.slice(e);ta.selectionStart=ta.selectionEnd=s+o.length;ta.focus();sfx.tap();upd()};
       box.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>ins(b.dataset.t));
@@ -1625,11 +1685,11 @@ function slideExtra(t,box,ctx){
             let i=done.indexOf(false);
             while(i>=0&&goals[i].test(cd,w)){done[i]=true;sfx.ok();burst(30);$('#ms',box).innerHTML='<b>Goal complete!</b> '+goals[i].after;i=done.indexOf(false)}
             const all=i<0;
-            $('#gl',box).innerHTML=goalList(goals,done);
+            $('#gl',box).innerHTML=goalList(goals,done);bindHints(box,goals,done,null,ta,upd2,m=>{$('#ms',box).innerHTML=m});
             if(all)ctx.done(true,'You restyled a plain page with CSS rules.');
           }catch(e){}
         });
-        $('#gl',box).innerHTML=goalList(goals,done);
+        $('#gl',box).innerHTML=goalList(goals,done);bindHints(box,goals,done,null,ta,upd2,m=>{$('#ms',box).innerHTML=m});
       };
       const ins=i=>{const s=ta.selectionStart,e=ta.selectionEnd,txt=SN[i][0];ta.value=ta.value.slice(0,s)+txt+ta.value.slice(e);ta.selectionStart=ta.selectionEnd=s+txt.length;ta.focus();sfx.tap();upd2()};
       box.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>ins(+b.dataset.i));
@@ -1697,7 +1757,7 @@ const BSHAPES=['<path d="M20 5 L36 34 H4 Z"/>','<path d="M20 3 L37 20 L20 37 L3 
 const BCOL=['#FF4757','#19D3FF','#FFC700','#3CFF8F'];
 function battleMode(){
   document.title='Quiz battle · Code Squad';musicSet('menu');MU.mode='menu';
-  const NAMES=['DataDan','SheetStar','TagTiger','StyleSam','PivotPeju'],SK=[.92,.82,.72,.62,.5],TIME=20;
+  const NAMES=['DataDan','SheetStar','TagTiger','StyleSam','PivotPeju'],SK=[.92,.82,.72,.62,.5];let TIME=20,EASYB=false;
   let code='',name='',Q=[],bots=[],qi=0,score=0,streak=0,timer=null;
 
   function lobby(){
@@ -1706,16 +1766,17 @@ function battleMode(){
     <div class="w" style="--acc:var(--mag)"><p class="qtext" style="animation:none">10 questions. 20 seconds each. Answer fast for more points. Build a streak for bonus points. You will race against 5 rival bots.</p>
     <div class="field"><label for="bnm">Your nickname</label><input id="bnm" type="text" maxlength="12" value="${esc(cleanName(S.name))}" autocomplete="off"></div>
     <div class="field"><label for="gc">Game code</label><input id="gc" type="text" maxlength="8" value="${rc}" autocomplete="off"></div>
+    <label class="chk"><input type="checkbox" id="rx"><span>Relaxed mode: 30 seconds per question, lesson questions only</span></label>
     <p class="hint">Teacher: tell the whole class the same game code. Everyone gets the same questions in the same order. At the end, each student gives you a result code for the Teacher board.</p>
     <div class="row" style="justify-content:flex-start"><button class="btn mg" id="go"><span>Start battle</span></button><a class="btn gh" href="#map"><span>Back to map</span></a></div></div>`;
     $('#go').onclick=()=>{
       code=($('#gc').value||rc).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8)||rc;
-      name=cleanName($('#bnm').value||S.name);actx();begin();
+      name=cleanName($('#bnm').value||S.name);EASYB=!!($('#rx')&&$('#rx').checked);TIME=EASYB?30:20;actx();begin();
     };
   }
   function begin(){
     const rng=mulberry(seedInt(code));
-    Q=sshuffle(battlePool(),rng).slice(0,10).map(q=>{
+    Q=sshuffle(battlePool().filter(q=>!EASYB||!q.vis),rng).slice(0,10).map(q=>{
       const idx=sshuffle(q.o.map((_,i)=>i),rng);
       return {q:q.q,o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a),why:q.why,vis:q.vis};
     });
