@@ -92,12 +92,26 @@ function gameExam(ok,total,isMock){
 }
 function gameFirst(){try{actx();if(ST.set.music&&!MU.on)musicSet('menu')}catch(e){}}
 
-/* ---- section banner: Penny vs the villain ---- */
+/* ---- section scene: Penny walks toward the villain as ideas are revealed ---- */
 function gameBanner(secId,scr){
   var v=VILL[secId];if(!v)return '';
-  return '<div class="banner" style="--vc:'+v.c+'"><div class="bp">'+penSVG('idle')+'</div><div class="bm"><b>'+esc(v.n)+'</b><span>“'+esc(v.q[scr%v.q.length])+'”</span></div><div class="bv">'+bossSVG(v.c,'idle')+'</div></div>';
+  return '<div class="banner scene" style="--vc:'+v.c+'"><div class="bm"><b>'+esc(v.n)+'</b><span id="bq">“'+esc(v.q[scr%v.q.length])+'”</span></div><div class="track"><div class="bp" id="bpen">'+penSVG('idle')+'</div><div class="bv" id="bvil">'+bossSVG(v.c,'idle')+'</div></div></div>';
 }
-
+function penWalk(){
+  var pen=document.getElementById('bpen');if(!pen||!RT.units)return;
+  var n=RT.units.length,rev=RT.rev[curKey()]||1,fin=!!ST.fin[curKey()]||rev>=n;
+  var frac=n>1?(rev-1)/(n-1):0;if(fin&&n>1)frac=1;
+  pen.style.left=(frac*68)+'%';
+  var v=VILL[RT.cur.sec],q=document.getElementById('bq');
+  if(v&&q)q.textContent='“'+v.q[(rev-1+RT.cur.scr)%v.q.length]+'”';
+  var vil=document.getElementById('bvil');
+  if(vil&&fin&&n>1&&!vil.getAttribute('data-hit')){vil.setAttribute('data-hit','1');vil.className='bv hit'}
+}
+function gameIntro(sec){
+  if(RT.seen[sec])return;RT.seen[sec]=1;
+  var s=secObj(sec),v=VILL[sec];if(!s)return;
+  overlay('lose',s.part,v?v.n.replace(/^The /,''):s.title,s.title,1500);
+}
 /* ---- animated word chips (FLIP) ---- */
 function chipsRender(box,toks,animate){
   var old={},first={},seen={};
@@ -131,6 +145,7 @@ function animInit(el){
     k=i;chipsRender(box,D.steps[i].tok,anim);cap.innerHTML=D.steps[i].cap;pr.textContent='Step '+(i+1)+' of '+n;
     bp.disabled=i===0;bn.disabled=i===n-1;
     if(i===n-1&&!ST.anim[id]){ST.anim[id]=1;save();addXp(D.xp,bn,'#2EE6A6')}
+    if(i===n-1)revUpdate();
   }
   bp.onclick=function(){sfx.tap();if(k>0)show(k-1,true)};
   bn.onclick=function(){sfx.flip();if(k<n-1)show(k+1,true)};
@@ -298,11 +313,12 @@ function gameHome(){
   return h+'</div>';
 }
 function gameDrawer(){
-  return '<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a>';
+  return '<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="pause">Reading pause (slows the Show next idea button)<span>'+(ST.set.pause===false?'Off':'On')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a>';
 }
 function gameSet(k){
   if(k==='music'){ST.set.music=!ST.set.music;if(ST.set.music){actx();musicSet(MU.mode)}else musicStop()}
   else if(k==='sfx')ST.set.sfx=!ST.set.sfx;
+  else if(k==='pause')ST.set.pause=(ST.set.pause===false);
   else if(k==='lite'){ST.set.lite=!isLite();document.body.classList.toggle('lite',ST.set.lite)}
   save();hud();buildDrawer();
 }

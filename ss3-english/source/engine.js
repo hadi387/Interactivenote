@@ -1,11 +1,11 @@
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
-var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{}};
-var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0}};
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{}};
+var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
-function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null;ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{}}}catch(e){}}
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null;ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{}}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function $(s,r){return (r||document).querySelector(s)}
@@ -49,19 +49,16 @@ function tbHtml(b){
   h+='<tbody>'+b.rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
   return h;
 }
-function wkHtml(b){
-  return (b.title?'<h3>'+esc(b.title)+'</h3>':'')+b.items.map(function(it){
-    return '<details class="wk"><summary><span class="tg">'+esc(it.tag)+'</span><div>'+it.q+'</div><span class="hint">Try it yourself first. Then tap to see the answer and the steps.</span></summary><div class="wkb"><div class="ans"><b>Answer:</b> '+it.a+'</div><ol class="steps">'+it.st.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol></div></details>';
-  }).join('');
+function wkItem(it){
+  return '<details class="wk"><summary><span class="tg">'+esc(it.tag)+'</span><div>'+it.q+'</div><span class="hint">Try it yourself first. Then tap to see the answer and the steps.</span></summary><div class="wkb"><div class="ans"><b>Answer:</b> '+it.a+'</div><ol class="steps">'+it.st.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol></div></details>';
 }
+function wkHtml(b){return (b.title?'<h3>'+esc(b.title)+'</h3>':'')+b.items.map(wkItem).join('')}
 function passageHtml(b){
   if(b.collapsed)return '<details class="pas"><summary>Show the passage again: '+esc(b.title)+'</summary><div class="passage">'+b.h+'</div></details>';
   return '<div class="passage"><div class="pt">'+esc(b.title)+'</div>'+b.h+'</div>';
 }
-function mkHtml(b){
-  return b.items.map(function(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">Incorrect</span>'+m.w+'</div><div class="r"><span class="k">Correct</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}).join('');
-}
-
+function mkCard(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">Incorrect</span>'+m.w+'</div><div class="r"><span class="k">Correct</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}
+function mkHtml(b){return b.items.map(mkCard).join('')}
 /* ---- live questions ---- */
 function liveCard(q){
   var r=resOf(q.id)||{tries:0,wrong:[],done:0};
@@ -102,14 +99,17 @@ function quizHtml(b){
   var ids=b.items.map(function(q){return q.id}),d=answeredCount(ids);
   var first=ids.filter(function(i){var r=ST.res[i];return r&&r.done&&r.ok&&r.tries===0}).length;
   return '<div class="qz" data-quiz="'+b.id+'"><div class="qh">Practice · '+esc(b.title)+'</div>'+(b.intro?'<div class="qi">'+b.intro+'</div>':'')+
-    '<div class="prog" data-prog="'+b.id+'">Answered '+d+' of '+ids.length+' · Correct first time: '+first+'</div>'+b.items.map(liveCard).join('')+'</div>';
+    '<div class="prog" data-prog="'+b.id+'">Answered '+d+' of '+ids.length+' · Correct first time: '+first+'</div>'+(function(){var fu=b.items.length;for(var i=0;i<b.items.length;i++){var rr=ST.res[b.items[i].id];if(!(rr&&rr.done)){fu=i;break}}return b.items.map(function(q,i){return '<div class="qwrap" data-qw="'+q.id+'"'+(i>fu?' hidden':'')+'>'+liveCard(q)+'</div>'}).join('')})()+'</div>';
 }
 function refreshCard(id){
   var q=QIDX[id],el=$('[data-card="'+id+'"]');if(!el)return;
   var tmp=document.createElement('div');tmp.innerHTML=liveCard(q);el.parentNode.replaceChild(tmp.firstChild,el);
   var qz=el.parentNode;while(qz&&!(qz.getAttribute&&qz.getAttribute('data-quiz')))qz=qz.parentNode;
   var inp=$('#in-'+id);if(inp&&!inp.disabled&&document.activeElement!==inp){try{inp.focus()}catch(e){}}
-  updateProgress();
+  var rr=ST.res[id];
+  if(rr&&rr.done){var w=$('[data-qw="'+id+'"]'),nx=w&&w.nextElementSibling;while(nx&&!nx.getAttribute('data-qw'))nx=nx.nextElementSibling;
+    if(nx&&nx.hidden){nx.hidden=false;nx.classList.add('unit-in');setTimeout(function(){try{nx.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}},60)}}
+  updateProgress();revUpdate();
 }
 function updateProgress(){
   $$('[data-quiz]').forEach(function(z){
@@ -305,18 +305,68 @@ function blockHtml(b){
   }
   return '';
 }
+/* ---- one idea at a time: every screen is split into units that are revealed in turn ---- */
+function quizDone(b){return b.items.every(function(q){var r=ST.res[q.id];return r&&r.done})}
+function unitsOf(b){
+  switch(b.t){
+   case 'stp':return b.items.map(function(x,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
+   case 'wk':return b.items.map(function(it,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+wkItem(it)}});
+   case 'mk':return b.items.map(function(m){return {html:mkCard(m)}});
+   case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
+   case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
+   case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
+  }
+  return [{html:blockHtml(b)}];
+}
+function curKey(){return RT.cur.sec+':'+RT.cur.scr}
+function unitWords(i){var u=RT.units[i],t=document.createElement('div');t.innerHTML=u.html;return (t.textContent||'').trim().split(/\s+/).length}
+var rvTimer=null;
+function revUpdate(){
+  var bar=document.getElementById('rvbar'),nx=document.getElementById('nx'),mid=document.getElementById('navmid');if(!bar||!RT.units)return;
+  var key=curKey(),n=RT.units.length,rev=RT.rev[key]||0;
+  var last=RT.units[rev-1],gateOk=!(last&&last.gate&&!last.gate());
+  var all=rev>=n;
+  if(all&&gateOk&&!ST.fin[key]){ST.fin[key]=1;save();penWalk()}
+  var finished=!!ST.fin[key];
+  nx.disabled=!(finished||(all&&gateOk));
+  var s=secObj(RT.cur.sec);
+  mid.textContent=all?('Screen '+(RT.cur.scr+1)+' of '+s.screens.length):('Idea '+rev+' of '+n);
+  if(finished||(all&&gateOk)){bar.className='rvbar st';bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
+  if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
+  // there is another idea to reveal
+  var left=Math.max(0,Math.ceil(((RT.pauseUntil||0)-Date.now())/1000));
+  bar.className='rvbar';bar.innerHTML='<button class="btn rvbtn" data-act="rev"'+(left>0?' disabled':'')+'>'+(left>0?'Read it first… '+left:'Show the next idea')+'</button>';
+  clearInterval(rvTimer);
+  if(left>0)rvTimer=setInterval(function(){var l=Math.ceil(((RT.pauseUntil||0)-Date.now())/1000);var bt=document.querySelector('.rvbtn');if(!bt){clearInterval(rvTimer);return}if(l<=0){clearInterval(rvTimer);revUpdate()}else bt.textContent='Read it first… '+l},250);
+}
+function startPause(i){
+  var u=RT.units[i];if(!u||u.gate||u.free||ST.set.pause===false){RT.pauseUntil=0;return}
+  var w=unitWords(i);RT.pauseUntil=Date.now()+Math.round(Math.min(6,Math.max(1.2,w/11))*1000);
+}
+function revealNext(){
+  var key=curKey(),rev=RT.rev[key]||0;if(rev>=RT.units.length)return;
+  if(Date.now()<(RT.pauseUntil||0))return;
+  var u=document.querySelector('[data-u="'+rev+'"]');RT.rev[key]=rev+1;
+  if(u){u.hidden=false;u.classList.add('unit-in');if(!isLite())sfx.flip();setTimeout(function(){try{u.scrollIntoView({block:'start',behavior:isLite()?'auto':'smooth'})}catch(e){}},40)}
+  startPause(rev);penWalk();revUpdate();
+}
 function render(keepScroll){
   var cur=RT.cur,h='',nav='';
   var nb=$('#navbar'),mid=$('#navmid'),pv=$('#pv'),nx=$('#nx');
+  RT.units=null;
   if(cur.sec==='home'){
     h=homeHtml();nb.style.display='none';
   }else{
-    var s=secObj(cur.sec),sc=s.screens[cur.scr];
+    var s=secObj(cur.sec),sc=s.screens[cur.scr],key=cur.sec+':'+cur.scr;
+    var units=[];sc.blocks.forEach(function(b){unitsOf(b).forEach(function(u){units.push(u)})});
+    RT.units=units;
+    if(ST.fin[key])RT.rev[key]=units.length;
+    var rev=RT.rev[key];if(rev===undefined||rev<1){rev=RT.rev[key]=1;startPause(0)}
     h='<div class="eyebrow">'+esc(s.part)+'</div><h2>'+esc(s.title)+'</h2><div class="prog">Screen '+(cur.scr+1)+' of '+s.screens.length+'</div><div class="tbar"><i style="width:'+Math.round(100*(cur.scr+1)/s.screens.length)+'%"></i></div>'+
-      gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 style="margin-top:6px;color:var(--accent)">'+esc(sc.title)+'</h3>':'')+sc.blocks.map(blockHtml).join('');
-    ST.vis[cur.sec+':'+cur.scr]=1;
+      gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct">'+esc(sc.title)+'</h3>':'')+
+      units.map(function(u,i){return '<div class="unit" data-u="'+i+'"'+(i<rev?'':' hidden')+'>'+u.html+'</div>'}).join('')+'<div id="rvbar" class="rvbar"></div>';
+    ST.vis[key]=1;
     nb.style.display='block';
-    mid.textContent='Screen '+(cur.scr+1)+' of '+s.screens.length;
     pv.textContent=cur.scr===0?'Menu':'Back';
     var last=cur.scr===s.screens.length-1,si=secIdx(cur.sec);
     nx.textContent=last?(si<SECS.length-1?'Next topic':'Home'):'Next';
@@ -328,11 +378,13 @@ function render(keepScroll){
   var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
   var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Contents':(secObj(cur.sec).title);
   buildDrawer();hud();
+  if(cur.sec!=='home'){penWalk();revUpdate()}
   if(RT.mock&&!RT.mock.done&&!mockTimer)mockTimer=setInterval(mockTick,1000);
 }
-function go(sec,scr){RT.cur={sec:sec,scr:scr||0};closeDrawer();render()}
+function go(sec,scr){var prevSec=RT.cur.sec;RT.cur={sec:sec,scr:scr||0};closeDrawer();render();if(sec!=='home'&&sec!==prevSec)gameIntro(sec)}
 function next(){
   var cur=RT.cur;if(cur.sec==='home')return;
+  var nxb=document.getElementById('nx');if(nxb&&nxb.disabled)return;
   var s=secObj(cur.sec);
   if(cur.scr<s.screens.length-1)go(cur.sec,cur.scr+1);
   else{var si=secIdx(cur.sec);if(si<SECS.length-1)go(SECS[si+1].id,0);else go('home',0)}
@@ -377,6 +429,7 @@ function onClick(e){
   else if(act==='pin'){var v=$('#pin').value;if(v===TPIN){RT.pin=true;RT.pinBad=0}else{RT.pinBad=1}render(true)}
   else if(act==='wipe'){ST.res={};ST.exam={};ST.vis={};ST.mockBest=null;RT.mock=null;RT.hint={};save();render()}
   else if(act==='closed')closeDrawer();
+  else if(act==='rev')revealNext();
   else if(act==='set')gameSet(t.getAttribute('data-k'));
 }
 function onKey(e){

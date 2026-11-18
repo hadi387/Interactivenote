@@ -120,3 +120,44 @@ body.lite .chip.pop,body.lite .chip.chg,body.lite .ov .tx .a,body.lite .ov .tx .
 body.lite .chip{transition:none}
 @media (prefers-reduced-motion:reduce){.banner .bv,.hero .hp1{animation:none}}
 html{scroll-padding-top:72px;scroll-padding-bottom:96px}
+
+/* ===== Sharp arcade shapes: no rounded corners ===== */
+*,*:before,*:after{border-radius:0!important}
+.box,.qz,.qc,.anim,.node,.hero,.banner,.tile,.stats>div,.score,.mk,.passage,details.wk,details.pas,.pl,.arena,.acap,.ptoast,.rvdone,.rvwait,.fb,.ans,.tw,.codebox{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.btn,.ib{clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);border-bottom:4px solid rgba(0,0,0,.4)}
+.btn{padding:0 26px}.btn.sm{padding:0 18px}
+.opt,.bti{clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}
+.btn:focus,.opt:focus,.ib:focus,summary:focus,.bti:focus{outline:none;box-shadow:inset 0 0 0 3px var(--def)}
+input.tx:focus{outline:3px solid var(--def);outline-offset:0}
+h1,h2{transform:skewX(-6deg);transform-origin:left;text-shadow:3px 3px 0 #000}
+.hero h1{text-shadow:3px 3px 0 var(--prac)}
+.tbar,.hud .xpb,.hpb i,.tim{transform:skewX(-20deg)}
+ol.steps li:before{background:var(--tip);color:#241A00}
+.sct{margin-top:6px;color:var(--accent)}
+body{background:radial-gradient(ellipse at 50% 110%,#2A1F55 0,#0F1117 62%) fixed}
+#floor{position:fixed;left:-60%;right:-60%;bottom:0;height:36vh;z-index:0;pointer-events:none;transform-origin:50% 100%;transform:perspective(360px) rotateX(64deg);background:repeating-linear-gradient(90deg,rgba(77,163,255,.28) 0 2px,transparent 2px 64px),repeating-linear-gradient(0deg,rgba(176,132,255,.28) 0 2px,transparent 2px 64px);-webkit-mask-image:linear-gradient(transparent,#000);mask-image:linear-gradient(transparent,#000);animation:floorgo 2.4s linear infinite}
+@keyframes floorgo{to{background-position:0 64px}}
+body.lite #floor{animation:none}
+/* one idea at a time */
+.unit{margin:0}
+.unit-in{animation:slidein .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes slidein{from{opacity:0;transform:translateX(-26px) skewX(-6deg)}to{opacity:1;transform:none}}
+body.lite .unit-in{animation:none}
+.rvbar{position:sticky;bottom:80px;z-index:12;padding:10px 0 4px;background:linear-gradient(rgba(15,17,23,0),var(--bg) 35%)}
+.rvbtn{width:100%;min-height:58px;font-size:18px}
+.rvwait,.rvdone{background:var(--tip-bg);border-left:6px solid var(--tip);padding:12px 14px;font-weight:600}
+.rvdone{background:var(--ex-bg);border-color:var(--ok)}
+.nav .btn[disabled]{opacity:.35}
+/* the scene */
+.banner.scene{display:block;padding:10px 12px 8px}
+.banner.scene .bm{padding:0 0 6px;display:block}
+.track{position:relative;height:92px;margin-top:4px}
+.track:after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--vc) 0 14px,transparent 14px 24px)}
+.track .bp{position:absolute;left:0;bottom:4px;width:46px;transition:left .9s cubic-bezier(.3,1.2,.4,1);animation:hop .5s ease-in-out infinite alternate}
+.track .bv{position:absolute;right:0;bottom:4px;width:76px;animation:bob 2.4s ease-in-out infinite alternate}
+.track .bv.hit{animation:shk .5s 3;filter:brightness(1.8)}
+@keyframes hop{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+body.lite .track .bp,body.lite .track .bv{animation:none}
+.ov .tx .b{font-size:clamp(28px,9vw,52px)}
+
+.rvbar.st{position:static;background:none}
