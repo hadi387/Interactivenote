@@ -1,11 +1,11 @@
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
-var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null};
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{}};
 var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0}};
 var app=document.getElementById('app');
 
-function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null}}catch(e){}}
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null;ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{}}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function $(s,r){return (r||document).querySelector(s)}
@@ -31,6 +31,7 @@ function checkTyped(q,raw){
 }
 function modelText(q){return q.type==='mcq'?LET[q.a]+'. '+q.opts[q.a]:q.ans.map(esc).join('<br><em>or</em> ')}
 
+/*@@GAME@@*/
 /* ---- stats ---- */
 function resOf(id){return ST.res[id]||null}
 function answeredCount(ids){var c=0;ids.forEach(function(i){var r=ST.res[i];if(r&&r.done)c++});return c}
@@ -126,6 +127,7 @@ function answerMcq(id,i){
   if(i===q.a){r.done=1;r.ok=1}
   else{r.tries++;r.wrong.push(i);if(r.tries>=2){r.done=1;r.ok=0}}
   ST.res[id]=r;save();refreshCard(id);
+  gameReward(id,i===q.a?(r.tries===0?'first':'second'):'miss');
 }
 function answerTyped(id){
   var q=QIDX[id],r=ST.res[id]||{tries:0,wrong:[],done:0},inp=$('#in-'+id);if(!inp||r.done)return;
@@ -134,6 +136,7 @@ function answerTyped(id){
   if(c.ok){r.done=1;r.ok=1;r.msg=null}
   else{r.tries++;r.msg=c.msg||('That is not what I expected. '+(q.hint||'Check each part of the sentence.'));if(r.tries>=2){r.done=1;r.ok=0}}
   ST.res[id]=r;save();refreshCard(id);
+  gameReward(id,c.ok?(r.tries===0?'first':'second'):'miss');
 }
 
 /* ---- exam sets (WAEC and JAMB style) ---- */
@@ -179,6 +182,7 @@ function examSubmit(setId){
   var b=findQuiz(setId),es=examState(setId);
   b.items.forEach(function(q){var ok=examOk(q,es);ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
   es.sub=1;save();render(true);
+  var okn=0;b.items.forEach(function(q){if(ST.res[q.id].ok)okn++});gameExam(okn,b.items.length,false);
 }
 
 /* ---- final timed mock ---- */
@@ -226,6 +230,7 @@ function mockFinish(){
   var sc=0;MOCK.forEach(function(q,i){var ok=m.a[i]===q.a;if(ok)sc++;ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
   if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;
   save();render(true);
+  gameExam(sc,15,true);
 }
 
 /* ---- revision panel ---- */
@@ -261,7 +266,7 @@ function keyHtml(){
 }
 
 /* ---- home ---- */
-function homeHtml(){
+function homeHtmlOld(){
   var h='<div class="hero"><div class="eyebrow" style="color:inherit;opacity:.85">SS3 · English Language · First Term · Week 1</div><h1>Sentence recasting and grammatical functions</h1><p>Comprehension skills for WAEC and JAMB. Learn one small idea at a time, then practise until it feels easy.</p><div class="row"><button class="btn" data-act="cont">'+(ST.last&&ST.last.sec!=='home'?'Continue where I stopped':'Start learning')+'</button><button class="btn gh" data-act="go" data-sec="e3" data-scr="0">My results</button></div></div>';
   h+='<div class="box tip"><div class="bt">Suggested 40-minute class plan</div><div><b>5 min:</b> Start here and What is recasting?<br><b>12 min:</b> Active and passive voice, screens 1 to 7<br><b>13 min:</b> Direct and reported speech, screens 1 to 8<br><b>10 min:</b> Word class or grammatical function? and the first functions<br><small>Everything else is for self-paced study after class.</small></div></div>';
   h+='<h3>How you are doing</h3><div class="tbar"><i style="width:'+totalProgress()+'%"></i></div><div class="prog">'+totalProgress()+'% of all questions answered</div>';
@@ -274,6 +279,7 @@ function homeHtml(){
   return h;
 }
 
+function homeHtml(){return gameHome()}
 /* ---- screen rendering ---- */
 function blockHtml(b){
   switch(b.t){
@@ -290,6 +296,10 @@ function blockHtml(b){
    case 'passage':return passageHtml(b);
    case 'mk':return mkHtml(b);
    case 'mock':return mockHtml();
+   case 'anim':return '<div class="anim" data-anim="'+b.id+'"></div>';
+   case 'boss':return '<div class="bossbox" data-boss="'+b.id+'"></div>';
+   case 'battle':return '<div data-battle="1"></div>';
+   case 'board':return '<div data-board="1"></div>';
    case 'revise':return reviseHtml();
    case 'key':return keyHtml();
   }
@@ -303,7 +313,7 @@ function render(keepScroll){
   }else{
     var s=secObj(cur.sec),sc=s.screens[cur.scr];
     h='<div class="eyebrow">'+esc(s.part)+'</div><h2>'+esc(s.title)+'</h2><div class="prog">Screen '+(cur.scr+1)+' of '+s.screens.length+'</div><div class="tbar"><i style="width:'+Math.round(100*(cur.scr+1)/s.screens.length)+'%"></i></div>'+
-      (sc.title&&sc.title!==s.title?'<h3 style="margin-top:6px;color:var(--accent)">'+esc(sc.title)+'</h3>':'')+sc.blocks.map(blockHtml).join('');
+      gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 style="margin-top:6px;color:var(--accent)">'+esc(sc.title)+'</h3>':'')+sc.blocks.map(blockHtml).join('');
     ST.vis[cur.sec+':'+cur.scr]=1;
     nb.style.display='block';
     mid.textContent='Screen '+(cur.scr+1)+' of '+s.screens.length;
@@ -312,11 +322,12 @@ function render(keepScroll){
     nx.textContent=last?(si<SECS.length-1?'Next topic':'Home'):'Next';
   }
   app.innerHTML=h;
+  gameAfter(app);
   ST.last=cur;save();
   if(!keepScroll)window.scrollTo(0,0);
   var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
   var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Contents':(secObj(cur.sec).title);
-  buildDrawer();
+  buildDrawer();hud();
   if(RT.mock&&!RT.mock.done&&!mockTimer)mockTimer=setInterval(mockTick,1000);
 }
 function go(sec,scr){RT.cur={sec:sec,scr:scr||0};closeDrawer();render()}
@@ -337,13 +348,14 @@ function buildDrawer(){
     var q=secQ(s.id);
     h+='<a data-act="go" data-sec="'+s.id+'" data-scr="0" class="'+(RT.cur.sec===s.id?'on':'')+'">'+esc(s.title)+'<span>'+(q.length?answeredCount(q)+'/'+q.length:'')+'</span></a>';
   });
-  d.innerHTML=h;
+  d.innerHTML=h+gameDrawer();
 }
 function openDrawer(){$('#drawer').classList.add('on');$('#shade').classList.add('on')}
 function closeDrawer(){$('#drawer').classList.remove('on');$('#shade').classList.remove('on')}
 
 /* ---- events ---- */
 function onClick(e){
+  gameFirst();
   var t=e.target;while(t&&t!==document&&!(t.getAttribute&&t.getAttribute('data-act')))t=t.parentNode;
   if(!t||t===document)return;
   var act=t.getAttribute('data-act'),q=t.getAttribute('data-q'),i=+t.getAttribute('data-i'),set=t.getAttribute('data-set');
@@ -365,6 +377,7 @@ function onClick(e){
   else if(act==='pin'){var v=$('#pin').value;if(v===TPIN){RT.pin=true;RT.pinBad=0}else{RT.pinBad=1}render(true)}
   else if(act==='wipe'){ST.res={};ST.exam={};ST.vis={};ST.mockBest=null;RT.mock=null;RT.hint={};save();render()}
   else if(act==='closed')closeDrawer();
+  else if(act==='set')gameSet(t.getAttribute('data-k'));
 }
 function onKey(e){
   var t=e.target;
@@ -384,6 +397,7 @@ $('#menu').onclick=openDrawer;$('#shade').onclick=closeDrawer;
 $('#pv').onclick=prev;$('#nx').onclick=next;
 $('#brand').onclick=function(){go('home',0)};
 load();
+gameBoot();
 if(ST.last&&ST.last.sec&&ST.last.sec!=='home'&&secObj(ST.last.sec)){RT.cur={sec:'home',scr:0}}
 render();
 window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};

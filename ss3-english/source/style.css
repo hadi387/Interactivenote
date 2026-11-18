@@ -1,32 +1,17 @@
 /* Layout: a calm classroom page. Header with progress, one screen at a time, colour-coded boxes. */
 :root{
-  --bg:#F3F6F9;--surface:#FFFFFF;--surface2:#EAF0F5;--fg:#14233A;--muted:#58667A;--line:#D3DCE6;
-  --accent:#0B7A4B;--accent-fg:#FFFFFF;--accent-soft:#DDF3E8;
-  --def:#1D5FD1;--def-bg:#E7EFFD;
-  --ex:#0B7A4B;--ex-bg:#E3F5EB;
-  --tip:#9A6200;--tip-bg:#FFF3D1;
-  --mis:#B3261E;--mis-bg:#FDEAE8;
-  --prac:#6B3FD4;--prac-bg:#F0EAFC;
-  --ok:#0B7A4B;--bad:#B3261E;
-  --hs:#1D5FD1;--hv:#B3261E;--ho:#0B7A4B;--hb:#9A6200;
+  --bg:#0F1117;--surface:#181B25;--surface2:#222636;--fg:#F4F5FA;--muted:#A8AEC2;--line:#323852;
+  --accent:#2EE6A6;--accent-fg:#06281C;--accent-soft:#13352B;
+  --def:#4DA3FF;--def-bg:#14253F;--ex:#2EE6A6;--ex-bg:#11352A;--tip:#FFD23F;--tip-bg:#3A3010;--mis:#FF5A6E;--mis-bg:#3D1A22;--prac:#B084FF;--prac-bg:#251D45;
+  --ok:#2EE6A6;--bad:#FF5A6E;--hs:#6FB6FF;--hv:#FF7A8A;--ho:#43E8AF;--hb:#FFD23F;color-scheme:dark
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0E1622;--surface:#172233;--surface2:#1F2D42;--fg:#E8EEF6;--muted:#9FB0C6;--line:#2B3C54;
-  --accent:#3DD598;--accent-fg:#06281A;--accent-soft:#12372B;
-  --def:#7FAEFF;--def-bg:#15284A;--ex:#5BE0A5;--ex-bg:#11352A;--tip:#FFC857;--tip-bg:#3B2E0D;--mis:#FF8A80;--mis-bg:#40191A;--prac:#B79BFF;--prac-bg:#2A2150;
-  --ok:#5BE0A5;--bad:#FF8A80;--hs:#7FAEFF;--hv:#FF8A80;--ho:#5BE0A5;--hb:#FFC857;color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0E1622;--surface:#172233;--surface2:#1F2D42;--fg:#E8EEF6;--muted:#9FB0C6;--line:#2B3C54;
-  --accent:#3DD598;--accent-fg:#06281A;--accent-soft:#12372B;
-  --def:#7FAEFF;--def-bg:#15284A;--ex:#5BE0A5;--ex-bg:#11352A;--tip:#FFC857;--tip-bg:#3B2E0D;--mis:#FF8A80;--mis-bg:#40191A;--prac:#B79BFF;--prac-bg:#2A2150;
-  --ok:#5BE0A5;--bad:#FF8A80;--hs:#7FAEFF;--hv:#FF8A80;--ho:#5BE0A5;--hb:#FFC857;color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Lexend","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:17px;line-height:1.6}
 button,input{font-family:inherit;font-size:inherit}
 .wrap{max-width:780px;margin:0 auto;padding-left:16px;padding-right:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 /* header */
-.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top{position:sticky;top:0;z-index:20;background:rgba(24,27,37,.96);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;padding-top:10px;padding-bottom:10px}
 .brand{flex:1;min-width:0}
 .brand b{display:block;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -100,7 +85,7 @@ details.wk[open] summary .hint{display:none}
 .fb.g{background:var(--ex-bg);border-left:5px solid var(--ok)}
 .fb.b{background:var(--mis-bg);border-left:5px solid var(--bad)}
 .fb.n{background:var(--tip-bg);border-left:5px solid var(--tip)}
-.fb b{display:block;margin-bottom:2px}
+.fb>b:first-child{display:block;margin-bottom:2px}
 .row{display:flex;flex-wrap:wrap;align-items:center}
 input.tx{flex:1;min-width:150px;margin:6px 8px 6px 0;padding:11px 12px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);min-height:46px}
 .btn{min-height:46px;padding:0 18px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:700;cursor:pointer;margin:6px 8px 6px 0}
@@ -127,10 +112,8 @@ details.pas .passage{border:0;margin:0}
 .mk .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
 .mk .w .k{color:var(--mis)}.mk .r .k{color:var(--ok)}
 /* home */
-.hero{background:var(--accent);color:var(--accent-fg);border-radius:14px;padding:20px 18px;margin:6px 0 14px}
+.hero{border-radius:14px;padding:16px 16px;margin:6px 0 14px}
 .hero h1{margin:0 0 6px}.hero p{margin:6px 0;opacity:.95}
-.hero .btn{background:var(--accent-fg);color:var(--accent)}
-.hero .btn.gh{background:transparent;color:var(--accent-fg);border:2px solid var(--accent-fg)}
 .part{margin:22px 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .tile{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer;color:var(--fg);min-height:60px}
 .tile:hover{border-color:var(--accent)}
