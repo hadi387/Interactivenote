@@ -297,9 +297,46 @@ body.lite .track .bp,body.lite .track .bv{animation:none}
 .ov .tx .b{font-size:clamp(28px,9vw,52px)}
 
 .rvbar.st{position:static;background:none}
+/* ===== game screens, not notes ===== */
+.say{display:flex;align-items:flex-end;margin:14px 0}
+.say .sp{width:44px;flex:none;margin-right:10px}.say .sp svg{display:block;width:100%;height:auto}
+.say .sb{position:relative;flex:1;min-width:0;background:var(--surface2);border:2px solid var(--line);border-left:6px solid var(--accent);padding:12px 14px;font-size:18px;line-height:1.55;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}
+.rc{display:flex;flex-wrap:wrap;margin:10px 0;padding:6px 6px;background:var(--surface);border:2px solid var(--line);border-left:6px solid var(--tip);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%)}
+.rc .cell{flex:1 1 160px;min-width:0;padding:6px 10px}
+.rc .cl{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tip);font-weight:700;margin-bottom:2px}
+.rc .cell[data-first]{flex-basis:100%;border-bottom:1px dashed var(--line);margin-bottom:4px}
+.sct{font-family:"Bungee",Impact,sans-serif;font-weight:400;font-size:19px;line-height:1.25;text-transform:uppercase;margin:14px 0 4px}
+.sct span{display:inline-block;background:var(--tip);color:#241A00;padding:2px 8px;margin-right:8px;font-size:13px;transform:skewX(-12deg)}
+.lvbar{display:flex;align-items:center;margin:2px 0 8px}
+.lvbar .ln{background:var(--accent);color:var(--accent-fg);padding:3px 10px;font-family:"Bungee",Impact,sans-serif;font-weight:400;font-size:14px;transform:skewX(-12deg);margin-right:10px}
+.lvbar .lname{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lvbar .lpips{display:flex}.lvbar .lpips i{width:12px;height:10px;margin-left:3px;background:var(--surface2);transform:skewX(-20deg)}
+.lvbar .lpips i.ok{background:var(--accent)}.lvbar .lpips i.cur{background:var(--tip)}
+.logo{text-align:center;margin:8px 0 6px;line-height:.95}
+.logo span{display:block;font-family:"Bungee",Impact,sans-serif;text-transform:uppercase}
+.logo .lg1{font-size:38px;color:#fff;text-shadow:4px 4px 0 var(--prac)}.logo .lg2{font-size:54px;color:var(--tip);text-shadow:4px 4px 0 #000}
+.lvmap{position:relative;margin:10px 0 6px;padding:0}
+.lvn{display:flex;align-items:center;width:calc(100% - 28px);margin:12px 0;padding:10px 12px;text-align:left;color:var(--fg);background:var(--surface);border:2px solid var(--vc);border-left-width:8px;min-height:84px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));position:relative}
+.lvn.l{margin-right:auto}.lvn.r{margin-left:auto}
+.lvn .lvnum{position:absolute;right:10px;top:4px;font-family:"Bungee",Impact,sans-serif;font-size:26px;color:var(--vc);opacity:.4}
+.lvn .lvav{width:56px;flex:none;margin-right:12px}.lvn .lvav svg{display:block;width:100%;height:auto}
+.lvn .lvt{flex:1;min-width:0}.lvn .lvt b{display:block;font-size:17px;line-height:1.2}.lvn .lvt small{display:block;color:var(--muted);margin-top:2px}
+.lvn .meta{display:block;font-size:12px;letter-spacing:.06em;color:var(--tip);margin-top:4px;font-weight:700}
+.lvn .tbar{margin:6px 0 0;height:6px}
+.lvn.lock{border-color:var(--line);background:#14161E;opacity:.75;cursor:not-allowed}
+.lvn.lock .lvt b{color:var(--muted)}
+.lvn.done{background:#12281F}
+.lvn.now{animation:nowp 1.4s ease-in-out infinite alternate;background:#241E45}
+@keyframes nowp{from{filter:none}to{filter:brightness(1.35)}}
+body.lite .lvn.now{animation:none}
+.lvmap:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:4px;margin-left:-2px;background:repeating-linear-gradient(180deg,var(--line) 0 14px,transparent 14px 24px);z-index:0}
+.lvn{z-index:1}
+.sq{margin-top:20px}h3.sq{font-family:"Bungee",Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:18px;color:var(--prac);margin:18px 0 0}
+.lvmap.sq:before{display:none}
+.ib{min-width:48px;padding:0 10px;font-size:13px;font-weight:700}
 </style></head><body>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
-<header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Open contents menu" style="margin:0 10px 0 0">☰</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">♪</button></div><div class="bar"><i id="gbar"></i></div></header>
+<header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>
 <aside id="drawer" aria-label="Table of contents"></aside><div id="shade"></div>
 <main><div class="wrap" id="app"></div></main>
 <div class="nav" id="navbar" style="display:none"><div class="wrap"><button class="btn gh" id="pv">Back</button><div class="mid" id="navmid"></div><button class="btn" id="nx">Next</button></div></div>
@@ -339,14 +376,14 @@ var TOPICS={
 
 /* ================= START HERE ================= */
 SEC('start','Start here','Words you need first','Ten small words that every grammar lesson uses.',[
- SC('How to use this note',
-  P('This note teaches one small idea at a time. Do not rush. Read a screen, try the activity, then tap <b>Next</b>.'),
-  DEF('A short, clear meaning of a new word. Read these first.'),
-  EX('A sentence that shows the idea at work. Study how it is built.'),
-  TIP('A trick for answering WAEC and JAMB questions.'),
-  MIS('A mistake many students make, and how to avoid it.'),
-  P('<b>Practice questions</b> have a purple border. Think first, then answer. You will get feedback straight away. If you are wrong, you get another chance.'),
-  P('Your scores are saved on this device. The <b>Revision</b> page tells you which topics you must study again.')),
+ SC('How to play',
+  P('Welcome, fighter! Every level has a villain. Learn one idea at a time, answer the questions, then beat the boss to unlock the next level.'),
+  P('Tap <b>Show the next idea</b> to read on. You have to read each idea before the next one appears. No skipping!'),
+  DEF('A power-up. Learn it, then use it in the fight.'),
+  EX('Watch how the idea works in a real sentence.'),
+  TIP('A cheat code for WAEC and JAMB questions.'),
+  MIS('A trap that catches many students. Spot it before it spots you.'),
+  P('Right answers give you XP. Right answers in a row build a streak and bonus XP. Wrong answers cost you hearts in a boss fight. Ready?')),
  SC('Ten words we will use',
   P('Do not worry if some of these feel new. Every one is explained again later with examples.'),
   TB(['Word','What it means','Example'],[
@@ -381,7 +418,7 @@ SEC('a1','Part A: Sentence recasting','What is sentence recasting?','Rewrite a s
    ['Because it rained, the match was cancelled.','The match was cancelled because it rained.','Order of the parts'],
    ['Despite his illness, he came.','Although he was ill, he came.','Phrase → clause']
   ]),
-  P('This note focuses on the two recasts that WAEC and JAMB test most often: <b>active and passive voice</b> and <b>direct and reported speech</b>.')),
+  P('The two recasts that WAEC and JAMB love most are <b>active and passive voice</b> and <b>direct and reported speech</b>. You will beat both.')),
  SC('Same meaning or different meaning?',
   P('<b>Think first.</b> For each pair, decide if the two sentences mean the same thing.'),
   QZ('a1-pairs','Same or different?','live',[
@@ -826,7 +863,7 @@ SEC('b2','Part B: Grammatical function','The twelve grammatical functions','Lear
    [`The bus left ${U('at noon')}.`,'at noon','The bus left. is complete without it.'],
    [`She sings ${U('in the choir')}.`,'in the choir','She sings. is complete without it.']
   ]),
-  TIP('Textbooks use the word <b>adjunct</b> in slightly different ways. Some use it only for optional adverbials. Others also use it for a noun that modifies another noun, as in <em>school bus</em>. If a question uses this word, look at your class notes and your teacher’s examples for the meaning that is taught.'),
+  TIP('Different books use the word <b>adjunct</b> in slightly different ways. Some use it only for optional adverbials. Others also use it for a noun that modifies another noun, as in <em>school bus</em>. If a question uses this word, look at what your teacher taught and the examples in class for the meaning that is taught.'),
   QZ('b2-12','Quick check','live',[FNQ('b2f12','Which part of <em>Segun ate his lunch quickly</em> is an optional <b>adjunct</b>?',['Segun','ate','his lunch','quickly'],3,'Take away quickly and the sentence Segun ate his lunch still makes sense. It is an optional extra.')]))
 ]);
 
@@ -930,7 +967,7 @@ var PASSAGE=`<p>When the new term began, the principal of Unity College, Mrs Ade
 <p>The library opened on a sunny morning in November. Hauwa, who had asked the question at the meeting, was chosen to cut the ribbon. She thanked everyone sincerely, and the students applauded loudly. From that day, the reading corner became the most popular place in the school.</p>`;
 SEC('c1','Part C: Comprehension application','Reading passage: The Library Project','Use everything you have learned on one passage.',[
  SC('Read the passage',
-  P('Read the passage slowly, once for the story and once for the grammar. Then answer the 15 questions on the next screens.'),
+  P('Read the passage slowly, once for the story and once for the grammar. Then face the riddles in the next rounds.'),
   {t:'passage',h:PASSAGE,title:'The Library Project'},
   TIP('Underlined words in the questions come directly from the passage. Always read the sentence around the underlined part before you answer.')),
  SC('Questions 1 to 5: sentence recasting',
@@ -1261,14 +1298,39 @@ SEC('f2','Play together','Teacher board','For the teacher: collect result codes 
   SECS.length=0;rest.slice(0,i).concat(f).concat(rest.slice(i)).forEach(function(s){SECS.push(s)});
 })();
 
+/* ================= LEVELS: the game is played one level at a time ================= */
+var LEVELS=[
+ {n:'Training ground',secs:['start'],v:'start',sub:'Learn how to play'},
+ {n:'Mirror Maze',secs:['a1'],v:'a1',sub:'Same meaning or different?'},
+ {n:'Passive Phantom',secs:['a2'],v:'a2',boss:'passive',sub:'Active and passive voice'},
+ {n:'Quote Thief',secs:['a3'],v:'a3',boss:'reported',sub:'Direct and reported speech'},
+ {n:'Function Fiend',secs:['b1','b2'],v:'b2',sub:'The twelve grammatical functions'},
+ {n:'Clause Goblin',secs:['b3'],v:'b3',boss:'phrase',sub:'Phrases and clauses'},
+ {n:'Exam Ogre',secs:['b4'],v:'b4',boss:'function',sub:'How to answer in the exam'},
+ {n:'Riddle Sphinx',secs:['c1'],v:'c1',sub:'The Library Project'},
+ {n:'WAEC Warlord',secs:['d1'],v:'d1',test:'d-waec',sub:'20 WAEC-style questions'},
+ {n:'JAMB Jester',secs:['d2'],v:'d2',test:'d-jamb',sub:'20 JAMB-style questions'},
+ {n:'Final Boss',secs:['d3'],v:'d3',mock:1,sub:'15 questions. 20 minutes.'}
+];
+var BONUS=[
+ {id:'e1',n:'Trap Room',after:3,sub:'17 traps that cost marks',v:'e1'},
+ {id:'e2',n:'Cheat Cards',after:6,sub:'Seven quick-look cards',v:'e2'},
+ {id:'f1',n:'Rival Bots',after:3,sub:'Race the class at quiz battle',v:'f1'}
+];
+var TEACHER_SECS=['e4','f2'];
+(function(){
+  var names={start:['Training ground','Level 0'],a1:['Mirror Maze','Level 1'],a2:['Passive Phantom','Level 2'],a3:['Quote Thief','Level 3'],b1:['Function Fiend: warm-up','Level 4'],b2:['Function Fiend','Level 4'],b3:['Clause Goblin','Level 5'],b4:['Exam Ogre','Level 6'],c1:['Riddle Sphinx','Level 7'],d1:['WAEC Warlord','Level 8'],d2:['JAMB Jester','Level 9'],d3:['Final Boss','Level 10'],e1:['Trap Room','Bonus'],e2:['Cheat Cards','Bonus'],e3:['My stats','Stats'],e4:['Teacher answer key','Teacher'],f1:['Rival Bots','Bonus'],f2:['Teacher board','Teacher']};
+  SECS.forEach(function(s){var n=names[s.id];if(n){s.title=n[0];s.part=n[1]}});
+})();
+
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
-var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{}};
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0};
 var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
-function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null;ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{}}}catch(e){}}
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function $(s,r){return (r||document).querySelector(s)}
@@ -1651,27 +1713,90 @@ function boardInit(el){
   draw();
 }
 
-/* ---- home screen: the arena map ---- */
-function bossStarsTotal(){var n=0;Object.keys(ST.boss).forEach(function(k){n+=ST.boss[k]||0});return n}
+/* ---- levels: you must clear one before the next opens ---- */
+function secFin(id){var s=secObj(id);return s.screens.every(function(_,i){return ST.fin[id+':'+i]})}
+function levelCleared(i){
+  var L=LEVELS[i];
+  if(L.test){var es=ST.exam[L.test];return !!(es&&es.sub)}
+  if(L.mock)return !!ST.mockDone;
+  if(!L.secs.every(secFin))return false;
+  if(L.boss&&!(ST.boss[L.boss]>=1))return false;
+  return true;
+}
+function levelUnlocked(i){return i===0||levelCleared(i-1)}
+function levelOfSec(id){for(var i=0;i<LEVELS.length;i++)if(LEVELS[i].secs.indexOf(id)>=0)return i;return -1}
+function bonusOf(id){for(var i=0;i<BONUS.length;i++)if(BONUS[i].id===id)return BONUS[i];return null}
+function secAllowed(id){
+  if(RT.dev)return true;
+  if(id==='e3')return true;
+  if(TEACHER_SECS.indexOf(id)>=0)return !!RT.teacher;
+  var b=bonusOf(id);if(b)return levelCleared(b.after);
+  var i=levelOfSec(id);return i<0?true:levelUnlocked(i);
+}
+function levelLabel(id){var i=levelOfSec(id);if(i>=0)return 'Level '+i+' · '+LEVELS[i].n;var b=bonusOf(id);if(b)return 'Bonus · '+b.n;return secObj(id).title}
+function isLevelEnd(id){var i=levelOfSec(id);return i<0||LEVELS[i].secs[LEVELS[i].secs.length-1]===id}
+function nextSecInLevel(id){var i=levelOfSec(id);if(i<0)return null;var L=LEVELS[i],k=L.secs.indexOf(id);return L.secs[k+1]||null}
+function levelBar(sec,scr){
+  var s=secObj(sec),i=levelOfSec(sec),pips='';
+  s.screens.forEach(function(_,k){pips+='<i class="'+(ST.fin[sec+':'+k]?'ok':k===scr?'cur':'')+'"></i>'});
+  var head=i>=0?'<b class="ln">LEVEL '+i+'</b>':'<b class="ln">BONUS</b>';
+  return '<div class="lvbar">'+head+'<span class="lname">'+esc(s.title)+'</span><span class="lpips">'+pips+'</span></div>';
+}
+function levelResume(i){
+  var L=LEVELS[i],sc=L.secs[L.secs.length-1],scr=secObj(sc).screens.length-1;
+  for(var a=0;a<L.secs.length;a++){var s=secObj(L.secs[a]);for(var k=0;k<s.screens.length;k++){if(!ST.fin[s.id+':'+k]){return [s.id,k]}}}
+  return [sc,scr];
+}
+function openLevel(i){
+  if(!levelUnlocked(i)&&!RT.dev){sfx.no();shakeScreen();penToast('no','Locked! Clear Level '+(i-1)+' first.');return}
+  gameFirst();var t=levelResume(i);go(t[0],t[1]);
+}
+function openBonus(id){
+  var b=bonusOf(id);if(!secAllowed(id)){sfx.no();shakeScreen();penToast('no','Locked! Clear Level '+b.after+' to open the '+b.n+'.');return}
+  gameFirst();go(id,0);
+}
+function levelFinish(sec){
+  var i=levelOfSec(sec);
+  if(i>=0&&levelCleared(i)){
+    if(!ST.clr[i]){ST.clr[i]=1;save();sfx.win();burst(160);
+      var nl=LEVELS[i+1];
+      overlay('win','Level cleared',LEVELS[i].n,nl?('Next: '+nl.n):'You finished the game!',2200);
+      addXp(100,null,'#2EE6A6');
+    }
+  }else if(i>=0&&LEVELS[i].boss&&!(ST.boss[LEVELS[i].boss]>=1)){
+    penToast('no','Beat the boss to clear this level!');
+  }
+  go('home',0);
+}
+function lockSVG(){return '<svg viewBox="0 0 40 48" aria-hidden="true"><path d="M10 20v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#6A7390" stroke-width="5"/><rect x="5" y="20" width="30" height="24" fill="#6A7390"/><circle cx="20" cy="31" r="4" fill="#232636"/></svg>'}
+function lvlProgress(i){var L=LEVELS[i],t=0,d=0;L.secs.forEach(function(id){var s=secObj(id);s.screens.forEach(function(_,k){t++;if(ST.fin[id+':'+k])d++})});return t?Math.round(100*d/t):0}
+function starsOf(L){return L.boss?new Array((ST.boss[L.boss]||0)+1).join('★')+new Array(4-(ST.boss[L.boss]||0)).join('☆'):''}
 function gameHome(){
-  var xp=ST.xp||0,l=lvlOf(xp);
-  var h='<div class="hero"><div class="hp1">'+penSVG('ok')+'</div><div class="hp2"><div class="eyebrow">SS3 · English Language · First Term · Week 1</div><h1>Grammar Arena</h1><p>Sentence recasting and grammatical functions for WAEC and JAMB. Beat the villains, earn XP and climb the ranks.</p></div></div>'+
-   '<div class="stats"><div><b>'+TITLES[l]+'</b><small>Level '+(l+1)+' · '+xp+' XP</small></div><div><b>'+(ST.best||0)+'</b><small>Best streak</small></div><div><b>'+bossStarsTotal()+' / 12</b><small>Boss stars</small></div></div>'+
-   '<div class="row"><button class="btn" data-act="cont">'+(ST.last&&ST.last.sec!=='home'?'Continue the quest':'Start the quest')+'</button><button class="btn gh" data-act="go" data-sec="f1" data-scr="0">Class quiz battle</button><button class="btn gh" data-act="go" data-sec="e3" data-scr="0">My results</button></div>'+
-   '<div class="box tip"><div class="bt">Suggested 40-minute class plan</div><div><b>5 min:</b> Start here and What is recasting?<br><b>12 min:</b> Active and passive voice, screens 1 to 8<br><b>13 min:</b> Direct and reported speech, screens 1 to 9<br><b>10 min:</b> Word class or function? and the first functions<br><small>Everything else is for self-paced study after class.</small></div></div>';
-  var last='';h+='<div class="path">';
-  SECS.forEach(function(s,i){
-    if(s.part!==last){h+='<div class="part">'+esc(s.part)+'</div>';last=s.part}
-    var v=VILL[s.id],q=secQ(s.id),d=answeredCount(q),vis=0;s.screens.forEach(function(sc,k){if(ST.vis[s.id+':'+k])vis++});
-    var pct=q.length?Math.round(100*d/q.length):Math.round(100*vis/s.screens.length);
-    var bs='';Object.keys(BOSSES).forEach(function(b){if(BOSSES[b].sec===s.id)bs='<span class="bst">'+new Array((ST.boss[b]||0)+1).join('★')+new Array(4-(ST.boss[b]||0)).join('☆')+'</span>'});
-    h+='<button class="node" data-act="go" data-sec="'+s.id+'" data-scr="0" style="--vc:'+(v?v.c:'#4DA3FF')+'"><span class="nv">'+(v?bossSVG(v.c,'idle'):penSVG('idle'))+'</span><span class="nt"><b>'+esc(s.title)+'</b><small>'+esc(s.blurb)+'</small><span class="meta">'+s.screens.length+' screen'+(s.screens.length>1?'s':'')+(q.length?' · '+d+' of '+q.length+' questions':'')+bs+'</span><span class="tbar"><i style="width:'+pct+'%"></i></span></span></button>';
+  var xp=ST.xp||0,l=lvlOf(xp),cur=-1;
+  for(var k=0;k<LEVELS.length;k++){if(!levelCleared(k)){cur=k;break}}
+  var h='<div class="logo"><span class="lg1">GRAMMAR</span><span class="lg2">ARENA</span></div>'+
+   '<div class="stats"><div><b>'+TITLES[l]+'</b><small>'+xp+' XP</small></div><div><b>× '+(ST.best||0)+'</b><small>Best streak</small></div><div><b>'+bossStarsTotal()+' / 12</b><small>Boss stars</small></div></div>';
+  h+='<div class="lvmap">';
+  LEVELS.forEach(function(L,i){
+    var un=levelUnlocked(i)||RT.dev,cl=levelCleared(i),st=cl?'done':un?'open':'lock',v=VILL[L.v]||{c:'#4DA3FF'};
+    h+='<button class="lvn '+st+(i===cur?' now':'')+' '+(i%2?'r':'l')+'" data-act="lvl" data-i="'+i+'" style="--vc:'+v.c+'"><span class="lvnum">'+i+'</span><span class="lvav">'+(un?(i===0?penSVG('ok'):bossSVG(v.c,cl?'dead':'idle')):lockSVG())+'</span><span class="lvt"><b>'+(un?esc(L.n):'???')+'</b><small>'+(un?esc(L.sub):'Locked. Clear Level '+(i-1)+' first.')+'</small>'+(un?'<span class="meta">'+(cl?'CLEARED ':'')+starsOf(L)+'</span><span class="tbar"><i style="width:'+(cl?100:lvlProgress(i))+'%"></i></span>':'')+'</span></button>';
   });
-  return h+'</div>';
+  h+='</div><h3 class="sq">Side quests</h3><div class="lvmap sq">';
+  BONUS.forEach(function(b){
+    var un=levelCleared(b.after)||RT.dev,v=VILL[b.v]||{c:'#4DA3FF'};
+    h+='<button class="lvn '+(un?'open':'lock')+' l" data-act="bon" data-sec="'+b.id+'" style="--vc:'+v.c+'"><span class="lvav">'+(un?bossSVG(v.c,'idle'):lockSVG())+'</span><span class="lvt"><b>'+(un?esc(b.n):'???')+'</b><small>'+(un?esc(b.sub):'Clear Level '+b.after+' to open')+'</small></span></button>';
+  });
+  h+='</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn gh sm" data-act="go" data-sec="e3" data-scr="0">My stats</button></div>';
+  return h;
 }
+function bossStarsTotal(){var n=0;Object.keys(ST.boss).forEach(function(k){n+=ST.boss[k]||0});return n}
 function gameDrawer(){
-  return '<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="pause">Reading pause (slows the Show next idea button)<span>'+(ST.set.pause===false?'Off':'On')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a>';
+  var h='<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="pause">Reading pause<span>'+(ST.set.pause===false?'Off':'On')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a><h4>Teacher</h4>';
+  if(RT.teacher)h+='<a data-act="go" data-sec="f2" data-scr="0">Teacher board</a><a data-act="go" data-sec="e4" data-scr="0">Answer key</a>';
+  else h+='<div class="row"><input class="tx" id="tpinv" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off" style="max-width:120px"><button class="btn sm" data-act="tpin">Open</button></div>'+(RT.tbad?'<div class="fb b"><b>Wrong PIN.</b></div>':'');
+  return h;
 }
+function gameTeacherPin(){var v=($('#tpinv')||{}).value;if(v===TPIN){RT.teacher=true;RT.tbad=0;RT.pin=true}else RT.tbad=1;buildDrawer()}
 function gameSet(k){
   if(k==='music'){ST.set.music=!ST.set.music;if(ST.set.music){actx();musicSet(MU.mode)}else musicStop()}
   else if(k==='sfx')ST.set.sfx=!ST.set.sfx;
@@ -1703,7 +1828,8 @@ function secObj(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return SECS
 function secIdx(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return i;return -1}
 
 /* ---- block rendering ---- */
-function boxHtml(cls,b){return '<div class="box '+cls+'"><div class="bt">'+esc(b.title)+'</div><div>'+b.h+'</div></div>'}
+var TITLEMAP={'Definition':'Power-up','Example':'Watch this','Exam tip':'Cheat code','Common mistake':'Trap!'};
+function boxHtml(cls,b){return '<div class="box '+cls+'"><div class="bt">'+esc(TITLEMAP[b.title]||b.title)+'</div><div>'+b.h+'</div></div>'}
 function tbHtml(b){
   var h='<div class="tw"><table>';
   if(b.head&&b.head.length&&b.head.join('')!=='')h+='<thead><tr>'+b.head.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead>';
@@ -1719,7 +1845,7 @@ function passageHtml(b){
   if(b.collapsed)return '<details class="pas"><summary>Show the passage again: '+esc(b.title)+'</summary><div class="passage">'+b.h+'</div></details>';
   return '<div class="passage"><div class="pt">'+esc(b.title)+'</div>'+b.h+'</div>';
 }
-function mkCard(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">Incorrect</span>'+m.w+'</div><div class="r"><span class="k">Correct</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}
+function mkCard(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">The trap</span>'+m.w+'</div><div class="r"><span class="k">The safe move</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}
 function mkHtml(b){return b.items.map(mkCard).join('')}
 /* ---- live questions ---- */
 function liveCard(q){
@@ -1852,7 +1978,7 @@ function mockHtml(){
   var m=RT.mock;
   if(!m){
     var best=ST.mockBest?'<p class="muted">Your best score so far: <b>'+ST.mockBest+' / 15</b></p>':'';
-    return '<div class="box def"><div class="bt">Final challenge</div><div>15 questions mixing everything in this note. You have <b>20 minutes</b>. You see your score, a breakdown by topic and an explanation for every answer you missed at the end.</div></div>'+best+
+    return '<div class="box def"><div class="bt">Final challenge</div><div>15 questions mixing everything you have learned. You have <b>20 minutes</b>. You see your score, a breakdown by topic and an explanation for every answer you missed at the end.</div></div>'+best+
       '<div class="row"><button class="btn" data-act="mstart">Start the timed mock</button></div>'+
       '<p class="muted">Tip: answer the easy ones first, then return to the harder ones. You can go back to any question before you finish.</p>';
   }
@@ -1890,7 +2016,7 @@ function mockTick(){
 function mockFinish(){
   var m=RT.mock;if(!m)return;m.done=true;clearInterval(mockTimer);mockTimer=null;
   var sc=0;MOCK.forEach(function(q,i){var ok=m.a[i]===q.a;if(ok)sc++;ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
-  if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;
+  if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;ST.mockDone=1;
   save();render(true);
   gameExam(sc,15,true);
 }
@@ -1945,7 +2071,7 @@ function homeHtml(){return gameHome()}
 /* ---- screen rendering ---- */
 function blockHtml(b){
   switch(b.t){
-   case 'p':return '<p>'+b.h+'</p>';
+   case 'p':return '<div class="say"><span class="sp">'+penSVG('idle')+'</span><div class="sb">'+b.h+'</div></div>';
    case 'h':return '<h3>'+b.h+'</h3>';
    case 'def':return boxHtml('def',b);
    case 'ex':return boxHtml('ex',b);
@@ -1969,11 +2095,15 @@ function blockHtml(b){
 }
 /* ---- one idea at a time: every screen is split into units that are revealed in turn ---- */
 function quizDone(b){return b.items.every(function(q){var r=ST.res[q.id];return r&&r.done})}
+function rcHtml(b,rows){
+  return rows.map(function(row){return '<div class="rc">'+row.map(function(c,k){var lab=b.head&&b.head[k]?b.head[k]:'';return '<div class="cell"'+(k===0&&row.length>2?' data-first="1"':'')+'>'+(lab?'<span class="cl">'+lab+'</span>':'')+'<div>'+c+'</div></div>'}).join('')+'</div>'}).join('');
+}
 function unitsOf(b){
   switch(b.t){
    case 'stp':return b.items.map(function(x,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
    case 'wk':return b.items.map(function(it,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+wkItem(it)}});
    case 'mk':return b.items.map(function(m){return {html:mkCard(m)}});
+   case 'tb':{var per=b.rows.length>8?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
    case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
    case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
    case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
@@ -1992,7 +2122,7 @@ function revUpdate(){
   var finished=!!ST.fin[key];
   nx.disabled=!(finished||(all&&gateOk));
   var s=secObj(RT.cur.sec);
-  mid.textContent=all?('Screen '+(RT.cur.scr+1)+' of '+s.screens.length):('Idea '+rev+' of '+n);
+  mid.textContent=levelLabel(RT.cur.sec);
   if(finished||(all&&gateOk)){bar.className='rvbar st';bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
   if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
   // there is another idea to reveal
@@ -2024,46 +2154,42 @@ function render(keepScroll){
     RT.units=units;
     if(ST.fin[key])RT.rev[key]=units.length;
     var rev=RT.rev[key];if(rev===undefined||rev<1){rev=RT.rev[key]=1;startPause(0)}
-    h='<div class="eyebrow">'+esc(s.part)+'</div><h2>'+esc(s.title)+'</h2><div class="prog">Screen '+(cur.scr+1)+' of '+s.screens.length+'</div><div class="tbar"><i style="width:'+Math.round(100*(cur.scr+1)/s.screens.length)+'%"></i></div>'+
-      gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct">'+esc(sc.title)+'</h3>':'')+
+    h=levelBar(cur.sec,cur.scr)+gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct"><span>Round '+(cur.scr+1)+'</span> '+esc(sc.title)+'</h3>':'')+
       units.map(function(u,i){return '<div class="unit" data-u="'+i+'"'+(i<rev?'':' hidden')+'>'+u.html+'</div>'}).join('')+'<div id="rvbar" class="rvbar"></div>';
     ST.vis[key]=1;
     nb.style.display='block';
-    pv.textContent=cur.scr===0?'Menu':'Back';
-    var last=cur.scr===s.screens.length-1,si=secIdx(cur.sec);
-    nx.textContent=last?(si<SECS.length-1?'Next topic':'Home'):'Next';
+    pv.textContent=cur.scr===0?'Map':'Back';
+    var last=cur.scr===s.screens.length-1;
+    nx.textContent=last?(isLevelEnd(cur.sec)?'Finish level':'Next'):'Next';
   }
   app.innerHTML=h;
   gameAfter(app);
   ST.last=cur;save();
   if(!keepScroll)window.scrollTo(0,0);
   var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
-  var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Contents':(secObj(cur.sec).title);
+  var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Choose your level':levelLabel(cur.sec);
   buildDrawer();hud();
   if(cur.sec!=='home'){penWalk();revUpdate()}
   if(RT.mock&&!RT.mock.done&&!mockTimer)mockTimer=setInterval(mockTick,1000);
 }
-function go(sec,scr){var prevSec=RT.cur.sec;RT.cur={sec:sec,scr:scr||0};closeDrawer();render();if(sec!=='home'&&sec!==prevSec)gameIntro(sec)}
+function go(sec,scr){
+  if(sec!=='home'&&!secAllowed(sec)){sfx.no();penToast('no','Locked! Clear the earlier level first.');return}
+  var prevSec=RT.cur.sec;RT.cur={sec:sec,scr:scr||0};closeDrawer();render();if(sec!=='home'&&sec!==prevSec)gameIntro(sec)
+}
 function next(){
   var cur=RT.cur;if(cur.sec==='home')return;
   var nxb=document.getElementById('nx');if(nxb&&nxb.disabled)return;
   var s=secObj(cur.sec);
-  if(cur.scr<s.screens.length-1)go(cur.sec,cur.scr+1);
-  else{var si=secIdx(cur.sec);if(si<SECS.length-1)go(SECS[si+1].id,0);else go('home',0)}
+  if(cur.scr<s.screens.length-1){go(cur.sec,cur.scr+1);return}
+  var ns=nextSecInLevel(cur.sec);
+  if(ns){go(ns,0);return}
+  levelFinish(cur.sec);
 }
 function prev(){
   var cur=RT.cur;if(cur.sec==='home')return;
-  if(cur.scr>0)go(cur.sec,cur.scr-1);else openDrawer();
+  if(cur.scr>0)go(cur.sec,cur.scr-1);else go('home',0);
 }
-function buildDrawer(){
-  var d=$('#drawer'),h='<div class="row"><b style="flex:1">Contents</b><button class="ib" data-act="closed" aria-label="Close menu">✕</button></div><a data-act="go" data-sec="home" data-scr="0" class="'+(RT.cur.sec==='home'?'on':'')+'">Home</a>',last='';
-  SECS.forEach(function(s){
-    if(s.part!==last){h+='<h4>'+esc(s.part)+'</h4>';last=s.part}
-    var q=secQ(s.id);
-    h+='<a data-act="go" data-sec="'+s.id+'" data-scr="0" class="'+(RT.cur.sec===s.id?'on':'')+'">'+esc(s.title)+'<span>'+(q.length?answeredCount(q)+'/'+q.length:'')+'</span></a>';
-  });
-  d.innerHTML=h+gameDrawer();
-}
+function buildDrawer(){var d=$('#drawer');d.innerHTML='<div class="row"><b style="flex:1">Settings</b><button class="ib" data-act="closed" aria-label="Close">✕</button></div>'+gameDrawer()}
 function openDrawer(){$('#drawer').classList.add('on');$('#shade').classList.add('on')}
 function closeDrawer(){$('#drawer').classList.remove('on');$('#shade').classList.remove('on')}
 
@@ -2093,6 +2219,9 @@ function onClick(e){
   else if(act==='closed')closeDrawer();
   else if(act==='rev')revealNext();
   else if(act==='set')gameSet(t.getAttribute('data-k'));
+  else if(act==='lvl')openLevel(+t.getAttribute('data-i'));
+  else if(act==='bon')openBonus(t.getAttribute('data-sec'));
+  else if(act==='tpin')gameTeacherPin();
 }
 function onKey(e){
   var t=e.target;
@@ -2108,12 +2237,12 @@ function onInput(e){
 document.addEventListener('click',onClick);
 document.addEventListener('keydown',onKey);
 document.addEventListener('input',onInput);
-$('#menu').onclick=openDrawer;$('#shade').onclick=closeDrawer;
+$('#menu').onclick=function(){go('home',0)};$('#cog').onclick=openDrawer;$('#shade').onclick=closeDrawer;
 $('#pv').onclick=prev;$('#nx').onclick=next;
 $('#brand').onclick=function(){go('home',0)};
 load();
 gameBoot();
-if(ST.last&&ST.last.sec&&ST.last.sec!=='home'&&secObj(ST.last.sec)){RT.cur={sec:'home',scr:0}}
+RT.cur={sec:'home',scr:0};
 render();
 window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
 })();
