@@ -2,7 +2,7 @@
 SEC('start','Start here','Words you need first','Ten small words that every grammar lesson uses.',[
  SC('How to play',
   P('Welcome, fighter! Every level has a villain. Learn one idea at a time, answer the questions, then beat the boss to unlock the next level.'),
-  P('Tap <b>Show the next idea</b> to read on. You have to read each idea before the next one appears. No skipping!'),
+  P('Tap <b>Next</b> to see the next card. Each card has one idea. Read it before the button wakes up. No skipping!'),
   DEF('A power-up. Learn it, then use it in the fight.'),
   EX('Watch how the idea works in a real sentence.'),
   TIP('A cheat code for WAEC and JAMB questions.'),

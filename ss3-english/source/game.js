@@ -99,7 +99,7 @@ function gameBanner(secId,scr){
 }
 function penWalk(){
   var pen=document.getElementById('bpen');if(!pen||!RT.units)return;
-  var n=RT.units.length,rev=RT.rev[curKey()]||1,fin=!!ST.fin[curKey()]||rev>=n;
+  var n=RT.units.length,rev=RT.rev[curKey()]||1,fin=!!ST.fin[curKey()]&&rev>=n;
   var frac=n>1?(rev-1)/(n-1):0;if(fin&&n>1)frac=1;
   pen.style.left=(frac*68)+'%';
   var v=VILL[RT.cur.sec],q=document.getElementById('bq');

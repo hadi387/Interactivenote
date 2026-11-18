@@ -332,6 +332,20 @@ body.lite .lvn.now{animation:none}
 .sq{margin-top:20px}h3.sq{font-family:"Bungee",Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:18px;color:var(--prac);margin:18px 0 0}
 .lvmap.sq:before{display:none}
 .ib{min-width:48px;padding:0 10px;font-size:13px;font-weight:700}
+
+/* one card at a time */
+.unit{min-height:30vh}
+.card-in{animation:cardin .4s cubic-bezier(.2,.9,.3,1)}
+.card-back{animation:cardback .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes cardin{from{opacity:0;transform:translateX(60px) skewX(-6deg)}to{opacity:1;transform:none}}
+@keyframes cardback{from{opacity:0;transform:translateX(-60px) skewX(6deg)}to{opacity:1;transform:none}}
+body.lite .card-in,body.lite .card-back{animation:none}
+.cdots{display:flex;margin:4px 0 8px}.cdots i{flex:1;height:8px;margin-right:3px;background:var(--surface2);transform:skewX(-20deg)}
+.cdots i.ok{background:var(--accent)}.cdots i.cur{background:var(--tip)}
+.say .sb{font-size:21px}
+.rvbar.st{min-height:0}
+
+.box,.mk,.say .sb,.rc .cell,.qc,.fb,.ans,.acap,.sct{overflow-wrap:anywhere}
 </style>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
 <header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>
@@ -376,7 +390,7 @@ var TOPICS={
 SEC('start','Start here','Words you need first','Ten small words that every grammar lesson uses.',[
  SC('How to play',
   P('Welcome, fighter! Every level has a villain. Learn one idea at a time, answer the questions, then beat the boss to unlock the next level.'),
-  P('Tap <b>Show the next idea</b> to read on. You have to read each idea before the next one appears. No skipping!'),
+  P('Tap <b>Next</b> to see the next card. Each card has one idea. Read it before the button wakes up. No skipping!'),
   DEF('A power-up. Learn it, then use it in the fight.'),
   EX('Watch how the idea works in a real sentence.'),
   TIP('A cheat code for WAEC and JAMB questions.'),
@@ -1325,7 +1339,7 @@ var TEACHER_SECS=['e4','f2'];
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
 var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0};
-var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},units:null,pauseUntil:0,seen:{}};
+var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
 function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0}}catch(e){}}
@@ -1516,7 +1530,7 @@ function gameBanner(secId,scr){
 }
 function penWalk(){
   var pen=document.getElementById('bpen');if(!pen||!RT.units)return;
-  var n=RT.units.length,rev=RT.rev[curKey()]||1,fin=!!ST.fin[curKey()]||rev>=n;
+  var n=RT.units.length,rev=RT.rev[curKey()]||1,fin=!!ST.fin[curKey()]&&rev>=n;
   var frac=n>1?(rev-1)/(n-1):0;if(fin&&n>1)frac=1;
   pen.style.left=(frac*68)+'%';
   var v=VILL[RT.cur.sec],q=document.getElementById('bq');
@@ -2098,10 +2112,10 @@ function rcHtml(b,rows){
 }
 function unitsOf(b){
   switch(b.t){
-   case 'stp':return b.items.map(function(x,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
+   case 'stp':return b.items.map(function(x,i){return {grp:'stp'+b.items[0].length+b.items.length,html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
    case 'wk':return b.items.map(function(it,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+wkItem(it)}});
    case 'mk':return b.items.map(function(m){return {html:mkCard(m)}});
-   case 'tb':{var per=b.rows.length>8?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
+   case 'tb':{var per=b.rows.length>12?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
    case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
    case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
    case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
@@ -2111,34 +2125,44 @@ function unitsOf(b){
 function curKey(){return RT.cur.sec+':'+RT.cur.scr}
 function unitWords(i){var u=RT.units[i],t=document.createElement('div');t.innerHTML=u.html;return (t.textContent||'').trim().split(/\s+/).length}
 var rvTimer=null;
+function showable(i,cur){if(RT.showAll)return true;var u=RT.units[i];return i===cur||(u.grp&&RT.units[cur].grp===u.grp&&i<cur)}
+function applyCard(dir){
+  var key=curKey(),cur=(RT.rev[key]||1)-1;
+  RT.units.forEach(function(u,i){
+    var el=document.querySelector('[data-u="'+i+'"]');if(!el)return;
+    var show=showable(i,cur);
+    if(show&&el.hidden){el.hidden=false}
+    if(!show&&!el.hidden)el.hidden=true;
+    el.classList.remove('card-in','card-back');
+    if(i===cur&&dir){void el.offsetWidth;el.classList.add(dir==='back'?'card-back':'card-in')}
+  });
+}
 function revUpdate(){
-  var bar=document.getElementById('rvbar'),nx=document.getElementById('nx'),mid=document.getElementById('navmid');if(!bar||!RT.units)return;
-  var key=curKey(),n=RT.units.length,rev=RT.rev[key]||0;
-  var last=RT.units[rev-1],gateOk=!(last&&last.gate&&!last.gate());
-  var all=rev>=n;
-  if(all&&gateOk&&!ST.fin[key]){ST.fin[key]=1;save();penWalk()}
-  var finished=!!ST.fin[key];
-  nx.disabled=!(finished||(all&&gateOk));
-  var s=secObj(RT.cur.sec);
-  mid.textContent=levelLabel(RT.cur.sec);
-  if(finished||(all&&gateOk)){bar.className='rvbar st';bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
-  if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
-  // there is another idea to reveal
-  var left=Math.max(0,Math.ceil(((RT.pauseUntil||0)-Date.now())/1000));
-  bar.className='rvbar';bar.innerHTML='<button class="btn rvbtn" data-act="rev"'+(left>0?' disabled':'')+'>'+(left>0?'Read it first… '+left:'Show the next idea')+'</button>';
+  var bar=document.getElementById('rvbar'),nx=document.getElementById('nx'),pv=document.getElementById('pv'),mid=document.getElementById('navmid');if(!bar||!RT.units)return;
+  var key=curKey(),n=RT.units.length,cur=(RT.rev[key]||1)-1,u=RT.units[cur];
+  var gateOk=!(u&&u.gate&&!u.gate()),last=cur>=n-1,s=secObj(RT.cur.sec);
+  if(last&&gateOk&&!ST.fin[key]){ST.fin[key]=1;save();penWalk()}
+  var left=0;if(!ST.fin[key]&&cur===(RT.max[key]||0))left=Math.max(0,Math.ceil(((RT.pauseUntil||0)-Date.now())/1000));
+  var endLabel=last?(RT.cur.scr<s.screens.length-1?'Next ▶':(isLevelEnd(RT.cur.sec)?'Finish level':'Next ▶')):'Next ▶';
+  nx.disabled=!gateOk||left>0;
+  nx.textContent=left>0?('Read… '+left):endLabel;
+  pv.textContent=(cur===0&&RT.cur.scr===0)?'Map':'◀ Back';
+  mid.textContent=(cur+1)+' / '+n;
   clearInterval(rvTimer);
-  if(left>0)rvTimer=setInterval(function(){var l=Math.ceil(((RT.pauseUntil||0)-Date.now())/1000);var bt=document.querySelector('.rvbtn');if(!bt){clearInterval(rvTimer);return}if(l<=0){clearInterval(rvTimer);revUpdate()}else bt.textContent='Read it first… '+l},250);
+  if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(u.why||'Finish the activity to continue.')+'</div>'}
+  else{bar.className='rvbar st';bar.innerHTML=''}
+  if(left>0)rvTimer=setInterval(function(){var l=Math.ceil(((RT.pauseUntil||0)-Date.now())/1000);if(l<=0){clearInterval(rvTimer);revUpdate()}else{var b=document.getElementById('nx');if(b)b.textContent='Read… '+l}},250);
+  var dots=document.getElementById('cdots');if(dots){var h='';for(var i=0;i<n;i++)h+='<i class="'+(i<cur||ST.fin[key]&&i<cur?'ok':i===cur?'cur':'')+'"></i>';dots.innerHTML=h}
 }
 function startPause(i){
-  var u=RT.units[i];if(!u||u.gate||u.free||ST.set.pause===false){RT.pauseUntil=0;return}
+  var u=RT.units[i];if(!u||u.gate||u.free||ST.set.pause===false||ST.fin[curKey()]){RT.pauseUntil=0;return}
   var w=unitWords(i);RT.pauseUntil=Date.now()+Math.round(Math.min(6,Math.max(1.2,w/11))*1000);
 }
-function revealNext(){
-  var key=curKey(),rev=RT.rev[key]||0;if(rev>=RT.units.length)return;
-  if(Date.now()<(RT.pauseUntil||0))return;
-  var u=document.querySelector('[data-u="'+rev+'"]');RT.rev[key]=rev+1;
-  if(u){u.hidden=false;u.classList.add('unit-in');if(!isLite())sfx.flip();setTimeout(function(){try{u.scrollIntoView({block:'start',behavior:isLite()?'auto':'smooth'})}catch(e){}},40)}
-  startPause(rev);penWalk();revUpdate();
+function gotoCard(i,dir){
+  var key=curKey();RT.rev[key]=i+1;
+  if(i>(RT.max[key]||0)||RT.max[key]===undefined){RT.max[key]=i;startPause(i)}
+  applyCard(dir);if(dir==='fwd'&&!isLite())sfx.flip();
+  window.scrollTo(0,0);penWalk();revUpdate();
 }
 function render(keepScroll){
   var cur=RT.cur,h='',nav='';
@@ -2150,16 +2174,14 @@ function render(keepScroll){
     var s=secObj(cur.sec),sc=s.screens[cur.scr],key=cur.sec+':'+cur.scr;
     var units=[];sc.blocks.forEach(function(b){unitsOf(b).forEach(function(u){units.push(u)})});
     RT.units=units;
-    if(ST.fin[key])RT.rev[key]=units.length;
-    var rev=RT.rev[key];if(rev===undefined||rev<1){rev=RT.rev[key]=1;startPause(0)}
-    h=levelBar(cur.sec,cur.scr)+gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct"><span>Round '+(cur.scr+1)+'</span> '+esc(sc.title)+'</h3>':'')+
-      units.map(function(u,i){return '<div class="unit" data-u="'+i+'"'+(i<rev?'':' hidden')+'>'+u.html+'</div>'}).join('')+'<div id="rvbar" class="rvbar"></div>';
+    var rev=RT.rev[key];if(rev===undefined||rev<1){rev=RT.rev[key]=1}
+    if(rev>units.length)rev=RT.rev[key]=units.length;
+    if(RT.max[key]===undefined){RT.max[key]=rev-1;startPause(rev-1)}
+    h=levelBar(cur.sec,cur.scr)+'<div class="cdots" id="cdots"></div>'+gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct"><span>Round '+(cur.scr+1)+'</span> '+esc(sc.title)+'</h3>':'')+
+      units.map(function(u,i){return '<div class="unit" data-u="'+i+'"'+(showable(i,rev-1)?'':' hidden')+'>'+u.html+'</div>'}).join('')+'<div id="rvbar" class="rvbar st"></div>';
     ST.vis[key]=1;
     nb.style.display='block';
-    pv.textContent=cur.scr===0?'Map':'Back';
-    var last=cur.scr===s.screens.length-1;
-    nx.textContent=last?(isLevelEnd(cur.sec)?'Finish level':'Next'):'Next';
-  }
+      }
   app.innerHTML=h;
   gameAfter(app);
   ST.last=cur;save();
@@ -2177,6 +2199,8 @@ function go(sec,scr){
 function next(){
   var cur=RT.cur;if(cur.sec==='home')return;
   var nxb=document.getElementById('nx');if(nxb&&nxb.disabled)return;
+  var key=curKey(),n=RT.units.length,i=(RT.rev[key]||1)-1;
+  if(i<n-1){gotoCard(i+1,'fwd');return}
   var s=secObj(cur.sec);
   if(cur.scr<s.screens.length-1){go(cur.sec,cur.scr+1);return}
   var ns=nextSecInLevel(cur.sec);
@@ -2185,7 +2209,10 @@ function next(){
 }
 function prev(){
   var cur=RT.cur;if(cur.sec==='home')return;
-  if(cur.scr>0)go(cur.sec,cur.scr-1);else go('home',0);
+  var key=curKey(),i=(RT.rev[key]||1)-1;
+  if(i>0){gotoCard(i-1,'back');return}
+  if(cur.scr>0){RT.rev[cur.sec+':'+(cur.scr-1)]=9999;go(cur.sec,cur.scr-1);return}
+  go('home',0);
 }
 function buildDrawer(){var d=$('#drawer');d.innerHTML='<div class="row"><b style="flex:1">Settings</b><button class="ib" data-act="closed" aria-label="Close">✕</button></div>'+gameDrawer()}
 function openDrawer(){$('#drawer').classList.add('on');$('#shade').classList.add('on')}
@@ -2215,7 +2242,6 @@ function onClick(e){
   else if(act==='pin'){var v=$('#pin').value;if(v===TPIN){RT.pin=true;RT.pinBad=0}else{RT.pinBad=1}render(true)}
   else if(act==='wipe'){ST.res={};ST.exam={};ST.vis={};ST.mockBest=null;RT.mock=null;RT.hint={};save();render()}
   else if(act==='closed')closeDrawer();
-  else if(act==='rev')revealNext();
   else if(act==='set')gameSet(t.getAttribute('data-k'));
   else if(act==='lvl')openLevel(+t.getAttribute('data-i'));
   else if(act==='bon')openBonus(t.getAttribute('data-sec'));
@@ -2242,7 +2268,7 @@ load();
 gameBoot();
 RT.cur={sec:'home',scr:0};
 render();
-window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
+window.__ENG={showAll:function(){[].forEach.call(document.querySelectorAll('[data-u]'),function(x){x.hidden=false})},SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
 })();
 
 </script>

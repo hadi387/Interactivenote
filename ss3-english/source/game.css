@@ -198,3 +198,17 @@ body.lite .lvn.now{animation:none}
 .sq{margin-top:20px}h3.sq{font-family:"Bungee",Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:18px;color:var(--prac);margin:18px 0 0}
 .lvmap.sq:before{display:none}
 .ib{min-width:48px;padding:0 10px;font-size:13px;font-weight:700}
+
+/* one card at a time */
+.unit{min-height:30vh}
+.card-in{animation:cardin .4s cubic-bezier(.2,.9,.3,1)}
+.card-back{animation:cardback .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes cardin{from{opacity:0;transform:translateX(60px) skewX(-6deg)}to{opacity:1;transform:none}}
+@keyframes cardback{from{opacity:0;transform:translateX(-60px) skewX(6deg)}to{opacity:1;transform:none}}
+body.lite .card-in,body.lite .card-back{animation:none}
+.cdots{display:flex;margin:4px 0 8px}.cdots i{flex:1;height:8px;margin-right:3px;background:var(--surface2);transform:skewX(-20deg)}
+.cdots i.ok{background:var(--accent)}.cdots i.cur{background:var(--tip)}
+.say .sb{font-size:21px}
+.rvbar.st{min-height:0}
+
+.box,.mk,.say .sb,.rc .cell,.qc,.fb,.ans,.acap,.sct{overflow-wrap:anywhere}
