@@ -9,7 +9,8 @@ bsvg=arena[b0:b1]
 eng=rd('engine.js').replace('/*@@GAME@@*/',rd('game.js').replace('/*@@AUDIO@@*/',audio).replace('/*@@BOSSSVG@@*/',bsvg).replace('/*@@LABS@@*/',rd('labs_engine.js')))
 js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','c6_labs.js','game_content.js']]+[eng])
 css=rd('style.css')+rd('game.css')
-body='''<div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
+body='''<script>window.onerror=function(m,s,l){try{var d=document.getElementById('errbar');if(!d){d=document.createElement('div');d.id='errbar';d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9999;background:#B00020;color:#fff;padding:8px 12px;font:14px/1.3 Arial,sans-serif';document.body.appendChild(d)}d.textContent='Something broke: '+m+' (line '+l+'). Tell your teacher.'}catch(e){}};</script>
+<div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
 <header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>
 <aside id="drawer" aria-label="Table of contents"></aside><div id="shade"></div>
 <main><div class="wrap" id="app"></div></main>
