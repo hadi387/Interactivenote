@@ -346,6 +346,8 @@ body.lite .card-in,body.lite .card-back{animation:none}
 .cdots i.ok{background:var(--accent)}.cdots i.cur{background:var(--tip)}
 .say .sb{font-size:21px}
 .rvbar.st{min-height:0}
+
+.box,.mk,.say .sb,.rc .cell,.qc,.fb,.ans,.acap,.sct{overflow-wrap:anywhere}
 </style></head><body>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
 <header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>
@@ -2115,7 +2117,7 @@ function unitsOf(b){
    case 'stp':return b.items.map(function(x,i){return {grp:'stp'+b.items[0].length+b.items.length,html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
    case 'wk':return b.items.map(function(it,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+wkItem(it)}});
    case 'mk':return b.items.map(function(m){return {html:mkCard(m)}});
-   case 'tb':{var per=b.rows.length>8?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
+   case 'tb':{var per=b.rows.length>12?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
    case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
    case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
    case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
@@ -2125,7 +2127,7 @@ function unitsOf(b){
 function curKey(){return RT.cur.sec+':'+RT.cur.scr}
 function unitWords(i){var u=RT.units[i],t=document.createElement('div');t.innerHTML=u.html;return (t.textContent||'').trim().split(/\s+/).length}
 var rvTimer=null;
-function showable(i,cur){var u=RT.units[i];return i===cur||(u.grp&&RT.units[cur].grp===u.grp&&i<cur)}
+function showable(i,cur){if(RT.showAll)return true;var u=RT.units[i];return i===cur||(u.grp&&RT.units[cur].grp===u.grp&&i<cur)}
 function applyCard(dir){
   var key=curKey(),cur=(RT.rev[key]||1)-1;
   RT.units.forEach(function(u,i){
@@ -2268,7 +2270,7 @@ load();
 gameBoot();
 RT.cur={sec:'home',scr:0};
 render();
-window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
+window.__ENG={showAll:function(){[].forEach.call(document.querySelectorAll('[data-u]'),function(x){x.hidden=false})},SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
 })();
 
 </script></body></html>
