@@ -1,0 +1,1376 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>SS3 English Recasting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: a calm classroom page. Header with progress, one screen at a time, colour-coded boxes. */
+:root{
+  --bg:#F3F6F9;--surface:#FFFFFF;--surface2:#EAF0F5;--fg:#14233A;--muted:#58667A;--line:#D3DCE6;
+  --accent:#0B7A4B;--accent-fg:#FFFFFF;--accent-soft:#DDF3E8;
+  --def:#1D5FD1;--def-bg:#E7EFFD;
+  --ex:#0B7A4B;--ex-bg:#E3F5EB;
+  --tip:#9A6200;--tip-bg:#FFF3D1;
+  --mis:#B3261E;--mis-bg:#FDEAE8;
+  --prac:#6B3FD4;--prac-bg:#F0EAFC;
+  --ok:#0B7A4B;--bad:#B3261E;
+  --hs:#1D5FD1;--hv:#B3261E;--ho:#0B7A4B;--hb:#9A6200;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1622;--surface:#172233;--surface2:#1F2D42;--fg:#E8EEF6;--muted:#9FB0C6;--line:#2B3C54;
+  --accent:#3DD598;--accent-fg:#06281A;--accent-soft:#12372B;
+  --def:#7FAEFF;--def-bg:#15284A;--ex:#5BE0A5;--ex-bg:#11352A;--tip:#FFC857;--tip-bg:#3B2E0D;--mis:#FF8A80;--mis-bg:#40191A;--prac:#B79BFF;--prac-bg:#2A2150;
+  --ok:#5BE0A5;--bad:#FF8A80;--hs:#7FAEFF;--hv:#FF8A80;--ho:#5BE0A5;--hb:#FFC857;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1622;--surface:#172233;--surface2:#1F2D42;--fg:#E8EEF6;--muted:#9FB0C6;--line:#2B3C54;
+  --accent:#3DD598;--accent-fg:#06281A;--accent-soft:#12372B;
+  --def:#7FAEFF;--def-bg:#15284A;--ex:#5BE0A5;--ex-bg:#11352A;--tip:#FFC857;--tip-bg:#3B2E0D;--mis:#FF8A80;--mis-bg:#40191A;--prac:#B79BFF;--prac-bg:#2A2150;
+  --ok:#5BE0A5;--bad:#FF8A80;--hs:#7FAEFF;--hv:#FF8A80;--ho:#5BE0A5;--hb:#FFC857;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Lexend","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:17px;line-height:1.6}
+button,input{font-family:inherit;font-size:inherit}
+.wrap{max-width:780px;margin:0 auto;padding-left:16px;padding-right:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;padding-top:10px;padding-bottom:10px}
+.brand{flex:1;min-width:0}
+.brand b{display:block;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:5px;background:var(--surface2)}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.ib{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;margin-left:8px;cursor:pointer;font-weight:600;padding:0 12px}
+.ib:focus,.btn:focus,.opt:focus,summary:focus,input:focus{outline:3px solid var(--def);outline-offset:2px}
+/* drawer */
+#drawer{position:fixed;left:0;top:0;bottom:0;width:88vw;max-width:360px;background:var(--surface);border-right:1px solid var(--line);z-index:40;transform:translateX(-105%);transition:transform .25s;overflow-y:auto;padding:14px 14px 40px}
+#drawer.on{transform:none}
+#shade{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:30;display:none}
+#shade.on{display:block}
+#drawer h4{margin:16px 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#drawer a{display:flex;justify-content:space-between;padding:10px 10px;margin:2px 0;border-radius:8px;color:var(--fg);text-decoration:none;font-size:15px;cursor:pointer}
+#drawer a:hover,#drawer a.on{background:var(--accent-soft)}
+#drawer a span{color:var(--muted);font-size:12px;margin-left:8px;white-space:nowrap}
+/* main */
+main{padding-top:18px;padding-bottom:110px}
+h1{font-size:28px;line-height:1.2;margin:6px 0 8px}
+h2{font-size:22px;line-height:1.25;margin:4px 0 10px}
+h3{font-size:18px;margin:18px 0 6px}
+p{margin:10px 0}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.muted{color:var(--muted)}
+.hs{color:var(--hs);font-weight:700}.hv{color:var(--hv);font-weight:700}.ho{color:var(--ho);font-weight:700}.hb{color:var(--hb);font-weight:700}
+u.ul{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:3px;text-decoration-color:var(--prac);font-weight:700}
+/* boxes */
+.box{border-left:6px solid var(--def);background:var(--def-bg);border-radius:8px;padding:12px 14px;margin:14px 0}
+.box .bt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+.box.def{border-color:var(--def)}.box.def .bt{color:var(--def)}
+.box.ex{border-color:var(--ex);background:var(--ex-bg)}.box.ex .bt{color:var(--ex)}
+.box.tip{border-color:var(--tip);background:var(--tip-bg)}.box.tip .bt{color:var(--tip)}
+.box.mis{border-color:var(--mis);background:var(--mis-bg)}.box.mis .bt{color:var(--mis)}
+.box s{color:var(--mis)}
+/* tables */
+.tw{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{background:var(--surface2);font-size:13px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+small{font-size:13px;color:var(--muted)}
+/* steps */
+ol.steps{margin:12px 0;padding-left:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:8px 10px 8px 46px;margin:6px 0;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+ol.steps li:before{content:counter(s);position:absolute;left:10px;top:8px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-fg);text-align:center;line-height:26px;font-weight:700;font-size:14px}
+/* worked examples */
+details.wk{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+details.wk summary{cursor:pointer;padding:12px 14px;list-style:none;min-height:44px}
+details.wk summary::-webkit-details-marker{display:none}
+details.wk summary .tg{display:inline-block;font-size:12px;font-weight:700;color:var(--ex);background:var(--ex-bg);padding:2px 8px;border-radius:20px;margin-bottom:4px}
+details.wk summary .hint{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+details.wk[open] summary .hint{display:none}
+.wkb{padding:4px 14px 14px;border-top:1px dashed var(--line)}
+.ans{background:var(--ex-bg);border-left:5px solid var(--ex);padding:9px 12px;border-radius:6px;margin:10px 0}
+/* practice */
+.qz{border:2px solid var(--prac);background:var(--prac-bg);border-radius:12px;padding:12px 12px 4px;margin:18px 0}
+.qz>.qh{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--prac);font-weight:700}
+.qz>.qi{margin:4px 0 8px;color:var(--muted);font-size:15px}
+.qc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;margin:0 0 12px}
+.qc.ok{border-color:var(--ok)}.qc.no{border-color:var(--bad)}
+.qc .qt{margin:0 0 8px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;min-height:46px;background:var(--surface);border:2px solid var(--line);color:var(--fg);border-radius:10px;cursor:pointer;line-height:1.4}
+.opt b.l{display:inline-block;min-width:26px;color:var(--prac)}
+.opt:hover:not([disabled]){border-color:var(--prac)}
+.opt.sel{border-color:var(--prac);background:var(--prac-bg)}
+.opt.good{border-color:var(--ok);background:var(--ex-bg)}
+.opt.bad{border-color:var(--bad);background:var(--mis-bg);text-decoration:none}
+.opt[disabled]{cursor:default}
+.fb{margin:8px 0 2px;padding:9px 12px;border-radius:8px;font-size:15px}
+.fb.g{background:var(--ex-bg);border-left:5px solid var(--ok)}
+.fb.b{background:var(--mis-bg);border-left:5px solid var(--bad)}
+.fb.n{background:var(--tip-bg);border-left:5px solid var(--tip)}
+.fb b{display:block;margin-bottom:2px}
+.row{display:flex;flex-wrap:wrap;align-items:center}
+input.tx{flex:1;min-width:150px;margin:6px 8px 6px 0;padding:11px 12px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);min-height:46px}
+.btn{min-height:46px;padding:0 18px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:700;cursor:pointer;margin:6px 8px 6px 0}
+.btn.gh{background:transparent;color:var(--fg);border:2px solid var(--line)}
+.btn.sm{min-height:38px;padding:0 12px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.lnk{background:none;border:0;color:var(--def);text-decoration:underline;cursor:pointer;padding:8px 4px;min-height:40px}
+.prog{font-size:13px;color:var(--muted);margin:2px 0 10px}
+.score{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:14px;margin:12px 0}
+.score .big{font-size:34px;font-weight:700;color:var(--accent);line-height:1.1}
+.tbar{height:10px;background:var(--surface2);border-radius:6px;overflow:hidden;margin:4px 0 10px}
+.tbar i{display:block;height:100%;background:var(--accent)}
+.tbar.low i{background:var(--bad)}.tbar.mid i{background:var(--tip)}
+/* passage */
+.passage{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 16px 8px;margin:14px 0;line-height:1.75}
+.passage .pt{font-weight:700;margin:10px 0 0}
+details.pas{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:12px 0}
+details.pas summary{padding:12px 14px;cursor:pointer;font-weight:600;min-height:44px}
+details.pas .passage{border:0;margin:0}
+/* mistakes cards */
+.mk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0}
+.mk .w{background:var(--mis-bg);border-left:5px solid var(--mis);padding:7px 10px;border-radius:6px;margin:6px 0}
+.mk .r{background:var(--ex-bg);border-left:5px solid var(--ok);padding:7px 10px;border-radius:6px;margin:6px 0}
+.mk .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.mk .w .k{color:var(--mis)}.mk .r .k{color:var(--ok)}
+/* home */
+.hero{background:var(--accent);color:var(--accent-fg);border-radius:14px;padding:20px 18px;margin:6px 0 14px}
+.hero h1{margin:0 0 6px}.hero p{margin:6px 0;opacity:.95}
+.hero .btn{background:var(--accent-fg);color:var(--accent)}
+.hero .btn.gh{background:transparent;color:var(--accent-fg);border:2px solid var(--accent-fg)}
+.part{margin:22px 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.tile{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer;color:var(--fg);min-height:60px}
+.tile:hover{border-color:var(--accent)}
+.tile b{display:block;font-size:16px;line-height:1.3}
+.tile small{display:block;margin-top:2px}
+.tile .meta{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
+.tile .tbar{margin:6px 0 0;height:6px}
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:15;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .wrap{display:flex;align-items:center;padding-top:8px;padding-bottom:8px}
+.nav .mid{flex:1;text-align:center;font-size:13px;color:var(--muted);padding:0 6px}
+.nav .btn{margin:0;min-width:92px}
+.timer{position:sticky;top:60px;z-index:10;background:var(--tip-bg);border:2px solid var(--tip);border-radius:10px;padding:8px 12px;margin:8px 0;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Open contents menu" style="margin:0 10px 0 0">☰</button><div class="brand" id="brand" style="cursor:pointer"><b>SS3 English · Recasting and function</b><small id="sub">Contents</small></div></div><div class="bar"><i id="gbar"></i></div></header>
+<aside id="drawer" aria-label="Table of contents"></aside><div id="shade"></div>
+<main><div class="wrap" id="app"></div></main>
+<div class="nav" id="navbar" style="display:none"><div class="wrap"><button class="btn gh" id="pv">Back</button><div class="mid" id="navmid"></div><button class="btn" id="nx">Next</button></div></div>
+<script>
+/* ---- content helpers ---- */
+var SECS=[];
+function hs(x){return '<span class="hs">'+x+'</span>'}   // subject colour
+function hv(x){return '<span class="hv">'+x+'</span>'}   // verb colour
+function ho(x){return '<span class="ho">'+x+'</span>'}   // object colour
+function hb(x){return '<span class="hb">'+x+'</span>'}   // other highlight
+function P(h){return {t:'p',h:h}}
+function H(h){return {t:'h',h:h}}
+function DEF(h,title){return {t:'def',h:h,title:title||'Definition'}}
+function EX(h,title){return {t:'ex',h:h,title:title||'Example'}}
+function TIP(h,title){return {t:'tip',h:h,title:title||'Exam tip'}}
+function MIS(h,title){return {t:'mis',h:h,title:title||'Common mistake'}}
+function TB(head,rows,cap){return {t:'tb',head:head,rows:rows,cap:cap||''}}
+function WK(title,items){return {t:'wk',title:title,items:items}}
+function STP(items,title){return {t:'stp',items:items,title:title||''}}
+function QZ(id,title,mode,items,intro,level){return {t:'qz',id:id,title:title,mode:mode,items:items,intro:intro||'',level:level||''}}
+function SC(title){var b=[];for(var i=1;i<arguments.length;i++)b.push(arguments[i]);return {title:title,blocks:b}}
+function SEC(id,part,title,blurb,screens){SECS.push({id:id,part:part,title:title,blurb:blurb,screens:screens})}
+/* questions */
+function M(id,topic,q,opts,a,why,wr){return {type:'mcq',id:id,topic:topic,q:q,opts:opts,a:a,why:why,wr:wr||{}}}
+function W(id,topic,q,ans,why,o){o=o||{};return {type:'typed',id:id,topic:topic,q:q,ans:ans,why:why,model:ans[0],hint:o.hint||'',traps:o.traps||[],noq:!!o.noq,needq:!!o.needq,has:o.has||null,ph:o.ph||'Type your answer here'}}
+var SAME=['Same meaning','Different meaning'];
+/* the topic list used for the revision panel */
+var TOPICS={
+  recast:{n:'What recasting means',sec:'a1'},
+  participle:{n:'Past participles',sec:'a2'},
+  passive:{n:'Active and passive voice',sec:'a2'},
+  reported:{n:'Direct and reported speech',sec:'a3'},
+  function:{n:'Grammatical functions',sec:'b2'},
+  phrase:{n:'Phrases and clauses',sec:'b3'},
+  passage:{n:'Comprehension passage',sec:'c1'}
+};
+
+/* ================= START HERE ================= */
+SEC('start','Start here','Words you need first','Ten small words that every grammar lesson uses.',[
+ SC('How to use this note',
+  P('This note teaches one small idea at a time. Do not rush. Read a screen, try the activity, then tap <b>Next</b>.'),
+  DEF('A short, clear meaning of a new word. Read these first.'),
+  EX('A sentence that shows the idea at work. Study how it is built.'),
+  TIP('A trick for answering WAEC and JAMB questions.'),
+  MIS('A mistake many students make, and how to avoid it.'),
+  P('<b>Practice questions</b> have a purple border. Think first, then answer. You will get feedback straight away. If you are wrong, you get another chance.'),
+  P('Your scores are saved on this device. The <b>Revision</b> page tells you which topics you must study again.')),
+ SC('Ten words we will use',
+  P('Do not worry if some of these feel new. Every one is explained again later with examples.'),
+  TB(['Word','What it means','Example'],[
+   ['<b>Sentence</b>','A group of words that makes complete sense. It has a subject and a verb.',`${hs('Ada')} ${hv('sings')}.`],
+   ['<b>Subject</b>','The person or thing the sentence is about. It usually does the action.',`${hs('The boy')} ran home.`],
+   ['<b>Verb</b>','A word that shows an action or a state.',`The boy ${hv('ran')} home.`],
+   ['<b>Object</b>','The person or thing that receives the action of the verb.',`Ada kicked ${ho('the ball')}.`],
+   ['<b>Noun</b>','The name of a person, place, thing or idea.','Lagos, teacher, book, honesty'],
+   ['<b>Pronoun</b>','A small word used in place of a noun.','he, she, it, they, him, her, them'],
+   ['<b>Tense</b>','The form of the verb that shows time: past, present or future.','cooks (now), cooked (past), will cook (future)'],
+   ['<b>Phrase</b>','A group of words that works together but has no subject-verb pair of its own.','in the classroom'],
+   ['<b>Clause</b>','A group of words that has its own subject and verb.','because the bell rang'],
+   ['<b>Adverb</b>','A word that tells how, when or where something happens.','quickly, yesterday, here']
+  ]),
+  TIP('If you are ever stuck on a sentence, find the <b>verb</b> first. Everything else is easier once you know the verb.'))
+]);
+
+/* ================= A1: RECASTING ================= */
+SEC('a1','Part A: Sentence recasting','What is sentence recasting?','Rewrite a sentence in a new form without changing its meaning.',[
+ SC('Recasting in one sentence',
+  DEF('<b>Sentence recasting</b> means rewriting a sentence in a different grammatical form <b>without changing its meaning</b>.'),
+  P('Think of it as pouring water from one cup into another. The shape of the cup changes. The water stays the same.'),
+  EX(`${hs('Ada')} ${hv('cooked')} ${ho('the food')}.<br>→ ${ho('The food')} ${hv('was cooked')} by ${hs('Ada')}.<br><em>The form changed (active to passive). The meaning did not change: Ada did the cooking.</em>`),
+  TIP('Examiners test one thing above all: <b>is the meaning still the same?</b> A sentence can be grammatically perfect and still be marked wrong because the meaning changed.')),
+ SC('Six recasts to study',
+  P('Study each pair. The two sentences have exactly the same meaning.'),
+  TB(['Original','Recast','What changed'],[
+   ['Ada cooked the food.','The food was cooked by Ada.','Active → passive'],
+   ['Musa said, "I am hungry."','Musa said that he was hungry.','Direct → reported speech'],
+   ['The soup was too hot for the child to drink.','The soup was so hot that the child could not drink it.','Different sentence pattern'],
+   ['Ngozi is taller than Bola.','Bola is not as tall as Ngozi.','Comparison reversed'],
+   ['Because it rained, the match was cancelled.','The match was cancelled because it rained.','Order of the parts'],
+   ['Despite his illness, he came.','Although he was ill, he came.','Phrase → clause']
+  ]),
+  P('This note focuses on the two recasts that WAEC and JAMB test most often: <b>active and passive voice</b> and <b>direct and reported speech</b>.')),
+ SC('Same meaning or different meaning?',
+  P('<b>Think first.</b> For each pair, decide if the two sentences mean the same thing.'),
+  QZ('a1-pairs','Same or different?','live',[
+   M('a1p1','recast',`<b>1.</b> Ada beat Bola.<br>Bola was beaten by Ada.`,SAME,0,'Ada is the winner in both. Only the form changed, from active to passive.',{1:'Look at who does the beating. In both sentences, Ada beats Bola.'}),
+   M('a1p2','recast',`<b>2.</b> Ada beat Bola.<br>Ada was beaten by Bola.`,SAME,1,'In the first sentence Ada is the winner. In the second Bola is the winner. The doer and the receiver have been swapped.',{0:'Check who does the beating in each sentence. In the second one, Bola does it.'}),
+   M('a1p3','recast',`<b>3.</b> The dog bit the thief.<br>The thief was bitten by the dog.`,SAME,0,'The dog does the biting in both sentences.',{1:'In both sentences the dog is the biter.'}),
+   M('a1p4','recast',`<b>4.</b> Emeka gave Tunde the key.<br>Emeka was given the key by Tunde.`,SAME,1,'In the first sentence Emeka gives. In the second, Tunde gives. The giver and the receiver have been swapped.',{0:'Who gives the key in the second sentence? It is Tunde, not Emeka.'}),
+   M('a1p5','recast',`<b>5.</b> Musa said, "I will come tomorrow."<br>Musa said that he would come the next day.`,SAME,0,'Will changes to would and tomorrow to the next day. The promise is exactly the same.',{1:'Both sentences report the same promise. Only the form changed.'}),
+   M('a1p6','recast',`<b>6.</b> The teacher told the pupil to sit.<br>The pupil told the teacher to sit.`,SAME,1,'The person giving the order and the person receiving it have been swapped.',{0:'Who gives the order in each sentence? The roles are reversed.'}),
+   M('a1p7','recast',`<b>7.</b> Funke is as tall as her brother.<br>Funke is not as tall as her brother.`,SAME,1,'The second sentence adds not. It says the opposite.',{0:'Look for the word not. It reverses the meaning.'})
+  ],'Choose one answer for each pair.')),
+ SC('The serious mistake: swapping the doer and the receiver',
+  P('The <b>doer</b> is the person or thing that performs the action. The <b>receiver</b> is the person or thing the action happens to.'),
+  EX(`${hs('The police')} ${hv('arrested')} ${ho('the thief')}.<br>✔ ${ho('The thief')} was arrested by ${hs('the police')}.<br>✘ <s>The police were arrested by the thief.</s>`,'Right and wrong'),
+  P('In the wrong sentence the grammar is perfect, but the story is now the opposite. The police are now the people in trouble.'),
+  MIS('A student moves the words around but forgets who did what. Before you write your answer, ask: <b>Who did the action? Who received it?</b> The same person must still do the action in your recast.'),
+  QZ('a1-swap','Check yourself','live',[
+   M('a1s1','recast',`Which sentence has the <b>same meaning</b> as: <em>The principal praised the prefects.</em>`,['The principal was praised by the prefects.','The prefects were praised by the principal.','The prefects praised the principal.','The principal has been praised.'],1,'The principal is the doer and the prefects are the receivers. Only option B keeps that.',{0:'The doer and receiver are swapped here. The prefects now do the praising.',2:'The doer and receiver are swapped here too.',3:'The prefects have disappeared and the tense changed. The meaning is not preserved.'}),
+   M('a1s2','recast',`Which sentence has the <b>same meaning</b> as: <em>Chidi gave Ada a gift.</em>`,['Chidi was given a gift by Ada.','Ada gave Chidi a gift.','Ada was given a gift by Chidi.','A gift was given to Chidi by Ada.'],2,'Chidi is the giver and Ada is the receiver. Only option C keeps that.',{0:'Ada is now the giver. The roles are swapped.',1:'Ada is now the giver. The roles are swapped.',3:'Here Chidi receives the gift. The roles are swapped.'})
+  ],'Two quick questions.'))
+]);
+
+/* ================= A2: ACTIVE AND PASSIVE ================= */
+var PASS_WORKED=[
+ {q:`${hs('Ngozi')} ${hv('cooks')} ${ho('rice')}.`,tag:'1. Simple present',a:'Rice is cooked by Ngozi.',st:[`Subject: <b>Ngozi</b>. Verb: <b>cooks</b>. Object: <b>rice</b>.`,'Move the object to the front: <b>Rice</b>…','Simple present passive uses <b>is/am/are + past participle</b>. The object is singular, so use <b>is</b>: <b>is cooked</b>.','Add the doer with by: <b>by Ngozi</b>.','Check the tense. The original is present. The passive is present. Same meaning.']},
+ {q:`${hs('The teacher')} ${hv('punished')} ${ho('the student')}.`,tag:'2. Simple past',a:'The student was punished by the teacher.',st:['Subject: the teacher. Verb: punished. Object: the student.','Move the object to the front: <b>The student</b>…','Simple past passive uses <b>was/were + past participle</b>: <b>was punished</b>.','Add the doer: <b>by the teacher</b>.','Past stays past. The teacher is still the one who punished.']},
+ {q:`${hs('Emeka')} ${hv('is washing')} ${ho('the car')}.`,tag:'3. Present continuous',a:'The car is being washed by Emeka.',st:['Subject: Emeka. Verb: is washing. Object: the car.','Move the object: <b>The car</b>…','Present continuous passive uses <b>am/is/are + being + past participle</b>: <b>is being washed</b>.','Add the doer: <b>by Emeka</b>.','The action is still happening now. The tense is preserved.']},
+ {q:`${hs('The girls')} ${hv('were singing')} ${ho('a song')}.`,tag:'4. Past continuous',a:'A song was being sung by the girls.',st:['Subject: the girls. Verb: were singing. Object: a song.','Move the object: <b>A song</b>…','Past continuous passive uses <b>was/were + being + past participle</b>. The object is singular, so <b>was being sung</b> (sing – sang – sung).','Add the doer: <b>by the girls</b>.','Past continuous stays past continuous.']},
+ {q:`${hs('Ibrahim')} ${hv('has written')} ${ho('the letter')}.`,tag:'5. Present perfect',a:'The letter has been written by Ibrahim.',st:['Subject: Ibrahim. Verb: has written. Object: the letter.','Move the object: <b>The letter</b>…','Present perfect passive uses <b>has/have + been + past participle</b>: <b>has been written</b>.','Add the doer: <b>by Ibrahim</b>.','Present perfect stays present perfect.']},
+ {q:`${hs('The thief')} ${hv('had broken')} ${ho('the window')}.`,tag:'6. Past perfect',a:'The window had been broken by the thief.',st:['Subject: the thief. Verb: had broken. Object: the window.','Move the object: <b>The window</b>…','Past perfect passive uses <b>had + been + past participle</b>: <b>had been broken</b>.','Add the doer: <b>by the thief</b>.','Past perfect stays past perfect.']},
+ {q:`${hs('The principal')} ${hv('will announce')} ${ho('the results')}.`,tag:'7. Future (will)',a:'The results will be announced by the principal.',st:['Subject: the principal. Verb: will announce. Object: the results.','Move the object: <b>The results</b>…','Future passive uses <b>will + be + past participle</b>: <b>will be announced</b>.','Add the doer: <b>by the principal</b>.','Future stays future.']},
+ {q:`${hs('Tunde')} ${hv('can solve')} ${ho('this problem')}.`,tag:'8. Modal verb (can)',a:'This problem can be solved by Tunde.',st:['Subject: Tunde. Verb: can solve. Object: this problem.','Move the object: <b>This problem</b>…','A modal verb (can, must, should, may…) stays the same. Then add <b>be + past participle</b>: <b>can be solved</b>.','Add the doer: <b>by Tunde</b>.','Do not change can to could. Keep the same modal.']},
+ {q:`${hs('Students')} ${hv('must obey')} ${ho('the school rules')}.`,tag:'9. Modal verb (must)',a:'The school rules must be obeyed by students.',st:['Subject: students. Verb: must obey. Object: the school rules.','Move the object: <b>The school rules</b>…','Modal <b>must</b> + <b>be + obeyed</b>: <b>must be obeyed</b>.','Add the doer: <b>by students</b>.','Keep the modal exactly the same. Its strength of meaning must not change.']},
+ {q:`${hs('Mrs Bello')} ${hv('gave')} ${hb('Chidi')} ${ho('a book')}.`,tag:'10. Two objects',a:'Chidi was given a book by Mrs Bello.  OR  A book was given to Chidi by Mrs Bello.',st:['This verb has <b>two objects</b>: <b>Chidi</b> (who receives) and <b>a book</b> (what is given).','Either object can become the new subject.','Option 1: start with Chidi: <b>Chidi was given a book by Mrs Bello</b>.','Option 2: start with the book: <b>A book was given to Chidi by Mrs Bello</b>. Notice that <b>to</b> is added.','Both are correct. Option 1 is more common in exams.']},
+ {q:`${hs('Someone')} ${hv('stole')} ${ho('my bicycle')}.`,tag:'11. Doer left out',a:'My bicycle was stolen.',st:['Subject: someone. Verb: stole. Object: my bicycle.','Move the object: <b>My bicycle</b>…','Past passive: <b>was stolen</b>.','Do we add <b>by someone</b>? No. We do not know who did it, and <b>someone</b> adds no information.','The passive is useful here because it lets us leave out an unknown doer.']},
+ {q:`${hs('The police')} ${hv('arrested')} ${ho('the robbers')}.`,tag:'12. Plural object',a:'The robbers were arrested by the police.',st:['Subject: the police. Verb: arrested. Object: the robbers.','Move the object: <b>The robbers</b>…','The new subject is plural, so use <b>were</b>: <b>were arrested</b>.','Add the doer: <b>by the police</b>.','Match the verb to the <b>new</b> subject.']},
+ {q:`${hs('People')} ${hv('speak')} ${ho('English')} in Ghana.`,tag:'13. General statement',a:'English is spoken in Ghana.',st:['Subject: people (a very general doer). Verb: speak. Object: English.','Move the object: <b>English</b>…','Simple present passive: <b>is spoken</b>.','Leave out <b>by people</b>. It is obvious and adds nothing.','Notice how natural this sounds. This is how the passive is used in real life.']},
+ {q:`${hs('Who')} ${hv('broke')} ${ho('the window')}?`,tag:'14. Question',a:'By whom was the window broken?',st:['Subject: who. Verb: broke. Object: the window.','The new subject is <b>the window</b>.','Question form of the passive: <b>was the window broken</b>.','Put the doer in front with <b>by whom</b>: <b>By whom was the window broken?</b>','Remember <b>whom</b>, not <b>who</b>, after a preposition.']}
+];
+SEC('a2','Part A: Sentence recasting','Active and passive voice','Learn it from the very beginning, then practise.',[
+ SC('Subject, verb and object',
+  P('Before we change a sentence, we must be able to <b>see</b> its parts. Three parts matter most.'),
+  DEF('<b>Subject:</b> the person or thing that does the action (or that the sentence is about).','Subject'),
+  DEF('<b>Verb:</b> the word that shows the action.','Verb'),
+  DEF('<b>Object:</b> the person or thing that <b>receives</b> the action.','Object'),
+  EX(`${hs('Ada')} ${hv('kicked')} ${ho('the ball')}.<br><b>Who kicked?</b> Ada → subject.<br><b>What was kicked?</b> The ball → object.`,'Finding the parts'),
+  TIP('To find the subject, ask <b>Who or what + verb?</b> To find the object, ask <b>Verb + who or what?</b>'),
+  QZ('a2-parts','Find the parts','live',[
+   M('a2pt1','passive',`In the sentence <em>The farmer sells yams</em>, what is the <b>object</b>?`,['The farmer','sells','yams','The farmer sells'],2,'Ask: sells what? Yams. Yams receives the action of selling.',{0:'The farmer is the subject. He does the selling.',1:'Sells is the verb, the word that shows the action.',3:'That is the subject and verb together. The object is only the thing that is sold.'}),
+   M('a2pt2','passive',`In the sentence <em>Tola eats rice</em>, which word is the <b>subject</b>?`,['Tola','eats','rice','None of them'],0,'Ask: who eats? Tola. Tola does the action.',{1:'Eats is the verb.',2:'Rice receives the action. It is the object.',3:'Every complete sentence has a subject.'})
+  ])),
+ SC('Doing and receiving',
+  P('Every action has someone who <b>does</b> it and, often, someone or something that <b>receives</b> it.'),
+  EX(`${hs('Musa')} ${hv('opened')} ${ho('the door')}.<br>Musa <b>performs</b> the action. The door <b>receives</b> it.`,'Who does? Who receives?'),
+  DEF('<b>Active voice:</b> the subject <b>does</b> the action. The doer comes first.','Active voice'),
+  DEF('<b>Passive voice:</b> the subject <b>receives</b> the action. The receiver comes first.','Passive voice'),
+  TB(['Active','Passive'],[
+   [`${hs('The teacher')} ${hv('punished')} ${ho('the student')}.<br><small>The teacher (doer) is the subject.</small>`,`${ho('The student')} ${hv('was punished')} by ${hs('the teacher')}.<br><small>The student (receiver) is the subject.</small>`],
+   [`${hs('Bola')} ${hv('wrote')} ${ho('the story')}.`,`${ho('The story')} ${hv('was written')} by ${hs('Bola')}.`]
+  ]),
+  P('The meaning is the same. What the sentence is <b>about</b> has changed. In the active sentence we talk about the doer. In the passive we talk about the receiver.')),
+ SC('Seven steps to change active to passive',
+  P('Follow these steps in order every time. It never fails.'),
+  STP([
+   '<b>Identify the subject.</b> Who or what does the action?',
+   '<b>Identify the verb.</b> Notice its tense.',
+   '<b>Identify the object.</b> Who or what receives the action?',
+   '<b>Move the object to the beginning.</b> It becomes the new subject.',
+   '<b>Change the verb</b> to the correct form of <b>be + past participle</b>. Keep the same tense.',
+   '<b>Add the original subject with “by”</b> where it is needed. Remember to use object pronouns: by him, by her, by them.',
+   '<b>Check.</b> Is the tense the same? Is the meaning the same? Does the verb agree with the new subject?'
+  ]),
+  EX(`${hs('The teacher')} ${hv('punished')} ${ho('the student')}.<br>1. Subject: the teacher<br>2. Verb: punished (simple past)<br>3. Object: the student<br>4. The student…<br>5. …was punished…<br>6. …by the teacher.<br>7. <b>The student was punished by the teacher.</b> ✔`,'All seven steps')),
+ SC('Past participles',
+  DEF('<b>Past participle:</b> the form of the verb used after <b>be</b> or <b>have</b>. It is the third form of the verb.'),
+  P('Regular verbs add <b>-ed</b>: cook – cooked – cooked. Irregular verbs must be learned.'),
+  TB(['Present','Past','Past participle'],[
+   ['write','wrote','<b>written</b>'],['eat','ate','<b>eaten</b>'],['break','broke','<b>broken</b>'],['build','built','<b>built</b>'],
+   ['teach','taught','<b>taught</b>'],['take','took','<b>taken</b>'],['give','gave','<b>given</b>'],['see','saw','<b>seen</b>'],
+   ['do','did','<b>done</b>'],['speak','spoke','<b>spoken</b>'],['steal','stole','<b>stolen</b>'],['sing','sang','<b>sung</b>'],
+   ['choose','chose','<b>chosen</b>'],['drive','drove','<b>driven</b>'],['bring','brought','<b>brought</b>'],['buy','bought','<b>bought</b>']
+  ]),
+  MIS('Students write <s>was wrote</s> or <s>was broke</s>. After <b>was</b>, <b>is</b>, <b>has been</b> and similar forms, always use the <b>past participle</b>: was <b>written</b>, was <b>broken</b>.'),
+  QZ('a2-pp','Type the past participle','live',[
+   W('a2pp1','participle','What is the past participle of <b>write</b>?',['written'],'Write – wrote – written. The past participle is the third form.',{hint:'It ends in -en.'}),
+   W('a2pp2','participle','What is the past participle of <b>take</b>?',['taken'],'Take – took – taken.',{hint:'Third form, ends in -en.'}),
+   W('a2pp3','participle','What is the past participle of <b>build</b>?',['built'],'Build – built – built. The past and the past participle are the same.',{hint:'Same as the past form.'}),
+   W('a2pp4','participle','What is the past participle of <b>teach</b>?',['taught'],'Teach – taught – taught.',{hint:'It is the same as the past form.'}),
+   W('a2pp5','participle','What is the past participle of <b>give</b>?',['given'],'Give – gave – given.',{hint:'Third form, ends in -en.'}),
+   W('a2pp6','participle','What is the past participle of <b>eat</b>?',['eaten'],'Eat – ate – eaten.',{hint:'Third form, ends in -en.'})
+  ],'Type one word.')),
+ SC('How each tense changes',
+  P('The tense of the active verb decides the form of <b>be</b>. The main verb always becomes the past participle.'),
+  TB(['Tense','Active','Passive pattern','Passive example'],[
+   ['Simple present','Ngozi cooks rice.','am/is/are + past participle','Rice <b>is cooked</b> by Ngozi.'],
+   ['Simple past','Ngozi cooked rice.','was/were + past participle','Rice <b>was cooked</b> by Ngozi.'],
+   ['Present continuous','Ngozi is cooking rice.','am/is/are <b>being</b> + past participle','Rice <b>is being cooked</b> by Ngozi.'],
+   ['Past continuous','Ngozi was cooking rice.','was/were <b>being</b> + past participle','Rice <b>was being cooked</b> by Ngozi.'],
+   ['Present perfect','Ngozi has cooked rice.','has/have <b>been</b> + past participle','Rice <b>has been cooked</b> by Ngozi.'],
+   ['Past perfect','Ngozi had cooked rice.','had <b>been</b> + past participle','Rice <b>had been cooked</b> by Ngozi.'],
+   ['Future (will)','Ngozi will cook rice.','will <b>be</b> + past participle','Rice <b>will be cooked</b> by Ngozi.'],
+   ['Future perfect','Ngozi will have cooked rice.','will have <b>been</b> + past participle','Rice <b>will have been cooked</b> by Ngozi.'],
+   ['Modal verbs','Ngozi can cook rice.','modal + <b>be</b> + past participle','Rice <b>can be cooked</b> by Ngozi.']
+  ]),
+  TIP('The tense must <b>never</b> change. If the active verb is in the present continuous, the passive must also be in the present continuous. The word <b>being</b> is the sign of a continuous passive.')),
+ SC('Twelve worked examples (and more)',
+  P('For each example: <b>try it yourself first</b>, then tap to see the steps.'),
+  WK('Worked examples',PASS_WORKED)),
+ SC('Three rules you must remember',
+  H('1. When can the doer be left out?'),
+  P('Leave out <b>by + doer</b> when:'),
+  STP(['the doer is unknown (<em>My bicycle was stolen.</em>)','the doer is obvious or general (<em>English is spoken in Ghana.</em>)','the doer is unimportant, or we want to focus on what happened (<em>The road was repaired.</em>)']),
+  H('2. Not every active sentence can become passive'),
+  DEF('A <b>passive</b> sentence needs an <b>object</b> in the active sentence. The object becomes the new subject.'),
+  TB(['Active sentence','Has an object?','Passive possible?'],[
+   [`${hs('Ada')} ${hv('arrived')} early.`,'No (arrive does not take an object)','<b>No.</b> <s>Early was arrived by Ada</s> is nonsense.'],
+   [`${hs('The baby')} ${hv('slept')}.`,'No','<b>No.</b>'],
+   [`${hs('The rain')} ${hv('fell')} heavily.`,'No','<b>No.</b>'],
+   [`${hs('Ada')} ${hv('opened')} ${ho('the door')}.`,'Yes (the door)','<b>Yes:</b> The door was opened by Ada.']
+  ]),
+  MIS('Do not try to force a passive. A verb with <b>no object</b> (arrive, sleep, fall, go, come, die) cannot be made passive. If the question asks you to, write what is possible and explain.'),
+  H('3. Use object pronouns after “by”'),
+  EX(`${hs('She')} ${hv('hit')} ${ho('him')}. → <b>He</b> was hit <b>by her</b>.<br>Not <s>by she</s>. After <b>by</b>, use <b>me, you, him, her, it, us, them</b>.`)),
+ SC('Practice 1: beginner questions',
+  QZ('a2-beg','Beginner: multiple choice','live',[
+   M('a2b1','passive','<b>1.</b> Which sentence is in the <b>passive voice</b>?',['Ada sweeps the floor.','The floor is swept by Ada.','Ada is sweeping the floor.','Ada swept the floor.'],1,'In B the floor (the receiver) is the subject, and the verb is <b>is swept</b> (be + past participle).',{0:'Here Ada does the action and is the subject. That is active.',2:'Ada does the action. That is active.',3:'Ada does the action. That is active.'}),
+   M('a2b2','participle','<b>2.</b> What is the past participle of <b>write</b>?',['wrote','written','writed','writing'],1,'Write – wrote – written.',{0:'Wrote is the simple past. The past participle is the third form.',2:'There is no such word as writed. Write is irregular.',3:'Writing is the -ing form, not the past participle.'}),
+   M('a2b3','passive','<b>3.</b> In <em>The thief was caught by the police</em>, who <b>performed</b> the action of catching?',['The thief','The police','Both','Neither'],1,'The word after <b>by</b> shows the doer: the police caught the thief.',{0:'The thief received the action. He was caught.',2:'Only one of them caught. The other was caught.',3:'Someone must perform an action. Look at the word after by.'}),
+   M('a2b4','passive','<b>4.</b> Choose the correct passive of <em>Tunde kicked the ball.</em>',['The ball is kicked by Tunde.','The ball was kicked by Tunde.','Tunde was kicked by the ball.','The ball kicked Tunde.'],1,'The active verb is simple past, so the passive uses was + kicked.',{0:'The tense has changed. Kicked is past, so is kicked (present) is wrong.',2:'The doer and receiver are swapped. Tunde did the kicking.',3:'This is active, and the meaning is reversed.'}),
+   M('a2b5','passive','<b>5.</b> The passive voice is formed with…',['the verb be + past participle','the verb have + -ing','will + the base verb','the verb do + the base verb'],0,'Every passive is <b>be + past participle</b>: is cooked, was written, has been taken.',{1:'That pattern is not passive.',2:'That is the active future.',3:'That is used for questions and negatives in the active.'})
+  ],'Choose the best answer. If you are wrong, read the feedback and try again.')),
+ SC('Practice 2: intermediate transformations',
+  P('Now type the full passive sentence. Do not worry about capital letters or full stops.'),
+  QZ('a2-int','Intermediate: change to passive','live',[
+   W('a2i1','passive','<b>1.</b> The cook prepared the meal.',['The meal was prepared by the cook.'],'Simple past: was + prepared. Object (the meal) becomes the subject.',{hint:'Start with The meal… and use was + the past participle.',traps:[{re:/^the meal prepared/,m:'You forgot the verb be. A passive needs was + prepared.'},{re:/is prepared/,m:'The tense has changed. The active sentence is in the past, so use was.'}]}),
+   W('a2i2','passive','<b>2.</b> Mr Danjuma is repairing the generator.',['The generator is being repaired by Mr Danjuma.'],'Present continuous passive: is being + repaired.',{hint:'Present continuous needs is being + past participle.',traps:[{re:/is repaired/,m:'You left out being. Present continuous passive is is being + past participle.'},{re:/was being/,m:'The tense has changed. The active sentence is in the present continuous.'}]}),
+   W('a2i3','passive','<b>3.</b> The students have finished the project.',['The project has been finished by the students.'],'Present perfect passive: has been + finished. The subject is singular (the project), so has.',{hint:'has/have + been + past participle. Is the new subject singular or plural?',traps:[{re:/have been/,m:'Check the new subject. The project is singular, so use has been.'}]}),
+   W('a2i4','passive','<b>4.</b> The committee will announce the winners tomorrow.',['The winners will be announced by the committee tomorrow.','Tomorrow the winners will be announced by the committee.'],'Future passive: will be + announced.',{hint:'will + be + past participle.',traps:[{re:/will announced/,m:'After will you need be: will be announced.'}]}),
+   W('a2i5','passive','<b>5.</b> Someone has stolen my phone.',['My phone has been stolen.','My phone has been stolen by someone.'],'Present perfect passive: has been stolen. The doer is unknown, so by someone can be left out.',{hint:'has been + stolen. You do not need to include the unknown doer.'})
+  ],'Type the passive form of each sentence.')),
+ SC('Practice 3: examination standard',
+  P('These are the kind of transformations that are asked in WAEC and JAMB. Take your time.'),
+  QZ('a2-exam','Exam standard: passive voice','live',[
+   W('a2e1','passive','<b>1.</b> The headmaster has given the prefects new badges.',['The prefects have been given new badges by the headmaster.','New badges have been given to the prefects by the headmaster.'],'Two objects, so both answers are correct. The tense stays present perfect. Both new subjects (the prefects, new badges) are plural, so use have been given.',{hint:'This verb has two objects. Start with the prefects or with the badges.',traps:[{re:/has been given/,m:'Check the subject. Prefects or badges are plural, so use have been given.'}]}),
+   W('a2e2','passive','<b>2.</b> Nobody could solve the puzzle.',['The puzzle could not be solved by anybody.','The puzzle could not be solved by anyone.','The puzzle could not be solved.'],'Modal could + not + be + solved. The negative meaning is kept by could not. Nobody becomes not … anybody.',{hint:'Keep the negative. Use could not be + past participle.',traps:[{re:/nobody/,m:'Do not keep nobody after by with could not. Two negatives would cancel each other out. Use anybody.'}]}),
+   W('a2e3','passive','<b>3.</b> They were building a bridge across the river when the rain started.',['A bridge was being built across the river when the rain started.','A bridge was being built by them across the river when the rain started.'],'Past continuous passive: was being built. They is vague, so it can be left out.',{hint:'Past continuous passive is was/were being + past participle.',traps:[{re:/was building/,m:'Building is active. Use was being built.'},{re:/were being/,m:'The new subject (a bridge) is singular, so use was being.'}]}),
+   W('a2e4','passive','<b>4.</b> You must not touch the wires.',['The wires must not be touched.','The wires must not be touched by you.'],'Modal must + not + be + touched. By you is not needed because it is obvious.',{hint:'Modal + not + be + past participle.'}),
+   W('a2e5','passive','<b>5.</b> Who broke the window?',['By whom was the window broken?','Who was the window broken by?'],'The new subject is the window. The doer who becomes by whom. This is a classic exam question.',{hint:'The window becomes the subject. Who changes to by whom.',traps:[{re:/by who /,m:'After a preposition use whom, not who: by whom.'}]})
+  ],'Type the passive form. Some questions have more than one correct answer.'))
+]);
+
+/* ================= A3: DIRECT AND REPORTED SPEECH ================= */
+var REP_WORKED=[
+ {q:'Musa said, "I am hungry."',tag:'1. Statement',a:'Musa said that he was hungry.',st:['Reporting verb: <b>said</b>. Reported words: I am hungry.','Remove the quotation marks and the comma. Add <b>that</b>.','Pronoun: <b>I</b> is Musa himself, so I → <b>he</b>.','Tense: <b>am</b> (present) → <b>was</b> (past).','Check: no quotation marks, pronoun and tense both changed.']},
+ {q:'Ngozi said, "We are going to the market."',tag:'2. Statement',a:'Ngozi said that they were going to the market.',st:['Reporting verb: said. Reported words: We are going to the market.','We includes Ngozi and others, so we → <b>they</b>.','Present continuous → past continuous: are going → <b>were going</b>.','Add that. Remove quotation marks.','Place stays the same because it is not a here/there word.']},
+ {q:'Mrs Eze said to the class, "I have marked your scripts."',tag:'3. Statement with “told”',a:'Mrs Eze told the class that she had marked their scripts.',st:['Because the class is named, use <b>told</b> instead of <b>said to</b>.','I → <b>she</b> (Mrs Eze). Your → <b>their</b> (the class).','Present perfect → past perfect: have marked → <b>had marked</b>.','Add that. Remove quotation marks.','The speaker and the listener both appear in the pronouns. Check both.']},
+ {q:'Bayo said, "I will travel tomorrow."',tag:'4. Time change',a:'Bayo said that he would travel the next day.',st:['I → <b>he</b>.','will → <b>would</b>.','tomorrow → <b>the next day</b> (or the following day).','Add that. Remove quotation marks.','Never keep tomorrow in an exam answer unless the question says it is still tomorrow.']},
+ {q:'Chidi said to me, "You can borrow my pen."',tag:'5. Pronouns: you and my',a:'Chidi told me that I could borrow his pen.',st:['said to me → <b>told me</b>.','<b>You</b> is the listener, who is me, so you → <b>I</b>.','<b>My</b> belongs to Chidi, so my → <b>his</b>.','can → <b>could</b>.','Check that every pronoun points to the right person.']},
+ {q:'Uche said, "I saw her yesterday."',tag:'6. Simple past',a:'Uche said that he had seen her the day before.',st:['I → he. Her stays <b>her</b> (a third person does not change).','Simple past → <b>past perfect</b>: saw → <b>had seen</b>.','yesterday → <b>the day before</b> (or the previous day).','Add that. Remove quotation marks.','Use the past participle (seen) after had.']},
+ {q:'The teacher said, "Water boils at 100 degrees Celsius."',tag:'7. A universal truth',a:'The teacher said that water boils at 100 degrees Celsius.',st:['This statement is always true.','When the words reported are a <b>fact that is always true</b>, the tense does not have to change.','Keep <b>boils</b> in the present.','Add that. Remove quotation marks.','Only do this for real general truths. Do not use it to avoid learning the tense changes.']},
+ {q:'"Are you ready?" the coach asked Tunde.',tag:'8. Yes/no question',a:'The coach asked Tunde if he was ready.',st:['The reported words are a question that needs yes or no.','Use <b>if</b> or <b>whether</b> to join the sentences. <b>Do not use that.</b>','Change the word order to a statement: are you ready → <b>he was ready</b>.','You → he. Are → was.','Remove the question mark. The new sentence is a statement.']},
+ {q:'"Where do you live?" Mr Adamu asked the boy.',tag:'9. Wh-question',a:'Mr Adamu asked the boy where he lived.',st:['Keep the question word: <b>where</b>.','Change the word order to a statement: do you live → <b>he lived</b>. Remove <b>do</b>.','You → he. Live → lived.','Do not add that or if. Remove the question mark.','Check: where he lived, not where did he live.']},
+ {q:'"What did you eat this morning?" the doctor asked Zainab.',tag:'10. Wh-question + time',a:'The doctor asked Zainab what she had eaten that morning.',st:['Keep the question word: <b>what</b>.','Statement order: you did eat → <b>she had eaten</b>. Simple past in the question → past perfect.','You → she.','this morning → <b>that morning</b>.','No that, no question mark.']},
+ {q:'Amaka said to him, "Have you seen my bag?"',tag:'11. Question with “said to”',a:'Amaka asked him if he had seen her bag.',st:['The words are a question, so the reporting verb becomes <b>asked</b>.','Use <b>if</b> or <b>whether</b>.','You → he. My → her. Present perfect → past perfect: have seen → <b>had seen</b>.','Statement order: if he had seen her bag.','Remove the question mark.']},
+ {q:'"Close the door," the teacher said to Bayo.',tag:'12. Command',a:'The teacher told Bayo to close the door.',st:['A command uses <b>told</b> or <b>ordered</b>.','The listener (Bayo) comes right after the reporting verb.','Use <b>to + the base verb</b>: to close.','Do not use that. Do not keep the comma or quotation marks.','Check: told Bayo to close.']},
+ {q:'"Do not shout," the prefect said to the pupils.',tag:'13. Negative command',a:'The prefect told the pupils not to shout.',st:['Negative command: use <b>not to</b> + the base verb.','told the pupils <b>not to shout</b>.','Do not write told the pupils to not shout. Many examiners consider it weak.','Remove quotation marks and the comma.','Check the doer: the prefect gives the order.']},
+ {q:'"Please lend me your ruler," Halima said to Segun.',tag:'14. Request',a:'Halima asked Segun to lend her his ruler.',st:['A request uses <b>asked</b> (or requested, begged).','Please is dropped. A polite request is shown by asked.','Me → her (Halima). Your → his (Segun).','Use asked + person + <b>to</b> + base verb.','Remove quotation marks.']},
+ {q:'"Stand up at once!" the officer said to the soldiers.',tag:'15. Strong command',a:'The officer ordered the soldiers to stand up at once.',st:['A strong command uses <b>ordered</b> (or commanded).','ordered + the soldiers + <b>to</b> + stand up.','Keep at once. It shows the force of the order.','Remove the exclamation mark and quotation marks.','The reporting verb shows how the words were said.']},
+ {q:'"What a lovely dress!" Ada said.',tag:'16. Exclamation',a:'Ada exclaimed that it was a lovely dress.  (or: Ada exclaimed with admiration that it was a very lovely dress.)',st:['An exclamation shows strong feeling.','Use a reporting verb like <b>exclaimed</b> or <b>cried</b>, or say the feeling: with joy, with sorrow, with admiration.','What a lovely dress → that it was a lovely dress (you can add very).','Remove the exclamation mark.','Use that to join the parts.']},
+ {q:'"Hurray! We have won!" the boys shouted.',tag:'17. Exclamation',a:'The boys shouted with joy that they had won.',st:['Hurray shows joy. Replace the word with <b>with joy</b>.','We → they. Present perfect → past perfect: have won → <b>had won</b>.','Add that. Remove the exclamation marks.','The reporting verb is the same, shouted.','Notice how Hurray disappeared and with joy replaced it.']}
+];
+SEC('a3','Part A: Sentence recasting','Direct and reported speech','Report what people said without using their exact words.',[
+ SC('Direct speech and reported speech',
+  DEF('<b>Direct speech</b> gives the <b>exact words</b> a person said. It uses quotation marks.','Direct speech'),
+  DEF('<b>Reported speech</b> (also called indirect speech) tells <b>what a person said</b>, without quotation marks and often with changes.','Reported speech'),
+  EX(`<b>Direct:</b> Musa said, “I am hungry.”<br><b>Reported:</b> Musa said that he was hungry.`),
+  P('In both sentences, <b>said</b> is the <b>reporting verb</b>. The words that follow are the <b>reported clause</b>.'),
+  P('Three things usually change when you move from direct to reported speech: <b>pronouns</b>, <b>tenses</b> and <b>time/place words</b>. We learn them one at a time.')),
+ SC('Change 1: pronouns',
+  P('A pronoun must point to the right person from the <b>reporter’s</b> point of view.'),
+  TB(['Direct','Reported','Example'],[
+   ['I','he / she','Musa said, “<b>I</b> am hungry.” → Musa said that <b>he</b> was hungry.'],
+   ['we','they','Ngozi said, “<b>We</b> are late.” → Ngozi said that <b>they</b> were late.'],
+   ['my','his / her','Tayo said, “<b>My</b> bag is new.” → Tayo said that <b>his</b> bag was new.'],
+   ['our','their','The boys said, “<b>Our</b> teacher is here.” → The boys said that <b>their</b> teacher was there.'],
+   ['you / your','I / he / she / they … (depends on who is listening)','Ada said to me, “<b>You</b> are late.” → Ada told me that <b>I</b> was late.'],
+   ['he, she, they','No change','Bola said, “<b>She</b> is clever.” → Bola said that <b>she</b> was clever.']
+  ]),
+  TIP('Use this rule: <b>I/we</b> → the speaker. <b>You</b> → the listener. <b>He/she/they</b> → no change.')),
+ SC('Change 2: tenses',
+  P('When the reporting verb is in the past (said, told, asked…), the verb in the reported clause usually moves <b>one step back</b> in time. This is sometimes called <b>backshift</b>.'),
+  TB(['Direct speech','Reported speech','Example'],[
+   ['Simple present','Simple past','“I <b>eat</b>.” → he said that he <b>ate</b>.'],
+   ['Present continuous','Past continuous','“I <b>am eating</b>.” → he said that he <b>was eating</b>.'],
+   ['Present perfect','Past perfect','“I <b>have eaten</b>.” → he said that he <b>had eaten</b>.'],
+   ['Simple past','Past perfect (where appropriate)','“I <b>ate</b>.” → he said that he <b>had eaten</b>.'],
+   ['will','would','“I <b>will</b> go.” → he said that he <b>would</b> go.'],
+   ['can','could','“I <b>can</b> swim.” → he said that he <b>could</b> swim.'],
+   ['may','might','“I <b>may</b> come.” → he said that he <b>might</b> come.'],
+   ['must','had to (or must)','“I <b>must</b> go.” → he said that he <b>had to</b> go.']
+  ]),
+  TIP('<b>would, could, might, should, ought to</b> do not change again. They are already one step back.')),
+ SC('Change 3: time and place words',
+  P('Time and place words change because the reporter is speaking at a <b>different time and place</b> from the original speaker.'),
+  TB(['Direct','Reported'],[
+   ['today','that day'],['tonight','that night'],['now','then'],['yesterday','the previous day / the day before'],['tomorrow','the next day / the following day'],
+   ['last week','the previous week / the week before'],['next week','the following week / the week after'],['ago','before'],['here','there'],['this','that'],['these','those']
+  ]),
+  MIS('Students report tomorrow as <s>tomorrow</s> in an exam. Always change it to <b>the next day</b> or <b>the following day</b>.')),
+ SC('When the tense does not change',
+  P('The tenses do not always change. They stay the same when:'),
+  STP(['The words are a <b>universal truth</b> or a general fact: <em>The teacher said that water boils at 100 degrees Celsius.</em>','The reporting verb is in the <b>present</b> or future: <em>She says that she is tired.</em>','The verb is already one of <b>would, could, might, should, ought to</b>.']),
+  P('Time words also depend on the situation. If you report the words on the <b>same day</b>, you can keep <b>today</b> or <b>tomorrow</b>. In examinations, assume the reporting is done later, so change them.'),
+  QZ('a3-tense','Quick check: tense changes','live',[
+   M('a3t1','reported','<b>1.</b> In reported speech, <em>will</em> becomes…',['would','shall','can','did'],0,'will → would. It moves one step back.',{1:'Shall is not the usual backshift of will.',2:'Can is a different modal.',3:'Did is the past of do, not of will.'}),
+   M('a3t2','reported','<b>2.</b> In reported speech, <em>tomorrow</em> becomes…',['yesterday','the next day','today','now'],1,'tomorrow → the next day (or the following day).',{0:'Yesterday is a past time word, and it changes to the day before.',2:'Today becomes that day.',3:'Now becomes then.'}),
+   M('a3t3','reported','<b>3.</b> Which statement keeps the present tense correctly?',['The teacher said that water boils at 100 degrees Celsius.','The teacher said that the school was opening on Monday.','The teacher said that he is ill.','The teacher said that he can come.'],0,'A universal truth keeps its present tense. The other options report personal statements, so the tense should move back.',{1:'This one is not a universal truth.',2:'Personal state of health, not a universal truth. In exams, change it to was ill.',3:'Can → could in reported speech.'})
+  ])),
+ SC('Said, told, asked, ordered',
+  P('The <b>reporting verb</b> must match the type of sentence.'),
+  TB(['Reporting verb','Used for','Example'],[
+   ['said','statements; no person right after it','She <b>said</b> that she was tired. / She <b>said to me</b> that…'],
+   ['told','statements, commands; a person must follow','She <b>told me</b> that she was tired.'],
+   ['asked','questions and polite requests','He <b>asked</b> where I lived.'],
+   ['ordered / commanded','strong commands','The officer <b>ordered</b> them to stand.'],
+   ['begged / requested','requests','She <b>begged</b> him to stay.']
+  ]),
+  MIS('<s>She said me that she was tired.</s> <b>Said</b> cannot be followed directly by a person. Use <b>told me</b> or <b>said to me</b>.'),
+  QZ('a3-verbs','Quick check: reporting verbs','live',[
+   M('a3v1','reported','Choose the correct sentence.',['She said me that she was ready.','She told me that she was ready.','She told that she was ready.','She said to that she was ready.'],1,'Told needs a person after it: told me.',{0:'Said cannot take a person directly. Say said to me, or use told me.',2:'Told needs a person after it.',3:'Said to needs a person after to.'})
+  ])),
+ SC('Reporting questions',
+  P('A <b>question</b> becomes a <b>statement</b> when reported. Keep these rules:'),
+  STP(['The reporting verb is usually <b>asked</b>.','Yes/no questions: join with <b>if</b> or <b>whether</b>.','Wh-questions (who, what, where, why, when, how): keep the question word.','Change the word order to a <b>statement</b> (subject before verb). Remove do/does/did.','Remove the question mark.','Do not use <b>that</b> in a reported question.']),
+  TB(['Direct question','Reported question'],[
+   ['“Are you tired?” Ada asked him.','Ada asked him <b>if</b> he was tired.'],
+   ['“Where do you live?” he asked me.','He asked me <b>where</b> I lived.'],
+   ['“Why did you come late?” the teacher asked.','The teacher asked <b>why</b> he had come late.']
+  ]),
+  MIS('<s>He asked where was I going.</s> Do not keep the question order. Write <b>He asked where I was going.</b>'),
+  MIS('<s>She asked that where I lived.</s> Never put <b>that</b> before the question word.')),
+ SC('Reporting commands, requests and exclamations',
+  H('Commands'),
+  P('<b>Told/ordered + person + to + base verb.</b> For negatives, <b>not to</b>.'),
+  EX('“Sit down,” the teacher said to Bola. → The teacher <b>told</b> Bola <b>to sit down</b>.<br>“Do not run,” she said to the children. → She told the children <b>not to run</b>.'),
+  H('Requests'),
+  P('<b>Asked/begged/requested + person + to + base verb.</b> Please is dropped.'),
+  EX('“Please help me,” Tayo said to Ngozi. → Tayo <b>asked</b> Ngozi <b>to help</b> him.'),
+  H('Exclamations'),
+  P('Use a verb like <b>exclaimed</b>, <b>cried</b> or <b>shouted</b>, and name the feeling: <b>with joy, with sorrow, with surprise</b>.'),
+  EX('“Alas! I have lost my phone,” said Chika. → Chika exclaimed <b>with sorrow</b> that she had lost her phone.'),
+  QZ('a3-types','Quick check: sentence types','live',[
+   M('a3q1','reported','Which reporting verb is best for: <em>“Please wait here,” she said to him.</em>?',['ordered','asked','exclaimed','replied'],1,'Please shows a polite request, so asked.',{0:'Ordered is for strong commands. Please makes this a polite request.',2:'Exclaimed shows strong feeling.',3:'Replied answers a question. This is not an answer.'}),
+   M('a3q2','reported','Which is the correct report of <em>“Do not touch it,” he said to me.</em>',['He told me do not touch it.','He told me to not touch it.','He told me not to touch it.','He said me not to touch it.'],2,'Negative command: told + person + not to + base verb.',{0:'Do not keep the command form. Use not to + verb.',1:'Not to touch is the standard form. Avoid to not.',3:'Said cannot take me directly. Use told me.'})
+  ])),
+ SC('Seventeen worked examples',
+  P('Try each one first, then reveal the steps. Study the pronouns and tenses carefully.'),
+  WK('Worked examples',REP_WORKED)),
+ SC('Mistakes to avoid',
+  MIS('Keeping the quotation marks.<br>✘ <s>Musa said that “he was hungry.”</s><br>✔ Musa said that he was hungry.'),
+  MIS('Forgetting to change the pronoun.<br>✘ <s>Musa said that I was hungry.</s><br>✔ Musa said that he was hungry.'),
+  MIS('Forgetting to move the tense back.<br>✘ <s>Musa said that he is hungry.</s> (in an exam)<br>✔ Musa said that he was hungry.'),
+  MIS('Using that in a reported question.<br>✘ <s>He asked that where I lived.</s><br>✔ He asked where I lived.'),
+  MIS('Keeping the question order.<br>✘ <s>He asked where did I live.</s><br>✔ He asked where I lived.'),
+  MIS('Saying <s>said me</s>.<br>✔ He told me. ✔ He said to me.'),
+  MIS('Leaving tomorrow, yesterday, here or now unchanged.<br>✔ the next day, the day before, there, then.')),
+ SC('Practice 1: beginner questions',
+  QZ('a3-beg','Beginner: reported speech','live',[
+   M('a3b1','reported','<b>1.</b> Choose the reported form of: <em>Ibrahim said, “I am tired.”</em>',['Ibrahim said that I was tired.','Ibrahim said that he was tired.','Ibrahim said that he had been tired.','Ibrahim said he will be tired.'],1,'I → he and am → was.',{0:'I must change to he. Ibrahim is the person speaking.',2:'Am becomes was. Had been is too far back.',3:'Will be changes the time. The tense should be past.'}),
+   M('a3b2','reported','<b>2.</b> In reported speech, <em>now</em> becomes…',['then','here','today','later'],0,'now → then.',{1:'Here is a place word. It becomes there.',2:'Today becomes that day.',3:'Later does not replace now.'}),
+   M('a3b3','reported','<b>3.</b> Choose the correct sentence.',['She said me that she was ready.','She told me that she was ready.','She told that she was ready.','She said to that she was ready.'],1,'Told needs a person after it.',{0:'Said cannot be followed by me. Use told me or said to me.',2:'Told needs a person: told me.',3:'Said to needs a person after to.'}),
+   M('a3b4','reported','<b>4.</b> In reported speech, <em>can</em> becomes…',['could','will','must','did'],0,'can → could.',{1:'Will changes to would, not from can.',2:'Must is a different modal.',3:'Did is not a modal.'}),
+   M('a3b5','reported','<b>5.</b> Which reporting verb is most suitable for a <b>question</b>?',['told','ordered','asked','said'],2,'Questions are reported with asked.',{0:'Told is for statements and commands.',1:'Ordered is for strong commands.',3:'Said is used for statements.'})
+  ],'Choose the best answer.')),
+ SC('Practice 2: intermediate questions',
+  P('Type the full reported sentence. Do <b>not</b> use quotation marks.'),
+  QZ('a3-int','Intermediate: change to reported speech','live',[
+   W('a3i1','reported','<b>1.</b> Kemi said, “I am cooking now.”',['Kemi said that she was cooking then.'],'I → she, am cooking → was cooking, now → then.',{noq:true,hint:'Change I, the tense and now.',traps:[{re:/was cooking now/,m:'Change now to then.'},{re:/is cooking/,m:'Move the tense back: is/am cooking → was cooking.'}]}),
+   W('a3i2','reported','<b>2.</b> The boys said, “We have finished our homework.”',['The boys said that they had finished their homework.'],'We → they, our → their, have finished → had finished.',{noq:true,hint:'Change we, our and the tense.',traps:[{re:/had finished our/,m:'Our must change to their.'},{re:/have finished/,m:'Present perfect moves back to past perfect: had finished.'}]}),
+   W('a3i3','reported','<b>3.</b> “Are you coming to the party?” Bisi asked Tola.',['Bisi asked Tola if she was coming to the party.','Bisi asked Tola whether she was coming to the party.'],'A yes/no question → if or whether, statement order, you → she, are → was.',{noq:true,hint:'Use if or whether. No question mark.',traps:[{re:/that/,m:'Do not use that in a reported question. Use if or whether.'},{re:/was she/,m:'Use statement order: she was coming, not was she coming.'}]}),
+   W('a3i4','reported','<b>4.</b> Mr Yusuf said to the pupils, “Open your books.”',['Mr Yusuf told the pupils to open their books.'],'Command → told + person + to + base verb. Your → their.',{noq:true,hint:'Use told + the pupils + to + verb.',traps:[{re:/open your/,m:'Your must change to their.'},{re:/that/,m:'Do not use that for a command. Use to + verb.'}]}),
+   W('a3i5','reported','<b>5.</b> Chika said, “I met him last week.”',['Chika said that she had met him the previous week.','Chika said that she had met him the week before.'],'I → she. Met → had met. Last week → the previous week / the week before.',{noq:true,hint:'Change I, met and last week.',traps:[{re:/last week/,m:'Change last week to the previous week or the week before.'},{re:/she met/,m:'Move the past tense back: had met.'}]})
+  ],'Type the reported sentence.')),
+ SC('Practice 3: WAEC and JAMB standard',
+  P('Ten mixed questions: statements, questions, commands and requests. Read carefully.'),
+  QZ('a3-exam','Exam standard: reported speech','live',[
+   W('a3e1','reported','<b>1.</b> The principal said to the students, “You will write the test tomorrow.”',['The principal told the students that they would write the test the next day.','The principal told the students that they would write the test the following day.'],'You → they, will → would, tomorrow → the next/following day. Said to → told.',{noq:true,hint:'Change you, will and tomorrow. Use told.',traps:[{re:/tomorrow/,m:'Change tomorrow to the next day or the following day.'},{re:/will write/,m:'Will changes to would.'}]}),
+   W('a3e2','reported','<b>2.</b> “Why did you leave early?” the manager asked the clerk.',['The manager asked the clerk why he had left early.'],'Wh-question: keep why, statement order, did leave → had left, you → he.',{noq:true,hint:'Keep why. Use statement order. Past → past perfect.',traps:[{re:/why did/,m:'Remove did. Use statement order: why he had left.'},{re:/why he left/,m:'Move the tense back. Left → had left.'}]}),
+   W('a3e3','reported','<b>3.</b> “Don’t touch the machine,” the engineer warned the boys.',['The engineer warned the boys not to touch the machine.','The engineer told the boys not to touch the machine.'],'Negative command → not to + verb.',{noq:true,hint:'Use not to + the base verb.',traps:[{re:/dont|do not/,m:'Do not keep the command form. Use not to + verb.'}]}),
+   W('a3e4','reported','<b>4.</b> Funke said to her mother, “My friends are coming here tonight.”',['Funke told her mother that her friends were coming there that night.'],'My → her. are coming → were coming. here → there. tonight → that night.',{noq:true,hint:'Four changes: my, tense, here, tonight.',traps:[{re:/here/,m:'Here becomes there.'},{re:/tonight/,m:'Tonight becomes that night.'}]}),
+   W('a3e5','reported','<b>5.</b> “How far is the market from here?” the stranger asked me.',['The stranger asked me how far the market was from there.'],'Keep how far. Statement order. is → was. here → there.',{noq:true,hint:'Keep how far. Change is, and here.',traps:[{re:/how far was the market from here/,m:'Change here to there.'},{re:/how far is/,m:'Move the tense back. is → was.'}]}),
+   W('a3e6','reported','<b>6.</b> “I can solve this problem,” said Obi.',['Obi said that he could solve that problem.'],'I → he. can → could. this → that.',{noq:true,hint:'Change I, can and this.',traps:[{re:/this problem/,m:'This becomes that.'},{re:/can solve/,m:'Can becomes could.'}]}),
+   W('a3e7','reported','<b>7.</b> “Please wait outside,” the secretary said to the visitors.',['The secretary asked the visitors to wait outside.','The secretary requested the visitors to wait outside.'],'A polite request → asked/requested + person + to + verb.',{noq:true,hint:'Use asked and to + verb.',traps:[{re:/told|ordered/,m:'Please shows a polite request, so use asked.'}]}),
+   W('a3e8','reported','<b>8.</b> The woman said, “My son was admitted to hospital yesterday.”',['The woman said that her son had been admitted to hospital the day before.','The woman said that her son had been admitted to hospital the previous day.'],'My → her. was admitted → had been admitted. yesterday → the day before.',{noq:true,hint:'Past passive moves back to had been + participle.',traps:[{re:/yesterday/,m:'Yesterday becomes the day before or the previous day.'},{re:/was admitted/,m:'Simple past moves back to past perfect: had been admitted.'}]}),
+   W('a3e9','reported','<b>9.</b> “Hurray! I have passed!” cried Sade.',['Sade cried with joy that she had passed.','Sade shouted with joy that she had passed.','Sade exclaimed with joy that she had passed.'],'Hurray becomes with joy. I → she. have passed → had passed.',{noq:true,hint:'Replace Hurray with with joy. Change I and the tense.',traps:[{re:/hurray/,m:'Replace Hurray with the feeling: with joy.'}]}),
+   W('a3e10','reported','<b>10.</b> The nurse said to the patient, “Take this medicine after meals.”',['The nurse told the patient to take that medicine after meals.'],'Command → told + person + to + verb. this → that.',{noq:true,hint:'Use told, to + verb, and change this.',traps:[{re:/this medicine/,m:'This becomes that.'},{re:/that the patient/,m:'Do not use that for a command. Use to + verb.'}]})
+  ],'Type the reported sentence. Do not use quotation marks.'))
+]);
+
+function U(x){return '<u class="ul">'+x+'</u>'}
+/* ================= B1: WORD CLASS vs FUNCTION ================= */
+SEC('b1','Part B: Grammatical function','Word class or grammatical function?','Two different questions about the same word.',[
+ SC('Two different questions',
+  DEF('<b>Word class</b> asks: <b>What kind of word is this?</b> (noun, verb, adjective, adverb…). The answer belongs to the word itself.','Word class'),
+  DEF('<b>Grammatical function</b> asks: <b>What job is this word, phrase or clause doing in this sentence?</b> (subject, object, complement, adverbial…). The answer depends on the sentence.','Grammatical function'),
+  EX('The word <b>teacher</b> is always a noun. That is its word class.<br>But in one sentence it may be the <b>subject</b>, and in another it may be the <b>object</b>. That is its function.'),
+  TIP('If the question says <b>“What is the function of…”</b>, never answer with <s>noun</s>, <s>verb</s> or <s>adverb</s>. Those are word classes. Answer with <b>subject, object, complement, adverbial</b>, and so on.')),
+ SC('Same words, different jobs',
+  P('Look at the same noun phrase <b>the boy</b> doing different jobs:'),
+  TB(['Sentence','Underlined part','Function'],[
+   [`${U('The boy')} ran home.`,'The boy','<b>Subject</b> (it does the running)'],
+   [`She saw ${U('the boy')}.`,'the boy','<b>Direct object</b> (it receives the seeing)'],
+   [`She gave ${U('the boy')} a book.`,'the boy','<b>Indirect object</b> (it receives the book)'],
+   [`He is ${U('a teacher')}.`,'a teacher','<b>Subject complement</b> (it describes he)'],
+   [`They arrived ${U('early')}.`,'early','<b>Adverbial</b> (it tells when)']
+  ]),
+  P('<b>The function changes when the sentence changes.</b> Never judge a word out of the sentence.'),
+  QZ('b1-q','Quick check','live',[
+   M('b1q1','function',`What is the <b>function</b> of ${U('the boy')} in: <em>She saw the boy.</em>?`,['Noun','Subject','Direct object','Adjective'],2,'The boy receives the action of seeing. It is the direct object. Noun is its word class, not its function.',{0:'Noun is the word class. The question asks for the job it does in the sentence.',1:'Who saw? She. The boy is not the doer.',3:'The boy is a noun phrase, not an adjective.'}),
+   M('b1q2','function',`What is the <b>function</b> of ${U('early')} in: <em>They arrived early.</em>?`,['Adjective','Adverb','Adverbial','Subject'],2,'Early tells when. Its function is adverbial. (Adverb is its word class.)',{1:'Adverb is its word class. The question asks for its function.',0:'Here early describes the verb arrived, so it works as an adverbial.',3:'The subject is They.'})
+  ]))
+]);
+
+/* ================= B2: THE TWELVE FUNCTIONS ================= */
+function FNQ(id,q,opts,a,why){return M(id,'function',q,opts,a,why)}
+SEC('b2','Part B: Grammatical function','The twelve grammatical functions','Learn each job one at a time.',[
+ SC('1. Subject',
+  DEF('The <b>subject</b> is the person or thing that does the action or that the sentence is about.'),
+  P('<b>How to identify it:</b> find the verb. Ask <b>who or what + verb?</b>'),
+  TB(['Sentence','Subject','Why?'],[
+   [`${U('Ngozi')} sings well.`,'Ngozi','Who sings? Ngozi.'],
+   [`${U('The old man in the shop')} sold me bread.`,'The old man in the shop','Who sold? The whole phrase, not just man.'],
+   [`${U('Reading novels')} improves your vocabulary.`,'Reading novels','What improves? Reading novels.']
+  ]),
+  MIS('Students underline only the first word. A subject can be a long phrase. Take <b>everything</b> that answers “who or what + verb?”'),
+  QZ('b2-1','Quick check','live',[FNQ('b2f1',`What is the function of ${U('The old man in the shop')} in: <em>The old man in the shop sold me bread.</em>?`,['Subject','Direct object','Adverbial','Subject complement'],0,'Who sold me bread? The old man in the shop. That is the subject.')])),
+ SC('2. Direct object',
+  DEF('The <b>direct object</b> is the person or thing that <b>receives the action</b> of the verb.'),
+  P('<b>How to identify it:</b> ask <b>verb + what or whom?</b>'),
+  TB(['Sentence','Direct object','Why?'],[
+   [`Tola kicked ${U('the ball')}.`,'the ball','Kicked what? The ball.'],
+   [`The farmer sells ${U('yams')}.`,'yams','Sells what? Yams.'],
+   [`She saw ${U('the boy')}.`,'the boy','Saw whom? The boy.']
+  ]),
+  MIS('A direct object is not always a thing. People can be direct objects too. Also, the verb <b>be</b> (is, am, was) has no object. What follows it is a complement.'),
+  QZ('b2-2','Quick check','live',[FNQ('b2f2',`What is the function of ${U('the ball')} in: <em>Tola kicked the ball.</em>?`,['Subject','Indirect object','Adverbial of place','Direct object'],3,'Kicked what? The ball. It receives the action, so it is the direct object.')])),
+ SC('3. Indirect object',
+  DEF('The <b>indirect object</b> is the person who <b>receives</b> the direct object, or who the action is done for. It comes before the direct object.'),
+  P('<b>How to identify it:</b> find the direct object first. Then ask <b>to or for whom?</b> The verb has two objects.'),
+  TB(['Sentence','Indirect object','Direct object'],[
+   [`She gave ${U('the boy')} a book.`,'the boy','a book'],
+   [`Mum bought ${U('Tayo')} a bag.`,'Tayo','a bag'],
+   [`The teacher told ${U('us')} a story.`,'us','a story']
+  ]),
+  MIS('If the person comes <b>after “to” or “for”</b>, as in <em>She gave a book to the boy</em>, then <b>to the boy</b> is a prepositional phrase. Use the position test: an indirect object comes <b>before</b> the direct object without a preposition.'),
+  QZ('b2-3','Quick check','live',[FNQ('b2f3',`What is the function of ${U('Tayo')} in: <em>Mum bought Tayo a bag.</em>?`,['Direct object','Subject complement','Indirect object','Object of a preposition'],2,'The bag is bought for Tayo. Tayo is the receiver of the direct object (a bag), so he is the indirect object.')])),
+ SC('4. Subject complement',
+  DEF('A <b>subject complement</b> completes the meaning of the subject. It <b>describes or renames the subject</b>. It follows a <b>linking verb</b> (be, become, seem, look, feel, smell, taste).'),
+  P('<b>How to identify it:</b> check that it <b>means the same thing as the subject</b> or describes the subject.'),
+  TB(['Sentence','Subject complement','Why?'],[
+   [`He is ${U('a teacher')}.`,'a teacher','a teacher = he'],
+   [`The soup smells ${U('delicious')}.`,'delicious','It describes the soup.'],
+   [`Ngozi became ${U('the captain')}.`,'the captain','the captain = Ngozi']
+  ]),
+  MIS('Do not call it an object. <b>Be</b> and linking verbs do not take objects. The word after them tells what the subject <b>is</b> or <b>is like</b>.'),
+  QZ('b2-4','Quick check','live',[FNQ('b2f4',`What is the function of ${U('delicious')} in: <em>The soup smells delicious.</em>?`,['Adverbial of manner','Subject complement','Direct object','Object complement'],1,'Smells is a linking verb here. Delicious describes the soup, the subject.')])),
+ SC('5. Object complement',
+  DEF('An <b>object complement</b> comes after the object and <b>describes or renames the object</b>.'),
+  P('<b>How to identify it:</b> find the object first. The complement tells you what the object <b>becomes, is called or is made to be</b>.'),
+  TB(['Sentence','Object','Object complement'],[
+   [`They elected Musa ${U('captain')}.`,'Musa','captain'],
+   [`The news made her ${U('happy')}.`,'her','happy'],
+   [`We call the dog ${U('Rex')}.`,'the dog','Rex']
+  ]),
+  MIS('Do not confuse it with an indirect object. In <em>They elected Musa captain</em>, captain = Musa (object complement). In <em>She gave Musa a book</em>, a book ≠ Musa (direct object).'),
+  QZ('b2-5','Quick check','live',[FNQ('b2f5',`What is the function of ${U('captain')} in: <em>They elected Musa captain.</em>?`,['Subject complement','Indirect object','Object complement','Adverbial of time'],2,'Captain describes what Musa has become. It renames the object, so it is an object complement.')])),
+ SC('6. Adverbial of time',
+  DEF('An <b>adverbial of time</b> tells <b>when</b> or <b>how often</b> something happens.'),
+  P('<b>How to identify it:</b> ask <b>when?</b> or <b>how often?</b>'),
+  TB(['Sentence','Adverbial of time','Why?'],[
+   [`She arrived ${U('yesterday')}.`,'yesterday','Arrived when?'],
+   [`We will meet ${U('after school')}.`,'after school','Meet when?'],
+   [`He visits his uncle ${U('every Sunday')}.`,'every Sunday','How often?']
+  ]),
+  MIS('<b>Time</b> can hide inside a phrase. In <em>after school</em>, the word school is the object of the preposition after, but the <b>whole phrase</b> is the adverbial of time. Answer for the whole group of words the question underlines.'),
+  QZ('b2-6','Quick check','live',[FNQ('b2f6',`What is the function of ${U('after school')} in: <em>We will meet after school.</em>?`,['Adverbial of place','Adverbial of time','Adverbial of manner','Subject'],1,'Meet when? After school. It tells the time.')])),
+ SC('7. Adverbial of place',
+  DEF('An <b>adverbial of place</b> tells <b>where</b> something happens.'),
+  P('<b>How to identify it:</b> ask <b>where?</b>'),
+  TB(['Sentence','Adverbial of place','Why?'],[
+   [`The children play ${U('in the compound')}.`,'in the compound','Play where?'],
+   [`They live ${U('near the market')}.`,'near the market','Live where?'],
+   [`Put the book ${U('here')}.`,'here','Put it where?']
+  ]),
+  MIS('The prepositional phrase <b>in the compound</b> contains the object of a preposition (the compound), but the <b>whole phrase</b> is an adverbial of place. Read the question to see which one is asked.'),
+  QZ('b2-7','Quick check','live',[FNQ('b2f7',`What is the function of ${U('in the compound')} in: <em>The children play in the compound.</em>?`,['Adverbial of place','Adverbial of time','Direct object','Subject complement'],0,'Play where? In the compound.')])),
+ SC('8. Adverbial of manner',
+  DEF('An <b>adverbial of manner</b> tells <b>how</b> something is done.'),
+  P('<b>How to identify it:</b> ask <b>how?</b>'),
+  TB(['Sentence','Adverbial of manner','Why?'],[
+   [`She spoke ${U('softly')}.`,'softly','Spoke how?'],
+   [`He answered ${U('with confidence')}.`,'with confidence','Answered how?'],
+   [`The boys left ${U('in a hurry')}.`,'in a hurry','Left how?']
+  ]),
+  MIS('Do not mix up <b>manner</b> with <b>place</b> or <b>time</b>. If the best question is <b>how?</b> (softly, quickly, with care), it is manner. Many students call every adverb an adverbial of manner.'),
+  QZ('b2-8','Quick check','live',[FNQ('b2f8',`What is the function of ${U('softly')} in: <em>She spoke softly.</em>?`,['Adverbial of time','Adverbial of place','Subject complement','Adverbial of manner'],3,'Spoke how? Softly. It describes the way she spoke.')])),
+ SC('9. Adverbial of reason',
+  DEF('An <b>adverbial of reason</b> tells <b>why</b> something happens.'),
+  P('<b>How to identify it:</b> ask <b>why?</b> Look for words like <b>because, since, owing to, because of</b>.'),
+  TB(['Sentence','Adverbial of reason','Why?'],[
+   [`He was late ${U('because the bus broke down')}.`,'because the bus broke down','Late why? (a clause)'],
+   [`She was absent ${U('owing to illness')}.`,'owing to illness','Absent why? (a phrase)'],
+   [`We stayed indoors ${U('because of the rain')}.`,'because of the rain','Stayed why? (a phrase)']
+  ]),
+  MIS('<b>Because</b> is followed by a clause (<em>because he was sick</em>). <b>Because of</b> and <b>owing to</b> are followed by a noun phrase (<em>because of the rain</em>). Both tell <b>why</b>, so both are adverbials of reason.'),
+  QZ('b2-9','Quick check','live',[FNQ('b2f9',`What is the function of ${U('because he was sick')} in: <em>He stayed at home because he was sick.</em>?`,['Adverbial of reason','Adverbial of manner','Direct object','Adverbial of time'],0,'Stayed at home why? Because he was sick.')])),
+ SC('10. Object of a preposition',
+  DEF('A <b>preposition</b> (in, on, at, beside, with, to…) shows how things are related. The noun or pronoun after it is the <b>object of the preposition</b>.'),
+  P('<b>How to identify it:</b> find the preposition. The noun phrase right after it is its object.'),
+  TB(['Sentence','Object of the preposition','Preposition'],[
+   [`She sat beside ${U('the teacher')}.`,'the teacher','beside'],
+   [`He came with ${U('his sister')}.`,'his sister','with'],
+   [`The book is on ${U('the table')}.`,'the table','on']
+  ]),
+  MIS('Do not call it the direct object. A direct object follows a <b>verb</b>. The object of a preposition follows a <b>preposition</b>.'),
+  QZ('b2-10','Quick check','live',[FNQ('b2f10',`What is the function of ${U('the teacher')} in: <em>She sat beside the teacher.</em>?`,['Direct object','Object of a preposition','Subject complement','Indirect object'],1,'The teacher comes right after the preposition beside. It is the object of beside.')])),
+ SC('11. Apposition',
+  DEF('<b>Apposition</b> is when a noun phrase is placed beside another noun phrase to <b>rename or explain it</b>. Both refer to the same person or thing.'),
+  P('<b>How to identify it:</b> two noun phrases side by side (often with commas) that mean the same person or thing, and there is <b>no verb</b> between them.'),
+  TB(['Sentence','Apposition','In apposition to'],[
+   [`Mr Ade, ${U('our principal')}, spoke.`,'our principal','Mr Ade'],
+   [`Lagos, ${U('the commercial capital of Nigeria')}, is crowded.`,'the commercial capital of Nigeria','Lagos'],
+   [`My friend ${U('Tunde')} is here.`,'Tunde','my friend']
+  ]),
+  MIS('Compare <em>Mr Ade, our principal, spoke</em> (apposition) with <em>Mr Ade is our principal</em> (subject complement). The verb <b>is</b> makes the difference.'),
+  QZ('b2-11','Quick check','live',[FNQ('b2f11',`What is the function of ${U('our principal')} in: <em>Mr Ade, our principal, spoke.</em>?`,['Subject','Apposition','Subject complement','Object complement'],1,'Our principal renames Mr Ade. There is no verb between them, so it is in apposition.')])),
+ SC('12. Adjunct',
+  DEF('An <b>adjunct</b> is an <b>optional extra</b> that adds information. If you remove it, the sentence is still complete. Adverbial adjuncts (time, place, manner, reason) are the ones tested most often.'),
+  P('<b>How to identify it:</b> remove it. If the sentence still makes complete sense, it is an adjunct.'),
+  TB(['Sentence','Adjunct','Why?'],[
+   [`Segun ate his lunch ${U('quickly')}.`,'quickly','Segun ate his lunch. is complete without it.'],
+   [`The bus left ${U('at noon')}.`,'at noon','The bus left. is complete without it.'],
+   [`She sings ${U('in the choir')}.`,'in the choir','She sings. is complete without it.']
+  ]),
+  TIP('Textbooks use the word <b>adjunct</b> in slightly different ways. Some use it only for optional adverbials. Others also use it for a noun that modifies another noun, as in <em>school bus</em>. If a question uses this word, look at your class notes and your teacher’s examples for the meaning that is taught.'),
+  QZ('b2-12','Quick check','live',[FNQ('b2f12','Which part of <em>Segun ate his lunch quickly</em> is an optional <b>adjunct</b>?',['Segun','ate','his lunch','quickly'],3,'Take away quickly and the sentence Segun ate his lunch still makes sense. It is an optional extra.')]))
+]);
+
+/* ================= B3: PHRASES AND CLAUSES ================= */
+var PC_WORKED=[
+ {q:`${U('The tall boy from Kano')} won the race.`,tag:'Noun phrase 1',a:'Structure: noun phrase. Function: subject.',st:['The head word is <b>boy</b>. The other words describe it.','Who won the race? The whole phrase.','Structure: noun phrase. Function: <b>subject</b>.']},
+ {q:`She bought ${U('a new red dress')}.`,tag:'Noun phrase 2',a:'Structure: noun phrase. Function: direct object.',st:['The head word is <b>dress</b>.','Bought what? The whole phrase.','Structure: noun phrase. Function: <b>direct object</b>.']},
+ {q:`The cat is ${U('under the table')}.`,tag:'Prepositional phrase 1',a:'Structure: prepositional phrase. Function: adverbial of place.',st:['It begins with the preposition <b>under</b>.','Where is the cat? Under the table.','Structure: prepositional phrase. Function: <b>adverbial of place</b>.']},
+ {q:`The girl ${U('with the red bag')} is my sister.`,tag:'Prepositional phrase 2',a:'Structure: prepositional phrase. Function: adjectival (modifies “girl”).',st:['It begins with the preposition <b>with</b>.','It does not tell where or when. It tells <b>which girl</b>.','Structure: prepositional phrase. Function: <b>adjectival</b>, because it describes the noun girl.']},
+ {q:`She is ${U('very tired')}.`,tag:'Adjectival phrase 1',a:'Structure: adjectival phrase. Function: subject complement.',st:['The head word is the adjective <b>tired</b>, with very in front of it.','It describes the subject, she, after the linking verb is.','Structure: adjectival phrase. Function: <b>subject complement</b>.']},
+ {q:`A man ${U('full of kindness')} visited us.`,tag:'Adjectival phrase 2',a:'Structure: adjectival phrase. Function: modifies the noun “man”.',st:['The head word is the adjective <b>full</b>.','It comes after man and describes him.','Structure: adjectival phrase. Function: adjectival (describes man).']},
+ {q:`He ran ${U('very quickly')}.`,tag:'Adverbial phrase 1',a:'Structure: adverb phrase. Function: adverbial of manner.',st:['The head word is the adverb <b>quickly</b>, with very in front.','Ran how? Very quickly.','Structure: adverb phrase. Function: <b>adverbial of manner</b>.']},
+ {q:`They arrived ${U('quite late')}.`,tag:'Adverbial phrase 2',a:'Structure: adverb phrase. Function: adverbial of time.',st:['The head word is the adverb <b>late</b>, with quite in front.','Arrived when? Quite late.','Structure: adverb phrase. Function: <b>adverbial of time</b>.']},
+ {q:`I believe ${U('that she is honest')}.`,tag:'Noun clause 1',a:'Structure: noun clause. Function: direct object of “believe”.',st:['It has its own subject (she) and verb (is).','It answers the question: believe what?','Structure: noun clause. Function: <b>direct object</b> of believe.']},
+ {q:`${U('Whoever wins')} gets the prize.`,tag:'Noun clause 2',a:'Structure: noun clause. Function: subject of “gets”.',st:['It has its own subject (whoever) and verb (wins).','Who gets the prize? Whoever wins.','Structure: noun clause. Function: <b>subject</b>.']},
+ {q:`The students arrived ${U('after the bell rang')}.`,tag:'Adverbial clause 1',a:'Structure: adverbial clause. Function: adverbial of time.',st:['It has its own subject (the bell) and verb (rang), and begins with <b>after</b>.','Arrived when? After the bell rang.','Structure: adverbial clause. Function: <b>adverbial of time</b>.']},
+ {q:`We stayed indoors ${U('because it was raining')}.`,tag:'Adverbial clause 2',a:'Structure: adverbial clause. Function: adverbial of reason.',st:['It has its own subject (it) and verb (was raining).','Stayed indoors why? Because it was raining.','Structure: adverbial clause. Function: <b>adverbial of reason</b>.']},
+ {q:`The man ${U('who lives next door')} is a doctor.`,tag:'Relative clause 1',a:'Structure: relative (adjectival) clause. Function: modifies “the man”.',st:['It begins with the relative pronoun <b>who</b> and has its own verb (lives).','It tells <b>which man</b>.','Structure: relative clause. Function: <b>adjectival</b>, modifying the man.']},
+ {q:`The book ${U('which I bought yesterday')} is expensive.`,tag:'Relative clause 2',a:'Structure: relative (adjectival) clause. Function: modifies “the book”.',st:['It begins with <b>which</b> and has its own subject (I) and verb (bought).','It tells <b>which book</b>.','Structure: relative clause. Function: <b>adjectival</b>, modifying the book.']},
+ {q:`${U('The fact that he passed')} surprised everyone.`,tag:'Noun clause in apposition',a:'The noun clause “that he passed” explains “the fact”. It is in apposition to “the fact”.',st:['Find the verb: <b>surprised</b>. Who or what surprised everyone? The whole phrase <b>the fact that he passed</b>. That is the subject.','Inside it, <b>that he passed</b> is a clause with its own subject (he) and verb (passed).','It tells <b>what the fact is</b>, so it renames or explains the fact. It is a noun clause in apposition to <b>the fact</b>.']}
+];
+SEC('b3','Part B: Grammatical function','Phrases and clauses','Know what a group of words is built from, and what job it does.',[
+ SC('Structure and function',
+  P('In WAEC you may be asked about a <b>whole group of words</b>, not just one word. First learn two ideas.'),
+  DEF('<b>Phrase:</b> a group of words that works together as one unit but has <b>no subject-verb pair of its own</b>. Example: <em>in the classroom</em>.','Phrase'),
+  DEF('<b>Clause:</b> a group of words that has its <b>own subject and verb</b>. Example: <em>after the bell rang</em>.','Clause'),
+  P('Every group of words has a <b>structure</b> (what it is made of) and a <b>function</b> (the job it does).'),
+  EX('<em>The man <b>who lives next door</b> is a doctor.</em><br><b>Structure:</b> relative clause (it has its own subject who and verb lives).<br><b>Function:</b> adjectival. It tells which man.'),
+  TIP('Ask two questions: (1) <b>What is it made of?</b> That gives the structure. (2) <b>What job is it doing here?</b> That gives the function. Answer the one the question asks.')),
+ SC('The seven you must know',
+  TB(['Structure','What it is','Example','Usual function'],[
+   ['<b>Noun phrase</b>','A noun with its describing words','the tall boy from Kano','subject, object, complement'],
+   ['<b>Prepositional phrase</b>','A preposition + a noun phrase','under the table','adverbial or adjectival'],
+   ['<b>Adjectival phrase</b>','An adjective with other words','very tired','complement or describes a noun'],
+   ['<b>Adverbial phrase</b>','An adverb with other words','very quickly','adverbial'],
+   ['<b>Noun clause</b>','A clause that works like a noun','that he passed','subject, object, complement'],
+   ['<b>Adverbial clause</b>','A clause that works like an adverb','after the bell rang','adverbial of time, reason…'],
+   ['<b>Relative / adjectival clause</b>','A clause that describes a noun','who lives next door','modifies a noun']
+  ]),
+  MIS('A prepositional phrase can have <b>different functions</b>: <em>The cat is [under the table]</em> (adverbial of place), <em>The girl [with the red bag]</em> (adjectival). The structure is the same, the function is not.')),
+ SC('Fourteen worked examples, plus one tricky one',
+  P('For each: try to name the <b>structure</b> and the <b>function</b> first. Then reveal.'),
+  WK('Phrases and clauses',PC_WORKED.slice(0,14))),
+ SC('The tricky one: “The fact that he passed surprised everyone”',
+  P('This sentence appears in many exam questions. Read it slowly.'),
+  WK('Worked example',PC_WORKED.slice(14))),
+ SC('Practice: name the underlined expression',
+  P('The underlined part is <b>a whole phrase or clause</b>. Decide what job it does.'),
+  QZ('b3-p','Phrases and clauses','live',[
+   M('b3p1','phrase',`${U('After the match ended')}, the fans went home.`.replace(/^/,'<b>1.</b> ')+'<br>What is the underlined part?',['Adverbial clause of time','Noun clause','Relative clause','Prepositional phrase'],0,'It has its own subject (the match) and verb (ended). It tells when the fans went home.',{1:'A noun clause does the job of a noun. This one tells when.',2:'A relative clause modifies a noun. Nothing is modified here.',3:'A phrase has no subject and verb of its own. This has the match ended.'}),
+   M('b3p2','phrase',`<b>2.</b> The woman ${U('who sells akara')} is my aunt.<br>What is the underlined part?`,['Adverbial clause of reason','Noun clause (subject)','Relative (adjectival) clause','Adjectival phrase'],2,'It tells which woman. It starts with the relative pronoun who and has its own verb.',{0:'It does not tell why.',1:'It does not stand as the subject. The subject is The woman.',3:'It has its own verb (sells), so it is a clause, not a phrase.'}),
+   M('b3p3','phrase',`<b>3.</b> ${U('That she was late')} annoyed the teacher.<br>What is the underlined part?`,['Adverbial clause of time','Noun clause (subject)','Relative clause','Object of a preposition'],1,'What annoyed the teacher? That she was late. It does the job of a noun and is the subject.',{0:'It does not tell when.',2:'It does not modify a noun.',3:'There is no preposition in front of it.'}),
+   M('b3p4','phrase',`<b>4.</b> He lives ${U('in a small village')}.<br>What is the <b>function</b> of the underlined part?`,['Direct object','Adverbial of place','Subject complement','Apposition'],1,'Lives where? In a small village. Its structure is a prepositional phrase, and its function is adverbial of place.',{0:'Lives does not take an object here. It is followed by a place.',2:'Lives is not a linking verb.',3:'It does not rename another noun.'}),
+   M('b3p5','phrase',`<b>5.</b> ${U('The new student from Kaduna')} speaks Hausa.<br>What is the underlined part?`,['A noun phrase used as subject','A noun clause','An adverbial clause','A prepositional phrase'],0,'It is a group of words built around the noun student, with no verb of its own. It tells who speaks.',{1:'There is no subject-verb pair inside it.',2:'It does not tell when, why or how.',3:'The whole phrase does not begin with a preposition (only from Kaduna does).'}),
+   M('b3p6','phrase',`<b>6.</b> She became ${U('very famous')}.<br>What is the <b>function</b> of the underlined part?`,['Direct object','Adverbial of manner','Subject complement','Object complement'],2,'Became is a linking verb. Very famous describes she, the subject.',{0:'Became does not take an object.',1:'It does not tell how she became.',3:'There is no object before it.'}),
+   M('b3p7','phrase',`<b>7.</b> I wonder ${U('whether he will come')}.<br>What is the underlined part?`,['Relative clause','Adverbial clause of time','Noun clause (object)','Prepositional phrase'],2,'Wonder what? Whether he will come. It acts as the object of wonder.',{0:'It does not describe a noun.',1:'It does not tell when.',3:'It has its own subject and verb.'}),
+   M('b3p8','phrase',`<b>8.</b> We left ${U('although it was raining')}.<br>What is the underlined part?`,['Noun clause','Relative clause','Adverbial clause','Adjectival phrase'],2,'It has its own subject and verb and adds information about the leaving. It is an adverbial clause (of concession).',{0:'It does not name a thing.',1:'It does not describe a noun.',3:'It has its own verb, so it is a clause.'})
+  ],'Choose the best answer.'))
+]);
+
+/* ================= B4: EXAM TECHNIQUE ================= */
+var TECH_WORKED=[
+ {q:`The boy ${U('who won the race')} is my cousin.`,tag:'Example 1',a:'Relative (adjectival) clause, modifying “the boy”.',st:['Read the whole sentence.','The underlined words have a verb (won) and a subject (who).','They tell which boy.','Answer: relative (adjectival) clause.']},
+ {q:`She promised ${U('that she would come early')}.`,tag:'Example 2',a:'Noun clause, object of “promised”.',st:['Promised what? That she would come early.','It has its own subject (she) and verb (would come).','Answer: noun clause, direct object of promised.']},
+ {q:`We waited ${U('until the rain stopped')}.`,tag:'Example 3',a:'Adverbial clause of time.',st:['Waited when? Until the rain stopped.','It has its own subject (the rain) and verb (stopped).','Answer: adverbial clause of time.']},
+ {q:`${U('Our new teacher')} has arrived.`,tag:'Example 4',a:'Noun phrase, subject.',st:['Find the verb: has arrived.','Who has arrived? Our new teacher.','Answer: subject (a noun phrase).']},
+ {q:`The principal gave ${U('the prefects')} new badges.`,tag:'Example 5',a:'Indirect object.',st:['Find the verb: gave.','What was given? New badges (direct object).','Who received them? The prefects. They come before the direct object.','Answer: indirect object.']},
+ {q:`They made Tunde ${U('the leader')}.`,tag:'Example 6',a:'Object complement.',st:['Verb: made. Object: Tunde.','The leader tells what Tunde was made. It renames the object.','Answer: object complement.']},
+ {q:`Ngozi, ${U('a brilliant student')}, won the prize.`,tag:'Example 7',a:'Apposition, to “Ngozi”.',st:['Two noun phrases are side by side with commas: Ngozi and a brilliant student.','They mean the same person. No verb joins them.','Answer: in apposition to Ngozi.']},
+ {q:`He spoke ${U('with great confidence')}.`,tag:'Example 8',a:'Adverbial of manner (a prepositional phrase).',st:['Spoke how? With great confidence.','Answer: adverbial of manner.']},
+ {q:`The school is ${U('in the heart of the town')}.`,tag:'Example 9',a:'Adverbial of place (a prepositional phrase).',st:['Where is the school? In the heart of the town.','Answer: adverbial of place.']},
+ {q:`${U('Because the road was flooded')}, the bus did not move.`,tag:'Example 10',a:'Adverbial clause of reason.',st:['The bus did not move why? Because the road was flooded.','It has its own subject (the road) and verb (was flooded).','Answer: adverbial clause of reason.']}
+];
+SEC('b4','Part B: Grammatical function','How to answer function questions in WAEC and JAMB','A step-by-step method you can use under exam pressure.',[
+ SC('The method',
+  STP(['<b>Read the complete sentence.</b> Do not judge the words on their own.','<b>Identify the underlined word or expression.</b>','<b>Decide what it is doing.</b> Is it naming the doer? Receiving the action? Telling when, where, how or why?','<b>Look at its relationship with the verb and the other parts.</b> Find the verb first.','<b>State the grammatical function.</b>','<b>Give the type</b> of adverbial or clause where necessary: adverbial of time? adverbial clause of reason?']),
+  TIP('<b>Never answer with a word class when the question asks for a function.</b> Do not write “noun” for “What is the function of…?”. Write subject, object, complement, adverbial and so on.')),
+ SC('Ten exam-style examples',
+  P('Try each underlined expression yourself, then check the reasoning.'),
+  WK('Exam-style examples',TECH_WORKED)),
+ SC('Practice: function questions',
+  P('Ten questions. Think about the <b>job</b> of the underlined part.'),
+  QZ('b4-p','Function practice','live',[
+   M('b4p1','function',`<b>1.</b> ${U('My cousin')} lives in Kano.<br>Function of the underlined words?`,['Subject','Direct object','Adverbial of place','Subject complement'],0,'Who lives in Kano? My cousin.',{1:'Lives takes no object here.',2:'The place is in Kano.',3:'Lives is not a linking verb.'}),
+   M('b4p2','function',`<b>2.</b> The teacher praised ${U('the pupils')}.<br>Function of the underlined words?`,['Subject','Indirect object','Direct object','Object complement'],2,'Praised whom? The pupils. They receive the action.',{0:'The teacher is the subject.',1:'There is only one object here.',3:'Nothing describes the pupils.'}),
+   M('b4p3','function',`<b>3.</b> Mother made ${U('us')} a cake.<br>Function of the underlined word?`,['Indirect object','Direct object','Subject complement','Adverbial of manner'],0,'The cake is made for us. Us comes before the direct object a cake.',{1:'The direct object is a cake.',2:'Made is not a linking verb here.',3:'Us does not tell how.'}),
+   M('b4p4','function',`<b>4.</b> The boy is ${U('very intelligent')}.<br>Function of the underlined words?`,['Direct object','Subject complement','Adverbial of manner','Apposition'],1,'Is links the boy to very intelligent. It describes the subject.',{0:'Is does not take an object.',2:'It describes the boy. It does not tell how something is done.',3:'It does not rename a noun beside it.'}),
+   M('b4p5','function',`<b>5.</b> The jury declared the man ${U('innocent')}.<br>Function of the underlined word?`,['Subject complement','Object complement','Adverbial of manner','Indirect object'],1,'Innocent describes the man, who is the object of declared.',{0:'It describes the object, not the subject.',2:'It does not tell how they declared.',3:'It is not a receiver of the man.'}),
+   M('b4p6','function',`<b>6.</b> The match was postponed ${U('because of the rain')}.<br>Function of the underlined words?`,['Adverbial of time','Adverbial of place','Adverbial of reason','Apposition'],2,'Postponed why? Because of the rain.',{0:'It does not tell when.',1:'It does not tell where.',3:'It does not rename a noun.'}),
+   M('b4p7','function',`<b>7.</b> They arrived ${U('at six o’clock')}.<br>Function of the underlined words?`,['Adverbial of time','Adverbial of place','Adverbial of manner','Direct object'],0,'Arrived when? At six o’clock.',{1:'At six o’clock is a time, not a place.',2:'It does not tell how.',3:'Arrived does not take an object.'}),
+   M('b4p8','function',`<b>8.</b> The meeting began ${U('in the hall')}.<br>Function of the underlined words?`,['Adverbial of time','Adverbial of place','Object of a preposition','Subject'],1,'Began where? In the hall. (The hall alone is the object of the preposition in.)',{0:'It does not tell when.',2:'The object of the preposition is only the hall. The whole phrase is an adverbial of place.',3:'The subject is The meeting.'}),
+   M('b4p9','function',`<b>9.</b> He walked ${U('slowly')}.<br>What is the <b>function</b> of the underlined word?`,['Adverb','Adverbial of manner','Subject complement','Direct object'],1,'Adverb is the word class. Its function is adverbial of manner (walked how?).',{0:'Adverb is the word class. The question asks for the function.',2:'Walked is not a linking verb.',3:'Walked does not take an object here.'}),
+   M('b4p10','function',`<b>10.</b> Dr Bello, ${U('a famous surgeon')}, opened the clinic.<br>Function of the underlined words?`,['Subject','Apposition','Direct object','Subject complement'],1,'A famous surgeon renames Dr Bello and has no verb joining them. It is in apposition.',{0:'The subject is Dr Bello.',2:'The clinic is the object.',3:'There is no linking verb.'})
+  ],'Choose the best answer. If wrong, read the feedback and try again.'))
+]);
+
+/* ================= C: COMPREHENSION PASSAGE ================= */
+var PASSAGE=`<p>When the new term began, the principal of Unity College, Mrs Adeyemi, announced that the school library would be rebuilt. The old building had been neglected for many years, and its roof was leaking badly. Parents, teachers and students were invited to a meeting on Friday afternoon.</p>
+<p>At the meeting, Mr Balogun, the senior English teacher, stood up and said, “Our students cannot read well because they have no quiet place to study.” A few parents nodded. Chief Okafor, a retired engineer who lives near the school, promised that he would supervise the work free of charge. Then a student named Hauwa asked whether the new library would have computers. The principal answered that every classroom would receive books first and that computers would follow later.</p>
+<p>During the next two weeks, volunteers cleared the compound after school. The old shelves were repaired by the carpentry students, while the girls painted the walls a bright yellow. On the last day, a stranger arrived with a truck of donated books. “I read in this school thirty years ago,” he told the principal, “and I want today’s students to enjoy what I enjoyed.”</p>
+<p>The library opened on a sunny morning in November. Hauwa, who had asked the question at the meeting, was chosen to cut the ribbon. She thanked everyone sincerely, and the students applauded loudly. From that day, the reading corner became the most popular place in the school.</p>`;
+SEC('c1','Part C: Comprehension application','Reading passage: The Library Project','Use everything you have learned on one passage.',[
+ SC('Read the passage',
+  P('Read the passage slowly, once for the story and once for the grammar. Then answer the 15 questions on the next screens.'),
+  {t:'passage',h:PASSAGE,title:'The Library Project'},
+  TIP('Underlined words in the questions come directly from the passage. Always read the sentence around the underlined part before you answer.')),
+ SC('Questions 1 to 5: sentence recasting',
+  {t:'passage',h:PASSAGE,title:'The Library Project',collapsed:true},
+  QZ('c1-recast','Recast the sentence','live',[
+   W('c1q1','passive','<b>1.</b> Change to the <b>active voice</b>:<br><em>The old shelves <u class="ul">were repaired by the carpentry students</u>.</em><br>Write the full sentence.',['The carpentry students repaired the old shelves.'],'The doer (the carpentry students) becomes the subject. Were repaired → repaired. The tense stays simple past.',{hint:'Start with the doer: The carpentry students…',traps:[{re:/were repaired/,m:'You are still using the passive. Make the doer the subject and use the simple past: repaired.'}]}),
+   W('c1q2','reported','<b>2.</b> Change to <b>direct speech</b>:<br><em>A student named Hauwa asked whether the new library would have computers.</em><br>Use quotation marks.',['A student named Hauwa asked, "Will the new library have computers?"','Hauwa asked, "Will the new library have computers?"'],'Would → will. The word order returns to question order (will the library have), and a question mark is added.',{needq:true,hint:'Put the exact words Hauwa said inside quotation marks. Will the new library have computers?',traps:[{re:/whether/,m:'Direct speech does not use whether. Write the question exactly as Hauwa said it.'}]}),
+   W('c1q3','passive','<b>3.</b> Change to the <b>passive voice</b>:<br><em>Volunteers cleared the compound after school.</em>',['The compound was cleared by volunteers after school.','After school the compound was cleared by volunteers.'],'Simple past: was cleared. The compound is singular.',{hint:'The compound becomes the subject. Use was + cleared.'}),
+   W('c1q4','reported','<b>4.</b> Change to <b>direct speech</b>:<br><em>The principal answered that every classroom would receive books first.</em>',['The principal answered, "Every classroom will receive books first."'],'Would → will. Remove that and add the principal’s exact words in quotation marks.',{needq:true,hint:'Would changes to will. Use quotation marks.',traps:[{re:/would/,m:'In direct speech, would changes back to will.'}]}),
+   W('c1q5','reported','<b>5.</b> Change to <b>reported speech</b>:<br><em>He told the principal, “I read in this school thirty years ago.”</em>',['He told the principal that he had read in that school thirty years before.','He told the principal that he had read in that school thirty years earlier.'],'I → he. Read → had read. This → that. Ago → before.',{noq:true,hint:'Change I, read, this and ago.',traps:[{re:/ago/,m:'Ago changes to before (or earlier).'},{re:/this school/,m:'This changes to that.'}]})
+  ],'Type the full sentence.')),
+ SC('Questions 6 to 10: grammatical function',
+  {t:'passage',h:PASSAGE,title:'The Library Project',collapsed:true},
+  QZ('c1-func','Grammatical function','live',[
+   M('c1q6','function',`<b>6.</b> “…the principal of Unity College, ${U('Mrs Adeyemi')}, announced…”<br>What is the function of the underlined words?`,['Subject','Apposition','Direct object','Object of a preposition'],1,'Mrs Adeyemi renames the principal of Unity College, and no verb joins them. It is in apposition.',{0:'The subject is the principal of Unity College.',2:'The verb announced takes the clause that follows as its object.',3:'No preposition comes right before Mrs Adeyemi.'}),
+   M('c1q7','function',`<b>7.</b> “The old building had been neglected ${U('for many years')}.”<br>What is the function of the underlined words?`,['Adverbial of place','Adverbial of manner','Adverbial of time','Subject complement'],2,'Neglected for how long? For many years. It tells the time (duration).',{0:'It does not tell where.',1:'It does not tell how.',3:'Had been neglected is not a linking verb.'}),
+   M('c1q8','phrase',`<b>8.</b> “Chief Okafor, a retired engineer ${U('who lives near the school')}…”<br>What is the underlined part?`,['Noun clause','Adverbial clause of place','Relative (adjectival) clause','Apposition'],2,'It begins with the relative pronoun who, has its own verb (lives), and tells which engineer.',{0:'It does not do the job of a noun.',1:'It describes the engineer. It does not tell where something was done.',3:'Apposition is a noun phrase. This is a clause with its own verb.'}),
+   M('c1q9','function',`<b>9.</b> “…the reading corner became ${U('the most popular place in the school')}.”<br>What is the function of the underlined words?`,['Direct object','Subject complement','Indirect object','Adverbial of place'],1,'Became is a linking verb. The most popular place in the school renames the reading corner.',{0:'Became does not take an object.',2:'There is only one noun phrase after became.',3:'It does not tell where something happened.'}),
+   M('c1q10','function',`<b>10.</b> “She thanked everyone ${U('sincerely')}.”<br>What is the function of the underlined word?`,['Adverbial of manner','Adverbial of time','Object complement','Subject'],0,'Thanked how? Sincerely. It tells the manner.',{1:'It does not tell when.',2:'It does not describe everyone.',3:'The subject is She.'})
+  ],'Choose the best answer.')),
+ SC('Questions 11 to 15: understanding the passage',
+  {t:'passage',h:PASSAGE,title:'The Library Project',collapsed:true},
+  QZ('c1-comp','Understanding and interpretation','live',[
+   M('c1q11','passage','<b>11.</b> Why did the school decide to rebuild the library?',['The students wanted computers.','The old building was in bad condition.','A stranger had donated books.','Chief Okafor was an engineer.'],1,'The passage says the old building had been neglected for many years and its roof was leaking badly.',{0:'Hauwa asked about computers at the meeting, but that was not the reason for rebuilding.',2:'The stranger arrived later with books.',3:'Chief Okafor offered to supervise. That was not the reason.'}),
+   M('c1q12','passage','<b>12.</b> What did Chief Okafor promise to do?',['Pay for the books','Paint the walls','Supervise the work free of charge','Cut the ribbon'],2,'He promised that he would supervise the work free of charge.',{0:'The passage does not say he would pay for books.',1:'The girls painted the walls.',3:'Hauwa cut the ribbon.'}),
+   M('c1q13','passage','<b>13.</b> In the passage, the word <em>neglected</em> means…',['not given proper care','decorated beautifully','recently built','widely admired'],0,'The building was neglected, so it was not looked after. Its roof was leaking.',{1:'A building with a leaking roof was not decorated beautifully.',2:'It was old, so not recently built.',3:'Nobody admired a leaking roof.'}),
+   M('c1q14','passage','<b>14.</b> Which detail best shows that the community worked together?',['The library opened in November.','Volunteers cleared the compound, students repaired the shelves and a stranger donated books.','Hauwa asked a question.','The principal announced the plan.'],1,'Volunteers, students and a stranger all helped. This shows cooperation.',{0:'The month of the opening shows no cooperation.',2:'A question alone does not show teamwork.',3:'An announcement is one person’s action.'}),
+   M('c1q15','passage','<b>15.</b> Which is the best title for the passage?',['A Stranger’s Truck of Books','The Principal’s Speech','Hauwa Cuts the Ribbon','A School Rebuilds Its Library Together'],3,'The passage is about rebuilding the library and how people helped. This title covers the whole passage.',{0:'The stranger appears in only one paragraph.',1:'The principal’s speech is only one part.',2:'The ribbon-cutting is only the end of the story.'})
+  ],'Choose the best answer.'))
+]);
+
+/* ================= D: WAEC STYLE ================= */
+var WAEC=[
+ M('w1','passive','<b>1.</b> Choose the correct passive form of: <em>The cook has prepared the soup.</em>',['The soup has been prepared by the cook.','The soup was prepared by the cook.','The soup is being prepared by the cook.','The soup had been prepared by the cook.'],0,'Present perfect (has prepared) → has been prepared. B is simple past, C is present continuous and D is past perfect. The tense must be preserved.'),
+ M('w2','passive','<b>2.</b> Which is the active form of: <em>The window was broken by the storm.</em>?',['The storm has broken the window.','The storm broke the window.','The window broke the storm.','The storm was breaking the window.'],1,'Was broken (simple past passive) → broke (simple past active). A is present perfect and D is past continuous. C reverses the meaning.'),
+ M('w3','reported','<b>3.</b> Choose the correct report of: Ola asked, “Where is the exam hall?”',['Ola asked where the exam hall had been.','Ola asked where was the exam hall.','Ola asked where the exam hall was.','Ola asked that where the exam hall was.'],2,'Reported questions use statement order and the tense moves back: is → was. A changes the meaning (had been). B keeps question order. D uses that wrongly.'),
+ M('w4','reported','<b>4.</b> Choose the correct report of: “Don’t run in the corridor,” the prefect told the pupils.',['The prefect told the pupils don’t run in the corridor.','The prefect told the pupils not to run in the corridor.','The prefect told the pupils to not running in the corridor.','The prefect said the pupils not to run in the corridor.'],1,'Negative command: told + person + not to + base verb. A keeps the command form, C uses -ing wrongly, and D uses said with a person.'),
+ M('w5','function','<b>5.</b> “He is <u class="ul">a trained nurse</u>.” What is the function of the underlined words?',['Direct object','Subject complement','Apposition','Object complement'],1,'Is is a linking verb. A trained nurse renames he, the subject.'),
+ M('w6','function','<b>6.</b> “She sang <u class="ul">beautifully</u> at the party.” What is the function of the underlined word?',['Adjective','Adverb','Adverbial of place','Adverbial of manner'],3,'Sang how? Beautifully. Adjective and adverb are word classes, not functions.'),
+ M('w7','phrase','<b>7.</b> “We left <u class="ul">when the bell rang</u>.” What is the underlined part?',['Noun clause','Relative clause','Adverbial clause of time','Prepositional phrase'],2,'It has its own subject (the bell) and verb (rang) and tells when we left.'),
+ M('w8','phrase','<b>8.</b> “I know <u class="ul">that he is honest</u>.” What is the underlined part?',['Adverbial clause of reason','Noun clause (object of know)','Relative clause','Noun phrase'],1,'Know what? That he is honest. The clause does the job of a noun and is the object of know.'),
+ M('w9','function','<b>9.</b> “The girl <u class="ul">in the blue dress</u> is my cousin.” What is the function of the underlined words?',['Adverbial of place','Subject','Object of a preposition','Adjectival: it describes “girl”'],3,'It tells which girl. The phrase modifies a noun, so it is adjectival. (The blue dress alone is the object of in.)'),
+ M('w10','reported','<b>10.</b> <em>Read the extract:</em> “Bisi told her brother that she would visit him the following Sunday.”<br>Which is the correct <b>direct speech</b> version?',['Bisi said to her brother, “I will visit you next Sunday.”','Bisi said to her brother, “She will visit him next Sunday.”','Bisi said to her brother, “I would visit you the following Sunday.”','Bisi said to her brother, “You will visit me next Sunday.”'],0,'In direct speech the words return to the speaker’s own point of view: she → I, him → you, would → will, the following Sunday → next Sunday. The other options keep third-person pronouns, keep would, or swap the speaker and the listener.'),
+ M('w11','function','<b>11.</b> “They gave <u class="ul">the winner</u> a trophy.” What is the function of the underlined words?',['Direct object','Indirect object','Object complement','Subject'],1,'The trophy is given to the winner. The winner is the indirect object.'),
+ M('w12','function','<b>12.</b> <em>Read the extract:</em> “Chief Okafor, <u class="ul">a retired engineer</u>, promised that he would supervise the work.”<br>What is the function of the underlined words?',['Subject','Subject complement','Direct object','Apposition'],3,'A retired engineer renames Chief Okafor, with commas and no verb between them. It is in apposition to Chief Okafor.'),
+ W('w13','passive','<b>13.</b> Rewrite in the passive voice: <em>The students are cleaning the classroom.</em>',['The classroom is being cleaned by the students.'],'Present continuous passive: is being cleaned.',{hint:'am/is/are + being + past participle.'}),
+ W('w14','passive','<b>14.</b> Rewrite in the passive voice: <em>The government will build a new bridge.</em>',['A new bridge will be built by the government.'],'Future passive: will be built.',{hint:'will + be + past participle.'}),
+ W('w15','reported','<b>15.</b> Rewrite in reported speech: <em>Ola said, “I have lost my keys.”</em>',['Ola said that he had lost his keys.'],'I → he, my → his, have lost → had lost.',{noq:true,hint:'Change I, my and the tense.'}),
+ W('w16','reported','<b>16.</b> Rewrite in reported speech: <em>“Why are you crying?” the mother asked Ada.</em>',['The mother asked Ada why she was crying.'],'Keep why. Statement order. you → she, are → was.',{noq:true,hint:'Keep the question word. Use statement order.'}),
+ W('w17','reported','<b>17.</b> Rewrite in reported speech: <em>“Could you open the window, please?” Dayo asked Mrs Obi.</em>',['Dayo asked Mrs Obi to open the window.','Dayo asked Mrs Obi if she could open the window.'],'A polite request is reported with asked + person + to + verb (or asked if she could).',{noq:true,hint:'Use asked.'}),
+ W('w18','function','<b>18.</b> State the grammatical function of the underlined words: <em>Mr Okon, <u class="ul">the school bursar</u>, paid the workers.</em>',['apposition','in apposition to Mr Okon'],'The school bursar renames Mr Okon. There is no verb between them, so it is in apposition.',{has:[['apposition']],hint:'Two noun phrases side by side, meaning the same person.',ph:'Write the function'}),
+ W('w19','function','<b>19.</b> State the grammatical function of the underlined words: <em>We stayed at home <u class="ul">because of the rain</u>.</em>',['adverbial of reason'],'Stayed at home why? Because of the rain.',{has:[['reason']],hint:'Ask why.',ph:'Write the function'}),
+ W('w20','function','<b>20.</b> State the structure and the function of the underlined words: <em><u class="ul">What he said</u> surprised us.</em>',['noun clause, subject','noun clause used as the subject'],'It has its own subject and verb (he said) so its structure is a noun clause. It tells what surprised us, so its function is subject.',{has:[['noun clause'],['subject']],hint:'It has its own verb, so think about clauses. It answers: what surprised us?',ph:'Structure and function'})
+];
+
+/* ================= D: JAMB STYLE ================= */
+var JAMB=[
+ M('j1','passive','<b>1.</b> Choose the correct passive of: <em>The chairman will open the hall tomorrow.</em>',['The hall will be opened by the chairman tomorrow.','The hall would be opened by the chairman tomorrow.','The hall is opened by the chairman tomorrow.','The hall will have been opened by the chairman tomorrow.'],0,'Future → will be opened. B changes will to would, C changes to the present and D uses the future perfect.'),
+ M('j2','passive','<b>2.</b> Choose the correct passive of: <em>Segun is writing a letter.</em>',['A letter is written by Segun.','A letter was being written by Segun.','A letter is being written by Segun.','A letter has been written by Segun.'],2,'Present continuous → is being written. A is simple present, B is past continuous and D is present perfect.'),
+ M('j3','passive','<b>3.</b> Choose the correct passive of: <em>The police had arrested the suspect before the lawyer arrived.</em>',['The suspect was arrested by the police before the lawyer arrived.','The suspect had been arrested by the police before the lawyer arrived.','The suspect has been arrested by the police before the lawyer arrived.','The police had been arrested by the suspect before the lawyer arrived.'],1,'Past perfect → had been arrested. A is simple past, C is present perfect and D reverses the doer and receiver.'),
+ M('j4','passive','<b>4.</b> Choose the correct passive of: <em>Who painted this picture?</em>',['Who was this picture painted?','By who was this picture painted?','By whom did this picture paint?','By whom was this picture painted?'],3,'The picture becomes the subject: was painted. Who becomes by whom. A leaves out by, B uses who after a preposition and C keeps the active verb.'),
+ M('j5','passive','<b>5.</b> Choose the correct passive of: <em>They elected Mr Bello chairman.</em>',['Mr Bello elected them chairman.','Chairman was elected Mr Bello.','Mr Bello was elected chairman by them.','They were elected chairman by Mr Bello.'],2,'Mr Bello is the object and becomes the subject. Chairman stays as the complement. A, B and D change who was elected.'),
+ M('j6','reported','<b>6.</b> Choose the correct report of: <em>Ada said to Bola, “I will help you tomorrow.”</em>',['Ada told Bola that she would help her the next day.','Ada told Bola that I would help you the next day.','Ada said Bola that she will help her tomorrow.','Ada told Bola that she would help her tomorrow.'],0,'I → she, you → her, will → would, tomorrow → the next day. B keeps I and you, C uses said Bola and D keeps tomorrow.'),
+ M('j7','reported','<b>7.</b> Choose the correct report of: <em>“Do you like rice?” the host asked me.</em>',['The host asked did I like rice.','The host asked me that if I liked rice.','The host asked me do I like rice.','The host asked me if I liked rice.'],3,'A yes/no question uses if or whether, in statement order, with the tense moved back. A and C keep question order and B adds that.'),
+ M('j8','reported','<b>8.</b> Choose the correct report of: <em>“Don’t enter the room,” the matron told the girls.</em>',['The matron told the girls don’t enter the room.','The matron told the girls not to enter the room.','The matron said the girls not to enter the room.','The matron told the girls that they not to enter the room.'],1,'Negative command: told + person + not to + base verb. A keeps the command form, C uses said with a person, and D is not grammatical.'),
+ M('j9','reported','<b>9.</b> Choose the correct report of: <em>He said, “I saw the accident here yesterday.”</em>',['He said that he saw the accident here yesterday.','He said that I had seen the accident there the day before.','He said that he had seen the accident there the day before.','He said that he had seen the accident here the previous day.'],2,'I → he, saw → had seen, here → there, yesterday → the day before. A changes nothing but the pronoun, B keeps I and D keeps here.'),
+ M('j10','reported','<b>10.</b> Choose the correct report of: <em>“What are you doing?” Mother asked Tayo.</em>',['Mother asked Tayo what he was doing.','Mother asked Tayo what was he doing.','Mother asked Tayo that what he was doing.','Mother asked Tayo what is he doing.'],0,'Keep what, use statement order, you → he, are → was. B and D keep question order and C adds that.'),
+ M('j11','function','<b>11.</b> “The students elected Amaka <u class="ul">captain</u>.” What is the function of the underlined word?',['Direct object','Object complement','Subject complement','Indirect object'],1,'Captain renames Amaka, who is the object. It is an object complement.'),
+ M('j12','function','<b>12.</b> “She gave <u class="ul">her sister</u> a gift.” What is the function of the underlined words?',['Direct object','Subject complement','Object of a preposition','Indirect object'],3,'The gift is given to her sister. Her sister comes before the direct object and is the indirect object.'),
+ M('j13','function','<b>13.</b> “Lagos, <u class="ul">the largest city in Nigeria</u>, is very busy.” What is the function of the underlined words?',['Apposition','Subject complement','Object complement','Adverbial of place'],0,'It renames Lagos, with commas and no linking verb. It is in apposition.'),
+ M('j14','function','<b>14.</b> “They waited <u class="ul">at the gate</u>.” What is the function of the underlined words?',['Adverbial of manner','Adverbial of time','Adverbial of place','Adverbial of reason'],2,'Waited where? At the gate.'),
+ M('j15','phrase','<b>15.</b> “The man <u class="ul">who lives next door</u> is a doctor.” What is the underlined part?',['Noun clause','Adverbial clause of time','Prepositional phrase','Relative (adjectival) clause'],3,'It begins with who, has its own verb (lives) and tells which man. It is a relative clause.'),
+ M('j16','phrase','<b>16.</b> “He stayed indoors <u class="ul">because it was raining</u>.” What is the underlined part?',['Noun clause','Adverbial clause of reason','Relative clause','Adverbial clause of time'],1,'Stayed indoors why? Because it was raining.'),
+ M('j17','phrase','<b>17.</b> “<u class="ul">That he had cheated</u> shocked everyone.” What is the underlined part?',['Noun clause (subject)','Adverbial clause of reason','Relative clause','Prepositional phrase'],0,'What shocked everyone? That he had cheated. It does the job of a noun and is the subject.'),
+ M('j18','phrase','<b>18.</b> “The book <u class="ul">on the table</u> is mine.” What is the function of the underlined words?',['Adverbial of place','Subject','Adjectival: it describes “book”','Object of a preposition'],2,'It tells which book, so it is adjectival. (The table alone is the object of the preposition on.)'),
+ M('j19','function','<b>19.</b> Which sentence contains a <b>subject complement</b>?',['She sang a song.','The soup tastes delicious.','They made her happy.','He ran quickly.'],1,'In B, delicious describes the soup after the linking verb tastes. In C, happy describes the object her. A has an object. D has an adverb.'),
+ M('j20','function','<b>20.</b> “My uncle, a pilot, lives in Kano.” Which words are <b>in apposition</b>?',['lives in Kano','My uncle','in Kano','a pilot'],3,'A pilot renames my uncle. It stands beside it with commas and has no verb of its own.')
+];
+
+/* ================= D: FINAL CHALLENGE (15 questions, 20 minutes) ================= */
+var MOCK=[
+ M('m1','passive','The pupils are playing football. The passive form is:',['Football is played by the pupils.','Football was being played by the pupils.','Football has been played by the pupils.','Football is being played by the pupils.'],3,'Present continuous → is being played.'),
+ M('m2','passive','Mrs Okeke taught us English. Which is correct?',['English was taught to us by Mrs Okeke.','We were taught English by Mrs Okeke.','Both A and B are correct.','English is taught us by Mrs Okeke.'],2,'The verb has two objects. Either one can become the subject.'),
+ M('m3','passive','The company will employ fifty graduates. The passive form is:',['Fifty graduates are employed by the company.','Fifty graduates would be employed by the company.','Fifty graduates will have employed the company.','Fifty graduates will be employed by the company.'],3,'Future → will be employed.'),
+ M('m4','reported','Segun said, “I am leaving now.” The reported form is:',['Segun said that he is leaving now.','Segun said that I was leaving then.','Segun said that he was leaving then.','Segun said that he had been leaving then.'],2,'I → he, am leaving → was leaving, now → then.'),
+ M('m5','reported','“Did you see the accident?” the officer asked Bisi. The reported form is:',['The officer asked Bisi if she had seen the accident.','The officer asked Bisi did she see the accident.','The officer asked Bisi that she had seen the accident.','The officer asked Bisi if she saw the accident.'],0,'Yes/no question → if + statement order. Simple past → past perfect: had seen.'),
+ M('m6','reported','“Be quiet,” the teacher said to the class. The reported form is:',['The teacher told the class be quiet.','The teacher said the class to be quiet.','The teacher told the class that be quiet.','The teacher told the class to be quiet.'],3,'Command → told + person + to + verb.'),
+ M('m7','reported','She said to me, “I’ll see you tomorrow.” The reported form is:',['She told me that she would see me the next day.','She told me that I would see her tomorrow.','She said me that she would see me the next day.','She told me that she will see you tomorrow.'],0,'I → she, you → me, will → would, tomorrow → the next day.'),
+ M('m8','function','“Ada sat <u class="ul">beside her mother</u>.” The underlined words are:',['Adverbial of time','Adverbial of manner','Direct object','Adverbial of place'],3,'Sat where? Beside her mother.'),
+ M('m9','function','“The news made the family <u class="ul">sad</u>.” The underlined word is:',['Subject complement','Object complement','Adverbial of manner','Indirect object'],1,'Sad describes the family, the object of made.'),
+ M('m10','phrase','“<u class="ul">What she said</u> shocked everybody.” The underlined part is:',['A noun clause used as subject','A relative clause','An adverbial clause of time','A prepositional phrase'],0,'It has its own subject and verb and tells what shocked everybody.'),
+ M('m11','phrase','“The boy <u class="ul">who broke the window</u> ran away.” The underlined part is:',['Noun clause','Relative (adjectival) clause','Adverbial clause of reason','Adverbial of manner'],1,'It tells which boy.'),
+ M('m12','recast','Which pair has the same meaning?',['The dog bit the boy. / The dog was bitten by the boy.','Tola praised Ngozi. / Tola was praised by Ngozi.','The cook made the soup. / The soup was made by the cook.','The teacher asked me to leave. / I asked the teacher to leave.'],2,'Only in C do the doer and receiver stay the same. In A, B and D they are swapped.'),
+ M('m13','passive','Choose the correct sentence:',['The letter was written by he.','The letter was wrote by him.','The letter was written by him.','The letter written by him.'],2,'After by use him. After was use the past participle written. A passive needs be.'),
+ M('m14','reported','Choose the correct sentence:',['He said me that he was tired.','He told me that he was tired.','He told that he was tired.','He said to that he was tired.'],1,'Told needs a person: told me.'),
+ M('m15','function','“She is <u class="ul">my best friend</u>.” The underlined words are:',['Direct object','Apposition','Subject complement','Indirect object'],2,'Is links she to my best friend. It renames the subject.')
+];
+SEC('d1','Part D: Examination practice','WAEC-style practice: 20 questions','Objective and written questions. Submit when you are ready.',[
+ SC('WAEC-style test',
+  P('Questions 1 to 12 are objective. Questions 13 to 20 are written: type your answer. Two questions are based on a short extract. You can submit once you have answered what you can. After submission you will see the correct answer and an explanation for every question.'),
+  QZ('d-waec','WAEC-style practice','exam',WAEC,'This set follows the skills usually tested in WAEC English Language. It is not a copy of any past paper, and it does not predict the exact format of the examination.'))
+]);
+SEC('d2','Part D: Examination practice','JAMB-style practice: 20 questions','Objective questions with four options.',[
+ SC('JAMB-style test',
+  P('Choose one option (A to D) for each question. Submit at the end to see your score and the explanations.'),
+  QZ('d-jamb','JAMB-style practice','exam',JAMB,'This set follows the skills usually tested in JAMB UTME English. It is not a copy of any past paper, and it does not predict the exact format of the examination.'))
+]);
+SEC('d3','Part D: Examination practice','Final challenge: timed mock','15 questions. 20 minutes.',[
+ SC('Final challenge',{t:'mock'})
+]);
+
+/* ================= E: REVISION AND SUPPORT ================= */
+var MISTAKES=[
+ {t:'Passive',w:'He was hit by <s>she</s>.',r:'He was hit by <b>her</b>.',why:'After by you need the object form of the pronoun: me, you, him, her, it, us, them.',tip:'Say the pronoun as if it followed a verb: hit her, not hit she.'},
+ {t:'Passive',w:'Active: Ada is cooking rice. Passive: <s>Rice was cooked by Ada.</s>',r:'Rice <b>is being cooked</b> by Ada.',why:'The tense changed. Present continuous must stay present continuous.',tip:'Write the tense name above the active verb before you start. Then check it again at the end.'},
+ {t:'Passive',w:'<s>The letter written by Ibrahim.</s>',r:'The letter <b>was written</b> by Ibrahim.',why:'The verb be is missing. A passive needs be + past participle.',tip:'Every passive sentence has a form of be before the participle.'},
+ {t:'Passive',w:'The window was <s>broke</s> by the boy.',r:'The window was <b>broken</b> by the boy.',why:'After be you need the past participle, not the past tense.',tip:'Learn the three forms of common irregular verbs: break – broke – broken.'},
+ {t:'Passive',w:'<s>The bus was arrived by the students.</s>',r:'No passive is possible. Say: The students arrived by bus.',why:'Arrive has no object, so it cannot become passive.',tip:'Look for an object first. No object means no passive.'},
+ {t:'Passive',w:'The police were arrested by the thief. (for: The police arrested the thief.)',r:'The thief <b>was arrested</b> by the police.',why:'The doer and the receiver were swapped. The meaning is reversed.',tip:'After writing, say aloud: who did it? Check it is the same person.'},
+ {t:'Reported',w:'Musa said that <s>“he was hungry.”</s>',r:'Musa said that he was hungry.',why:'Reported speech has no quotation marks.',tip:'Delete the quotation marks as the first step.'},
+ {t:'Reported',w:'Musa said that <s>I</s> was hungry.',r:'Musa said that <b>he</b> was hungry.',why:'The pronoun I must change to match the person who spoke.',tip:'Circle every pronoun in the direct speech and ask who it refers to.'},
+ {t:'Reported',w:'He said that he <s>is</s> tired. (in an exam)',r:'He said that he <b>was</b> tired.',why:'When the reporting verb is past, the tense moves one step back.',tip:'Look at your list of tense changes before you write.'},
+ {t:'Reported',w:'She <s>said me</s> that she was ready.',r:'She <b>told me</b> that she was ready.',why:'Said cannot be followed directly by a person.',tip:'Said to me or told me. Never said me.'},
+ {t:'Reported',w:'He asked <s>where was I going</s>.',r:'He asked <b>where I was going</b>.',why:'A reported question uses statement order.',tip:'Reported questions are statements. The subject comes before the verb.'},
+ {t:'Reported',w:'He asked <s>that where</s> I lived.',r:'He asked <b>where</b> I lived.',why:'Never put that in front of a question word.',tip:'Reported questions use if, whether or the question word. Never that.'},
+ {t:'Reported',w:'He said that he would come <s>tomorrow</s>.',r:'He said that he would come <b>the next day</b>.',why:'Time words change in reported speech.',tip:'Underline tomorrow, yesterday, now, here, this and last before you write.'},
+ {t:'Function',w:'Function of <u class="ul">the boy</u> in <em>She saw the boy</em>: <s>noun</s>.',r:'<b>Direct object</b>.',why:'Noun is the word class. The question asked for the function.',tip:'If the question says function, the answer is never a word class.'},
+ {t:'Function',w:'<u class="ul">after the bell rang</u> is an <s>adverb</s>.',r:'It is an <b>adverbial clause of time</b>.',why:'A group of words with its own subject and verb is a clause, not a word.',tip:'Look for a subject and verb inside the underlined part. If you find them, it is a clause.'},
+ {t:'Function',w:'In <em>She is a doctor</em>, <u class="ul">a doctor</u> is the <s>direct object</s>.',r:'It is a <b>subject complement</b>.',why:'Be does not take an object. A doctor describes she.',tip:'Test: does the word after the verb mean the same as the subject? Then it is a complement.'},
+ {t:'Function',w:'In <em>She gave the boy a book</em>, <u class="ul">the boy</u> is the <s>direct object</s>.',r:'It is the <b>indirect object</b>.',why:'The book is what is given. The boy receives it.',tip:'Ask what is given first (direct object). The person who receives it is the indirect object.'}
+];
+SEC('e1','Part E: Revision and support','Common examination mistakes','Seventeen mistakes and how to avoid them.',[
+ SC('Passive voice mistakes',{t:'mk',items:MISTAKES.filter(function(x){return x.t==='Passive'})}),
+ SC('Reported speech mistakes',{t:'mk',items:MISTAKES.filter(function(x){return x.t==='Reported'})}),
+ SC('Grammatical function mistakes',{t:'mk',items:MISTAKES.filter(function(x){return x.t==='Function'})})
+]);
+
+SEC('e2','Part E: Revision and support','Quick revision sheets','Seven summary tables. Screenshot or copy them into your exercise book.',[
+ SC('1. Active vs passive voice',
+  TB(['','Active voice','Passive voice'],[
+   ['<b>Focus</b>','The doer','The receiver'],
+   ['<b>Pattern</b>','Doer + verb + receiver','Receiver + be + past participle (+ by doer)'],
+   ['<b>Example</b>','Ada cooked the food.','The food was cooked by Ada.'],
+   ['<b>Rule 1</b>','Tense stays the same','Tense stays the same'],
+   ['<b>Rule 2</b>','Needs an object to become passive','Doer can be left out'],
+   ['<b>Rule 3</b>','—','After by use him, her, them, me, us']
+  ])),
+ SC('2. Direct vs reported speech',
+  TB(['','Direct speech','Reported speech'],[
+   ['<b>Meaning</b>','Exact words','What was said'],
+   ['<b>Punctuation</b>','Quotation marks','No quotation marks'],
+   ['<b>Example</b>','Musa said, “I am hungry.”','Musa said that he was hungry.'],
+   ['<b>Changes</b>','—','pronouns, tenses, time and place words'],
+   ['<b>Questions</b>','“Where do you live?”','asked where I lived (statement order, no that)'],
+   ['<b>Commands</b>','“Sit down.”','told … to sit down']
+  ])),
+ SC('3. Common tense changes',
+  TB(['Direct','Reported'],[
+   ['simple present','simple past'],['present continuous','past continuous'],['present perfect','past perfect'],['simple past','past perfect'],
+   ['will','would'],['can','could'],['may','might'],['must','had to (or must)']
+  ])),
+ SC('4. Pronoun changes',
+  TB(['Direct','Reported','Rule'],[
+   ['I','he / she','the speaker'],['we','they','the speaker and others'],['my','his / her','the speaker'],['our','their','the speaker group'],
+   ['you / your','I, he, she, they … / my, his, her, their …','the listener'],['he / she / they','no change','third person']
+  ])),
+ SC('5. Time and place changes',
+  TB(['Direct','Reported'],[
+   ['today','that day'],['now','then'],['tonight','that night'],['yesterday','the day before / the previous day'],['tomorrow','the next day / the following day'],
+   ['last week','the previous week / the week before'],['next week','the following week / the week after'],['here','there'],['this / these','that / those'],['ago','before']
+  ])),
+ SC('6. Grammatical functions',
+  TB(['Function','Question to ask','Example'],[
+   ['Subject','Who or what + verb?','<u class="ul">Ngozi</u> sings.'],
+   ['Direct object','Verb + what or whom?','Tola kicked <u class="ul">the ball</u>.'],
+   ['Indirect object','To or for whom? (before the direct object)','She gave <u class="ul">the boy</u> a book.'],
+   ['Subject complement','Describes or renames the subject after a linking verb','He is <u class="ul">a teacher</u>.'],
+   ['Object complement','Describes or renames the object','They elected Musa <u class="ul">captain</u>.'],
+   ['Adverbial of time','When?','We left <u class="ul">yesterday</u>.'],
+   ['Adverbial of place','Where?','They play <u class="ul">outside</u>.'],
+   ['Adverbial of manner','How?','She spoke <u class="ul">softly</u>.'],
+   ['Adverbial of reason','Why?','He stayed <u class="ul">because he was ill</u>.'],
+   ['Object of a preposition','What follows the preposition?','beside <u class="ul">the teacher</u>'],
+   ['Apposition','Another noun phrase renaming it, with no verb between','Mr Ade, <u class="ul">our principal</u>, spoke.'],
+   ['Adjunct','Optional extra. Can it be removed?','He ran <u class="ul">quickly</u>.']
+  ])),
+ SC('7. Phrases and clauses',
+  TB(['Structure','Example','Usual function'],[
+   ['Noun phrase','the tall boy from Kano','subject, object, complement'],
+   ['Prepositional phrase','under the table','adverbial or adjectival'],
+   ['Adjectival phrase','very tired','complement, or describes a noun'],
+   ['Adverbial phrase','very quickly','adverbial'],
+   ['Noun clause','that he passed','subject, object, complement'],
+   ['Adverbial clause','after the bell rang','time, reason, concession …'],
+   ['Relative clause','who lives next door','describes a noun']
+  ]))
+]);
+SEC('e3','Part E: Revision and support','Revise my weak topics','See which topics need more work.',[SC('Your results',{t:'revise'})]);
+SEC('e4','Part E: Revision and support','Teacher’s answer key','Correct answers and explanations for every question.',[SC('Teacher’s answer key',{t:'key'})]);
+
+/* ---------------- engine ---------------- */
+(function(){
+var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null};
+var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0}};
+var app=document.getElementById('app');
+
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null}}catch(e){}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return [].slice.call((r||document).querySelectorAll(s))}
+function norm(s){return String(s).toLowerCase().replace(/[‘’“”]/g,function(c){return (c==='‘'||c==='’')?"'":'"'}).replace(/[.,;:!?"()]/g,' ').replace(/'/g,'').replace(/\s+/g,' ').trim()}
+var LET=['A','B','C','D','E'];
+
+/* ---- index all questions ---- */
+var QIDX={},QSEC={},TOTAL=0;
+function indexQ(q,sid){QIDX[q.id]=q;QSEC[q.id]=sid;TOTAL++}
+SECS.forEach(function(s){s.screens.forEach(function(sc){sc.blocks.forEach(function(b){if(b.t==='qz')b.items.forEach(function(q){indexQ(q,s.id)})})})});
+MOCK.forEach(function(q){indexQ(q,'d3')});
+
+/* ---- answer checking ---- */
+function checkTyped(q,raw){
+  if(q.noq&&/["“”]/.test(raw))return {ok:false,msg:'Remove the quotation marks. Reported speech does not use them.'};
+  if(q.needq&&!/["“”]/.test(raw))return {ok:false,msg:'Direct speech needs quotation marks around the exact words spoken.'};
+  var n=norm(raw);if(!n)return {ok:false,msg:'Type your answer first.',empty:true};
+  for(var i=0;i<q.ans.length;i++)if(norm(q.ans[i])===n)return {ok:true};
+  if(q.has){var all=true;q.has.forEach(function(g){var f=false;g.forEach(function(w){if(n.indexOf(w)>=0)f=true});if(!f)all=false});if(all)return {ok:true}}
+  for(var j=0;j<q.traps.length;j++)if(q.traps[j].re.test(n))return {ok:false,msg:q.traps[j].m};
+  return {ok:false,msg:null};
+}
+function modelText(q){return q.type==='mcq'?LET[q.a]+'. '+q.opts[q.a]:q.ans.map(esc).join('<br><em>or</em> ')}
+
+/* ---- stats ---- */
+function resOf(id){return ST.res[id]||null}
+function answeredCount(ids){var c=0;ids.forEach(function(i){var r=ST.res[i];if(r&&r.done)c++});return c}
+function secQ(sid){var out=[];Object.keys(QSEC).forEach(function(k){if(QSEC[k]===sid)out.push(k)});return out}
+function totalProgress(){return Math.round(100*answeredCount(Object.keys(QIDX))/Math.max(1,TOTAL))}
+function secObj(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return SECS[i];return null}
+function secIdx(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return i;return -1}
+
+/* ---- block rendering ---- */
+function boxHtml(cls,b){return '<div class="box '+cls+'"><div class="bt">'+esc(b.title)+'</div><div>'+b.h+'</div></div>'}
+function tbHtml(b){
+  var h='<div class="tw"><table>';
+  if(b.head&&b.head.length&&b.head.join('')!=='')h+='<thead><tr>'+b.head.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead>';
+  else if(b.head&&b.head.length)h+='<thead><tr>'+b.head.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead>';
+  h+='<tbody>'+b.rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
+  return h;
+}
+function wkHtml(b){
+  return (b.title?'<h3>'+esc(b.title)+'</h3>':'')+b.items.map(function(it){
+    return '<details class="wk"><summary><span class="tg">'+esc(it.tag)+'</span><div>'+it.q+'</div><span class="hint">Try it yourself first. Then tap to see the answer and the steps.</span></summary><div class="wkb"><div class="ans"><b>Answer:</b> '+it.a+'</div><ol class="steps">'+it.st.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol></div></details>';
+  }).join('');
+}
+function passageHtml(b){
+  if(b.collapsed)return '<details class="pas"><summary>Show the passage again: '+esc(b.title)+'</summary><div class="passage">'+b.h+'</div></details>';
+  return '<div class="passage"><div class="pt">'+esc(b.title)+'</div>'+b.h+'</div>';
+}
+function mkHtml(b){
+  return b.items.map(function(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">Incorrect</span>'+m.w+'</div><div class="r"><span class="k">Correct</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}).join('');
+}
+
+/* ---- live questions ---- */
+function liveCard(q){
+  var r=resOf(q.id)||{tries:0,wrong:[],done:0};
+  var cls=r.done?(r.ok?'ok':'no'):'';
+  var h='<div class="qc '+cls+'" data-card="'+q.id+'"><p class="qt">'+q.q+'</p>';
+  if(q.type==='mcq'){
+    h+=q.opts.map(function(o,i){
+      var st='',dis='';
+      if(r.done){dis=' disabled';if(i===q.a)st=' good';else if(r.wrong&&r.wrong.indexOf(i)>=0)st=' bad'}
+      else if(r.wrong&&r.wrong.indexOf(i)>=0){st=' bad';dis=' disabled'}
+      return '<button class="opt'+st+'" data-act="opt" data-q="'+q.id+'" data-i="'+i+'"'+dis+'><b class="l">'+LET[i]+'.</b> '+esc(o)+'</button>';
+    }).join('');
+    if(r.wrong&&r.wrong.length&&!r.done){var li=r.wrong[r.wrong.length-1];h+='<div class="fb b"><b>Not quite.</b>'+(q.wr[li]||'Read the question again and try another option.')+' Try again.</div>'}
+    if(r.done){
+      if(r.ok&&r.tries===0)h+='<div class="fb g"><b>Correct!</b>'+q.why+'</div>';
+      else if(r.ok)h+='<div class="fb g"><b>Correct on your second try.</b>'+q.why+'</div>';
+      else h+='<div class="fb n"><b>The correct answer is '+LET[q.a]+'.</b>'+q.why+'</div>';
+    }
+  }else{
+    var val=r.val||'';
+    if(!r.done||true){
+      h+='<div class="row"><input class="tx" type="text" id="in-'+q.id+'" data-q="'+q.id+'" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="'+esc(q.ph)+'" value="'+esc(val)+'"'+(r.done?' disabled':'')+'>';
+      if(!r.done)h+='<button class="btn" data-act="chk" data-q="'+q.id+'">Check</button>';
+      h+='</div>';
+    }
+    if(!r.done){
+      if(r.msg)h+='<div class="fb b"><b>Not quite.</b>'+r.msg+(r.tries<2?' Try again.':'')+'</div>';
+      if(q.hint)h+=(RT.hint[q.id]?'<div class="fb n"><b>Hint</b>'+esc(q.hint)+'</div>':'<button class="lnk" data-act="hint" data-q="'+q.id+'">Need a hint?</button>');
+    }else{
+      if(r.ok)h+='<div class="fb g"><b>Correct!</b>'+q.why+'</div>';
+      else h+='<div class="fb n"><b>Model answer</b>'+modelText(q)+'<br><br>'+q.why+'</div><button class="btn gh sm" data-act="self" data-q="'+q.id+'">My answer means the same</button>';
+    }
+  }
+  return h+'</div>';
+}
+function quizHtml(b){
+  if(b.mode==='exam')return examHtml(b);
+  var ids=b.items.map(function(q){return q.id}),d=answeredCount(ids);
+  var first=ids.filter(function(i){var r=ST.res[i];return r&&r.done&&r.ok&&r.tries===0}).length;
+  return '<div class="qz" data-quiz="'+b.id+'"><div class="qh">Practice · '+esc(b.title)+'</div>'+(b.intro?'<div class="qi">'+b.intro+'</div>':'')+
+    '<div class="prog" data-prog="'+b.id+'">Answered '+d+' of '+ids.length+' · Correct first time: '+first+'</div>'+b.items.map(liveCard).join('')+'</div>';
+}
+function refreshCard(id){
+  var q=QIDX[id],el=$('[data-card="'+id+'"]');if(!el)return;
+  var tmp=document.createElement('div');tmp.innerHTML=liveCard(q);el.parentNode.replaceChild(tmp.firstChild,el);
+  var qz=el.parentNode;while(qz&&!(qz.getAttribute&&qz.getAttribute('data-quiz')))qz=qz.parentNode;
+  var inp=$('#in-'+id);if(inp&&!inp.disabled&&document.activeElement!==inp){try{inp.focus()}catch(e){}}
+  updateProgress();
+}
+function updateProgress(){
+  $$('[data-quiz]').forEach(function(z){
+    var id=z.getAttribute('data-quiz'),b=findQuiz(id);if(!b||b.mode==='exam')return;
+    var ids=b.items.map(function(q){return q.id}),d=answeredCount(ids);
+    var first=ids.filter(function(i){var r=ST.res[i];return r&&r.done&&r.ok&&r.tries===0}).length;
+    var p=$('[data-prog="'+id+'"]',z);if(p)p.textContent='Answered '+d+' of '+ids.length+' · Correct first time: '+first;
+  });
+  var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
+}
+function findQuiz(id){var f=null;SECS.forEach(function(s){s.screens.forEach(function(sc){sc.blocks.forEach(function(b){if(b.t==='qz'&&b.id===id)f=b})})});return f}
+
+function answerMcq(id,i){
+  var q=QIDX[id],r=ST.res[id]||{tries:0,wrong:[],done:0};if(r.done)return;
+  if(i===q.a){r.done=1;r.ok=1}
+  else{r.tries++;r.wrong.push(i);if(r.tries>=2){r.done=1;r.ok=0}}
+  ST.res[id]=r;save();refreshCard(id);
+}
+function answerTyped(id){
+  var q=QIDX[id],r=ST.res[id]||{tries:0,wrong:[],done:0},inp=$('#in-'+id);if(!inp||r.done)return;
+  var raw=inp.value,c=checkTyped(q,raw);r.val=raw;
+  if(c.empty){r.msg=c.msg;ST.res[id]=r;refreshCard(id);return}
+  if(c.ok){r.done=1;r.ok=1;r.msg=null}
+  else{r.tries++;r.msg=c.msg||('That is not what I expected. '+(q.hint||'Check each part of the sentence.'));if(r.tries>=2){r.done=1;r.ok=0}}
+  ST.res[id]=r;save();refreshCard(id);
+}
+
+/* ---- exam sets (WAEC and JAMB style) ---- */
+function examState(id){return ST.exam[id]||(ST.exam[id]={a:{},sub:0,self:{}})}
+function examHtml(b){
+  var es=examState(b.id),h='<div class="qz" data-quiz="'+b.id+'"><div class="qh">Practice test · '+esc(b.title)+'</div><div class="qi">'+b.intro+'</div>';
+  if(es.sub){
+    var sc=0,by={};b.items.forEach(function(q){var ok=examOk(q,es);if(ok)sc++;var t=TOPICS[q.topic]?TOPICS[q.topic].n:q.topic;by[t]=by[t]||{n:0,c:0};by[t].n++;if(ok)by[t].c++});
+    h+='<div class="score"><div class="big">'+sc+' / '+b.items.length+'</div><div>'+Math.round(100*sc/b.items.length)+'%</div>'+
+      Object.keys(by).map(function(t){var p=Math.round(100*by[t].c/by[t].n);return '<div style="margin-top:8px">'+esc(t)+': '+by[t].c+' of '+by[t].n+'<div class="tbar '+(p<50?'low':p<80?'mid':'')+'"><i style="width:'+p+'%"></i></div></div>'}).join('')+
+      '<button class="btn gh sm" data-act="xreset" data-set="'+b.id+'">Try the test again</button></div>';
+  }else{
+    var n=0;b.items.forEach(function(q){if(es.a[q.id]!==undefined&&es.a[q.id]!=='')n++});
+    h+='<div class="prog">Answered '+n+' of '+b.items.length+'</div>';
+  }
+  b.items.forEach(function(q){h+=examCard(q,b,es)});
+  if(!es.sub)h+='<div class="row"><button class="btn" data-act="xsubmit" data-set="'+b.id+'">Submit answers</button></div>';
+  return h+'</div>';
+}
+function examOk(q,es){
+  if(es.self&&es.self[q.id])return true;
+  var a=es.a[q.id];if(a===undefined||a==='')return false;
+  if(q.type==='mcq')return a===q.a;
+  return checkTyped(q,a).ok;
+}
+function examCard(q,b,es){
+  var sub=es.sub,ok=sub&&examOk(q,es),a=es.a[q.id];
+  var h='<div class="qc '+(sub?(ok?'ok':'no'):'')+'" data-xc="'+q.id+'"><p class="qt">'+q.q+'</p>';
+  if(q.type==='mcq'){
+    h+=q.opts.map(function(o,i){var st='';if(sub){if(i===q.a)st=' good';else if(a===i)st=' bad'}else if(a===i)st=' sel';
+      return '<button class="opt'+st+'" data-act="xopt" data-set="'+b.id+'" data-q="'+q.id+'" data-i="'+i+'"'+(sub?' disabled':'')+'><b class="l">'+LET[i]+'.</b> '+esc(o)+'</button>'}).join('');
+  }else{
+    h+='<div class="row"><input class="tx" type="text" data-act="xtype" data-set="'+b.id+'" data-q="'+q.id+'" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="'+esc(q.ph)+'" value="'+esc(a||'')+'"'+(sub?' disabled':'')+'></div>';
+  }
+  if(sub){
+    h+='<div class="fb '+(ok?'g':'b')+'"><b>'+(ok?'Correct':(a===undefined||a===''?'Not answered':'Not correct'))+'</b>'+
+      (q.type==='mcq'?'Correct answer: '+LET[q.a]+'. '+esc(q.opts[q.a])+'<br><br>':'Model answer: '+modelText(q)+'<br><br>')+q.why+'</div>';
+    if(q.type!=='mcq'&&!ok&&a)h+='<button class="btn gh sm" data-act="xself" data-set="'+b.id+'" data-q="'+q.id+'">My answer means the same</button>';
+  }
+  return h+'</div>';
+}
+function examSubmit(setId){
+  var b=findQuiz(setId),es=examState(setId);
+  b.items.forEach(function(q){var ok=examOk(q,es);ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
+  es.sub=1;save();render(true);
+}
+
+/* ---- final timed mock ---- */
+function mockHtml(){
+  var m=RT.mock;
+  if(!m){
+    var best=ST.mockBest?'<p class="muted">Your best score so far: <b>'+ST.mockBest+' / 15</b></p>':'';
+    return '<div class="box def"><div class="bt">Final challenge</div><div>15 questions mixing everything in this note. You have <b>20 minutes</b>. You see your score, a breakdown by topic and an explanation for every answer you missed at the end.</div></div>'+best+
+      '<div class="row"><button class="btn" data-act="mstart">Start the timed mock</button></div>'+
+      '<p class="muted">Tip: answer the easy ones first, then return to the harder ones. You can go back to any question before you finish.</p>';
+  }
+  if(m.done)return mockResult(m);
+  var q=MOCK[m.i],a=m.a[m.i];
+  var h='<div class="timer">Time left: <span id="tmr">'+fmtT(m.end-Date.now())+'</span> · Question '+(m.i+1)+' of 15</div><div class="qc" data-mc="1"><p class="qt">'+q.q+'</p>';
+  h+=q.opts.map(function(o,i){return '<button class="opt'+(a===i?' sel':'')+'" data-act="mopt" data-i="'+i+'"><b class="l">'+LET[i]+'.</b> '+esc(o)+'</button>'}).join('')+'</div>';
+  h+='<div class="row">'+(m.i>0?'<button class="btn gh" data-act="mprev">Previous</button>':'')+(m.i<14?'<button class="btn" data-act="mnext">Next</button>':'')+'<button class="btn gh" data-act="mfinish">Finish and see my score</button></div>';
+  h+='<div class="prog">Answered '+m.a.filter(function(x){return x!==undefined}).length+' of 15</div>';
+  return h;
+}
+function fmtT(ms){if(ms<0)ms=0;var s=Math.floor(ms/1000),mm=Math.floor(s/60),ss=s%60;return (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss}
+function band(s){return s>=13?['Excellent understanding.','You are ready for the examination questions on this topic.']:s>=10?['Good understanding.','Revise the areas you missed.']:s>=7?['Developing.','More practice is needed.']:['Revisit the lessons.','Go back to the lessons and attempt the exercises again.']}
+function mockResult(m){
+  var sc=0,by={};
+  MOCK.forEach(function(q,i){var ok=m.a[i]===q.a;if(ok)sc++;var t=TOPICS[q.topic]?TOPICS[q.topic].n:q.topic;by[t]=by[t]||{n:0,c:0};by[t].n++;if(ok)by[t].c++});
+  var bd=band(sc);
+  var h='<div class="score"><div class="big">'+sc+' / 15</div><div><b>'+bd[0]+'</b> '+bd[1]+'</div>'+(m.timeUp?'<p class="muted">The time ran out. Unanswered questions were marked wrong.</p>':'')+'<h3>Performance by topic</h3>'+
+    Object.keys(by).map(function(t){var p=Math.round(100*by[t].c/by[t].n);return '<div>'+esc(t)+': '+by[t].c+' of '+by[t].n+'<div class="tbar '+(p<50?'low':p<80?'mid':'')+'"><i style="width:'+p+'%"></i></div></div>'}).join('')+
+    '<div class="row"><button class="btn" data-act="mstart">Try again</button></div></div><h3>Review: what you missed</h3>';
+  var miss=0;
+  MOCK.forEach(function(q,i){
+    if(m.a[i]===q.a)return;miss++;
+    h+='<div class="qc no"><p class="qt">'+(i+1)+'. '+q.q+'</p><div class="fb b"><b>'+(m.a[i]===undefined?'Not answered':'Your answer: '+LET[m.a[i]]+'. '+esc(q.opts[m.a[i]]))+'</b>Correct answer: '+LET[q.a]+'. '+esc(q.opts[q.a])+'<br><br>'+q.why+'</div></div>';
+  });
+  if(!miss)h+='<div class="fb g"><b>Perfect score!</b>You did not miss a question.</div>';
+  return h;
+}
+var mockTimer=null;
+function mockTick(){
+  var m=RT.mock;if(!m||m.done){clearInterval(mockTimer);mockTimer=null;return}
+  var left=m.end-Date.now(),t=$('#tmr');if(t)t.textContent=fmtT(left);
+  if(left<=0){m.timeUp=true;mockFinish()}
+}
+function mockFinish(){
+  var m=RT.mock;if(!m)return;m.done=true;clearInterval(mockTimer);mockTimer=null;
+  var sc=0;MOCK.forEach(function(q,i){var ok=m.a[i]===q.a;if(ok)sc++;ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
+  if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;
+  save();render(true);
+}
+
+/* ---- revision panel ---- */
+function reviseHtml(){
+  var h='<p>Your results are saved on this device. Each bar shows how many questions you got right the first time.</p>';
+  var any=false;
+  Object.keys(TOPICS).forEach(function(k){
+    var n=0,c=0;Object.keys(QIDX).forEach(function(id){var q=QIDX[id];if(q.topic!==k)return;var r=ST.res[id];if(r&&r.done){n++;if(r.ok&&(r.tries===0||r.exam))c++}});
+    if(n)any=true;
+    var p=n?Math.round(100*c/n):0,tag=!n?'Not started':p>=80?'Strong':p>=50?'Revise':'Revisit the lesson';
+    h+='<div class="tile" style="cursor:default"><b>'+esc(TOPICS[k].n)+'</b><span class="meta">'+tag+(n?' · '+c+' of '+n+' correct first time':'')+'</span><div class="tbar '+(!n?'':p<50?'low':p<80?'mid':'')+'"><i style="width:'+p+'%"></i></div>'+
+      (n&&p<80?'<button class="btn sm" data-act="go" data-sec="'+TOPICS[k].sec+'" data-scr="0">Revise this topic</button>':'')+(!n?'<button class="btn gh sm" data-act="go" data-sec="'+TOPICS[k].sec+'" data-scr="0">Start</button>':'')+'</div>';
+  });
+  if(!any)h+='<div class="box tip"><div class="bt">Nothing to show yet</div><div>Answer some practice questions first. Then come back here.</div></div>';
+  h+='<div class="row"><button class="btn gh" data-act="wipe">Clear my saved results</button></div>';
+  return h;
+}
+
+/* ---- teacher key ---- */
+function keyHtml(){
+  if(!RT.pin)return '<div class="box tip"><div class="bt">For teachers</div><div>This page lists every answer with an explanation. Enter the PIN to open it.<br><small>This PIN only stops casual browsing. It is stored in the page, so a determined student could find it. For a real exam, give the questions on paper.</small></div></div><div class="row"><input class="tx" id="pin" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off"><button class="btn" data-act="pin">Open</button></div>'+(RT.pinBad?'<div class="fb b"><b>Wrong PIN.</b>Try again.</div>':'');
+  var h='';
+  SECS.forEach(function(s){
+    var qs=[];s.screens.forEach(function(sc){sc.blocks.forEach(function(b){if(b.t==='qz')b.items.forEach(function(q){qs.push(q)})})});
+    if(s.id==='d3')qs=MOCK;
+    if(!qs.length)return;
+    h+='<h3>'+esc(s.title)+'</h3>';
+    qs.forEach(function(q,i){
+      h+='<div class="mk"><div>'+q.q+'</div><div class="r"><span class="k">Answer</span>'+(q.type==='mcq'?LET[q.a]+'. '+esc(q.opts[q.a]):modelText(q))+'</div><p><b>Explanation:</b> '+q.why+'</p></div>';
+    });
+  });
+  return h;
+}
+
+/* ---- home ---- */
+function homeHtml(){
+  var h='<div class="hero"><div class="eyebrow" style="color:inherit;opacity:.85">SS3 · English Language · First Term · Week 1</div><h1>Sentence recasting and grammatical functions</h1><p>Comprehension skills for WAEC and JAMB. Learn one small idea at a time, then practise until it feels easy.</p><div class="row"><button class="btn" data-act="cont">'+(ST.last&&ST.last.sec!=='home'?'Continue where I stopped':'Start learning')+'</button><button class="btn gh" data-act="go" data-sec="e3" data-scr="0">My results</button></div></div>';
+  h+='<div class="box tip"><div class="bt">Suggested 40-minute class plan</div><div><b>5 min:</b> Start here and What is recasting?<br><b>12 min:</b> Active and passive voice, screens 1 to 7<br><b>13 min:</b> Direct and reported speech, screens 1 to 8<br><b>10 min:</b> Word class or grammatical function? and the first functions<br><small>Everything else is for self-paced study after class.</small></div></div>';
+  h+='<h3>How you are doing</h3><div class="tbar"><i style="width:'+totalProgress()+'%"></i></div><div class="prog">'+totalProgress()+'% of all questions answered</div>';
+  var last='';
+  SECS.forEach(function(s){
+    if(s.part!==last){h+='<div class="part">'+esc(s.part)+'</div>';last=s.part}
+    var q=secQ(s.id),d=answeredCount(q),vis=0;s.screens.forEach(function(sc,i){if(ST.vis[s.id+':'+i])vis++});
+    h+='<button class="tile" data-act="go" data-sec="'+s.id+'" data-scr="0"><b>'+esc(s.title)+'</b><small>'+esc(s.blurb)+'</small><span class="meta">'+s.screens.length+' screen'+(s.screens.length>1?'s':'')+' · viewed '+vis+(q.length?' · '+d+' of '+q.length+' questions answered':'')+'</span></button>';
+  });
+  return h;
+}
+
+/* ---- screen rendering ---- */
+function blockHtml(b){
+  switch(b.t){
+   case 'p':return '<p>'+b.h+'</p>';
+   case 'h':return '<h3>'+b.h+'</h3>';
+   case 'def':return boxHtml('def',b);
+   case 'ex':return boxHtml('ex',b);
+   case 'tip':return boxHtml('tip',b);
+   case 'mis':return boxHtml('mis',b);
+   case 'tb':return tbHtml(b);
+   case 'stp':return (b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps">'+b.items.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ol>';
+   case 'wk':return wkHtml(b);
+   case 'qz':return quizHtml(b);
+   case 'passage':return passageHtml(b);
+   case 'mk':return mkHtml(b);
+   case 'mock':return mockHtml();
+   case 'revise':return reviseHtml();
+   case 'key':return keyHtml();
+  }
+  return '';
+}
+function render(keepScroll){
+  var cur=RT.cur,h='',nav='';
+  var nb=$('#navbar'),mid=$('#navmid'),pv=$('#pv'),nx=$('#nx');
+  if(cur.sec==='home'){
+    h=homeHtml();nb.style.display='none';
+  }else{
+    var s=secObj(cur.sec),sc=s.screens[cur.scr];
+    h='<div class="eyebrow">'+esc(s.part)+'</div><h2>'+esc(s.title)+'</h2><div class="prog">Screen '+(cur.scr+1)+' of '+s.screens.length+'</div><div class="tbar"><i style="width:'+Math.round(100*(cur.scr+1)/s.screens.length)+'%"></i></div>'+
+      (sc.title&&sc.title!==s.title?'<h3 style="margin-top:6px;color:var(--accent)">'+esc(sc.title)+'</h3>':'')+sc.blocks.map(blockHtml).join('');
+    ST.vis[cur.sec+':'+cur.scr]=1;
+    nb.style.display='block';
+    mid.textContent='Screen '+(cur.scr+1)+' of '+s.screens.length;
+    pv.textContent=cur.scr===0?'Menu':'Back';
+    var last=cur.scr===s.screens.length-1,si=secIdx(cur.sec);
+    nx.textContent=last?(si<SECS.length-1?'Next topic':'Home'):'Next';
+  }
+  app.innerHTML=h;
+  ST.last=cur;save();
+  if(!keepScroll)window.scrollTo(0,0);
+  var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
+  var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Contents':(secObj(cur.sec).title);
+  buildDrawer();
+  if(RT.mock&&!RT.mock.done&&!mockTimer)mockTimer=setInterval(mockTick,1000);
+}
+function go(sec,scr){RT.cur={sec:sec,scr:scr||0};closeDrawer();render()}
+function next(){
+  var cur=RT.cur;if(cur.sec==='home')return;
+  var s=secObj(cur.sec);
+  if(cur.scr<s.screens.length-1)go(cur.sec,cur.scr+1);
+  else{var si=secIdx(cur.sec);if(si<SECS.length-1)go(SECS[si+1].id,0);else go('home',0)}
+}
+function prev(){
+  var cur=RT.cur;if(cur.sec==='home')return;
+  if(cur.scr>0)go(cur.sec,cur.scr-1);else openDrawer();
+}
+function buildDrawer(){
+  var d=$('#drawer'),h='<div class="row"><b style="flex:1">Contents</b><button class="ib" data-act="closed" aria-label="Close menu">✕</button></div><a data-act="go" data-sec="home" data-scr="0" class="'+(RT.cur.sec==='home'?'on':'')+'">Home</a>',last='';
+  SECS.forEach(function(s){
+    if(s.part!==last){h+='<h4>'+esc(s.part)+'</h4>';last=s.part}
+    var q=secQ(s.id);
+    h+='<a data-act="go" data-sec="'+s.id+'" data-scr="0" class="'+(RT.cur.sec===s.id?'on':'')+'">'+esc(s.title)+'<span>'+(q.length?answeredCount(q)+'/'+q.length:'')+'</span></a>';
+  });
+  d.innerHTML=h;
+}
+function openDrawer(){$('#drawer').classList.add('on');$('#shade').classList.add('on')}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#shade').classList.remove('on')}
+
+/* ---- events ---- */
+function onClick(e){
+  var t=e.target;while(t&&t!==document&&!(t.getAttribute&&t.getAttribute('data-act')))t=t.parentNode;
+  if(!t||t===document)return;
+  var act=t.getAttribute('data-act'),q=t.getAttribute('data-q'),i=+t.getAttribute('data-i'),set=t.getAttribute('data-set');
+  if(act==='opt')answerMcq(q,i);
+  else if(act==='chk')answerTyped(q);
+  else if(act==='hint'){RT.hint[q]=1;refreshCard(q)}
+  else if(act==='self'){var r=ST.res[q];r.ok=1;r.self=1;save();refreshCard(q)}
+  else if(act==='xopt'){examState(set).a[q]=i;save();render(true)}
+  else if(act==='xsubmit')examSubmit(set);
+  else if(act==='xself'){examState(set).self[q]=1;var b=findQuiz(set);ST.res[q]={done:1,ok:1,tries:0,exam:1,self:1};save();render(true)}
+  else if(act==='xreset'){delete ST.exam[set];findQuiz(set).items.forEach(function(x){delete ST.res[x.id]});save();render()}
+  else if(act==='mstart'){RT.mock={i:0,a:[],end:Date.now()+MOCKMIN*60000,done:false};if(mockTimer)clearInterval(mockTimer);mockTimer=null;render()}
+  else if(act==='mopt'){RT.mock.a[RT.mock.i]=i;render(true)}
+  else if(act==='mnext'){RT.mock.i++;render()}
+  else if(act==='mprev'){RT.mock.i--;render()}
+  else if(act==='mfinish'){mockFinish()}
+  else if(act==='go')go(t.getAttribute('data-sec'),+t.getAttribute('data-scr'));
+  else if(act==='cont'){var l=ST.last;if(l&&l.sec!=='home'&&secObj(l.sec)&&l.scr<secObj(l.sec).screens.length)go(l.sec,l.scr);else go('start',0)}
+  else if(act==='pin'){var v=$('#pin').value;if(v===TPIN){RT.pin=true;RT.pinBad=0}else{RT.pinBad=1}render(true)}
+  else if(act==='wipe'){ST.res={};ST.exam={};ST.vis={};ST.mockBest=null;RT.mock=null;RT.hint={};save();render()}
+  else if(act==='closed')closeDrawer();
+}
+function onKey(e){
+  var t=e.target;
+  if(t&&t.classList&&t.classList.contains('tx')&&e.key==='Enter'){
+    var q=t.getAttribute('data-q');if(q&&t.id==='in-'+q)answerTyped(q);
+    if(t.id==='pin')$('[data-act="pin"]').click();
+  }
+}
+function onInput(e){
+  var t=e.target;
+  if(t&&t.getAttribute&&t.getAttribute('data-act')==='xtype'){var es=examState(t.getAttribute('data-set'));es.a[t.getAttribute('data-q')]=t.value;save();var cs=$('[data-set="'+t.getAttribute('data-set')+'"]');var q=$('[data-quiz="'+t.getAttribute('data-set')+'"] .prog');if(q){var b=findQuiz(t.getAttribute('data-set')),n=0;b.items.forEach(function(x){if(es.a[x.id]!==undefined&&es.a[x.id]!=='')n++});q.textContent='Answered '+n+' of '+b.items.length}}
+}
+document.addEventListener('click',onClick);
+document.addEventListener('keydown',onKey);
+document.addEventListener('input',onInput);
+$('#menu').onclick=openDrawer;$('#shade').onclick=closeDrawer;
+$('#pv').onclick=prev;$('#nx').onclick=next;
+$('#brand').onclick=function(){go('home',0)};
+load();
+if(ST.last&&ST.last.sec&&ST.last.sec!=='home'&&secObj(ST.last.sec)){RT.cur={sec:'home',scr:0}}
+render();
+window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
+})();
+
+</script>
