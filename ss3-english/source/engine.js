@@ -1,11 +1,11 @@
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
-var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0};
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0,lab:{}};
 var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
-function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0}}catch(e){}}
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0;ST.lab=o.lab||{}}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function $(s,r){return (r||document).querySelector(s)}
@@ -319,6 +319,7 @@ function unitsOf(b){
    case 'tb':{var per=b.rows.length>12?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
    case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
    case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
+   case 'lab':return [{html:'<div class="lab" data-lab="'+b.id+'"></div>',gate:function(){return !!ST.lab[b.id]},why:'Finish the challenge to move on.'}];
    case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
   }
   return [{html:blockHtml(b)}];
@@ -469,5 +470,5 @@ load();
 gameBoot();
 RT.cur={sec:'home',scr:0};
 render();
-window.__ENG={showAll:function(){[].forEach.call(document.querySelectorAll('[data-u]'),function(x){x.hidden=false})},SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
+window.__ENG={revUpdate:function(){revUpdate()},showAll:function(){[].forEach.call(document.querySelectorAll('[data-u]'),function(x){x.hidden=false})},SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
 })();

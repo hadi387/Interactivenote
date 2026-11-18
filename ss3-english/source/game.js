@@ -318,10 +318,11 @@ function levelLabel(id){var i=levelOfSec(id);if(i>=0)return 'Level '+i+' · '+LE
 function isLevelEnd(id){var i=levelOfSec(id);return i<0||LEVELS[i].secs[LEVELS[i].secs.length-1]===id}
 function nextSecInLevel(id){var i=levelOfSec(id);if(i<0)return null;var L=LEVELS[i],k=L.secs.indexOf(id);return L.secs[k+1]||null}
 function levelBar(sec,scr){
-  var s=secObj(sec),i=levelOfSec(sec),pips='';
-  s.screens.forEach(function(_,k){pips+='<i class="'+(ST.fin[sec+':'+k]?'ok':k===scr?'cur':'')+'"></i>'});
+  var s=secObj(sec),i=levelOfSec(sec),done=0;
+  s.screens.forEach(function(_,k){if(ST.fin[sec+':'+k])done++});
+  var pct=Math.round(100*Math.max(done,scr)/s.screens.length);
   var head=i>=0?'<b class="ln">LEVEL '+i+'</b>':'<b class="ln">BONUS</b>';
-  return '<div class="lvbar">'+head+'<span class="lname">'+esc(s.title)+'</span><span class="lpips">'+pips+'</span></div>';
+  return '<div class="lvbar">'+head+'<span class="lname">'+esc(s.title)+'</span><span class="lpg"><i style="width:'+pct+'%"></i></span></div>';
 }
 function levelResume(i){
   var L=LEVELS[i],sc=L.secs[L.secs.length-1],scr=secObj(sc).screens.length-1;
@@ -385,7 +386,9 @@ function gameSet(k){
   else if(k==='lite'){ST.set.lite=!isLite();document.body.classList.toggle('lite',ST.set.lite)}
   save();hud();buildDrawer();
 }
+/*@@LABS@@*/
 function gameAfter(root){
+  $$('[data-lab]',root).forEach(labInit);
   $$('[data-anim]',root).forEach(animInit);
   $$('[data-boss]',root).forEach(bossInit);
   $$('[data-battle]',root).forEach(battleInit);

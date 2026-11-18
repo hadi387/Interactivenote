@@ -6,8 +6,8 @@ a0=arena.index('/* ---------- audio: sfx + chiptune music ---------- */');a1=are
 audio=arena[a0:a1]
 b0=arena.index('function bossSVG(color,mood){');b1=arena.index('const heart=on=>')
 bsvg=arena[b0:b1]
-eng=rd('engine.js').replace('/*@@GAME@@*/',rd('game.js').replace('/*@@AUDIO@@*/',audio).replace('/*@@BOSSSVG@@*/',bsvg))
-js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','game_content.js']]+[eng])
+eng=rd('engine.js').replace('/*@@GAME@@*/',rd('game.js').replace('/*@@AUDIO@@*/',audio).replace('/*@@BOSSSVG@@*/',bsvg).replace('/*@@LABS@@*/',rd('labs_engine.js')))
+js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','c6_labs.js','game_content.js']]+[eng])
 css=rd('style.css')+rd('game.css')
 body='''<div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
 <header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>

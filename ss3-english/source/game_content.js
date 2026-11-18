@@ -65,16 +65,7 @@ var ANIMS={
  ]}
 };
 /* where the animation screens go (inserted after the screen with this title) */
-var ANIM_AT=[
- ['a2','Seven steps to change active to passive',[ 'pass1' ],'Watch it move: simple past'],
- ['a2','How each tense changes',[ 'pass2' ],'Watch it move: continuous passive'],
- ['a2','Three rules you must remember',[ 'pass3' ],'Watch it move: the doer disappears'],
- ['a3','Change 3: time and place words',[ 'rep1' ],'Watch it move: statements'],
- ['a3','Reporting questions',[ 'rep2' ],'Watch it move: questions'],
- ['a3','Reporting commands, requests and exclamations',[ 'rep3' ],'Watch it move: commands'],
- ['b1','Same words, different jobs',[ 'func1' ],'Watch it move: one phrase, five jobs'],
- ['b3','The seven you must know',[ 'clause1','clause2' ],'Watch it move: clauses at work']
-];
+var ANIM_AT=[];
 (function(){
   ANIM_AT.forEach(function(a){
     var s=null;SECS.forEach(function(x){if(x.id===a[0])s=x});if(!s)throw new Error('anim sec '+a[0]);
