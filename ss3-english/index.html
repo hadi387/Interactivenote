@@ -393,6 +393,11 @@ body.lite .card-in,body.lite .card-back{animation:none}
 
 .lvbar .lpg{display:block;width:74px;height:10px;background:var(--surface2);transform:skewX(-20deg);margin-left:8px;flex:none}
 .lvbar .lpg i{display:block;height:100%;background:var(--accent)}
+
+.rem{margin:0 0 8px}.rem summary{cursor:pointer;color:var(--def);text-decoration:underline;padding:6px 0;min-height:36px}
+.rem div{background:var(--def-bg);border-left:5px solid var(--def);padding:8px 10px;margin-top:4px}
+.peek{outline:4px solid var(--tip);animation:pop .6s infinite alternate}
+.bhelp{background:var(--surface2);padding:8px 10px;margin-top:8px;font-size:14px;color:var(--muted)}.bhelp b{color:var(--fg)}
 </style></head><body>
 <script>window.onerror=function(m,s,l){try{var d=document.getElementById('errbar');if(!d){d=document.createElement('div');d.id='errbar';d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9999;background:#B00020;color:#fff;padding:8px 12px;font:14px/1.3 Arial,sans-serif';document.body.appendChild(d)}d.textContent='Something broke: '+m+' (line '+l+'). Tell your teacher.'}catch(e){}};</script>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
@@ -1237,7 +1242,7 @@ function TAP(id,title,prompt,toks,tasks,disc){return LAB({id:id,kind:'tap',title
 function TK(ask,a,role,lab,say,hint){return {ask:ask,a:a,role:role,lab:lab,say:say,hint:hint}}
 function BUILD(id,title,prompt,tiles,target,disc,traps,hint,alts){return LAB({id:id,kind:'build',title:title,prompt:prompt,tiles:tiles,targets:[target].concat(alts||[]),disc:disc,traps:traps||[],hint:hint})}
 function CYC(id,title,prompt,t,disc){return LAB({id:id,kind:'cycle',title:title,prompt:prompt,t:t,disc:disc})}
-function SRT(id,title,prompt,buckets,items,disc,hint){return LAB({id:id,kind:'sort',title:title,prompt:prompt,buckets:buckets,items:items,disc:disc,hint:hint})}
+function SRT(id,title,prompt,buckets,items,disc,hint,help){return LAB({id:id,kind:'sort',title:title,prompt:prompt,buckets:buckets,items:items,disc:disc,hint:hint,help:help})}
 function EXP(id,title,prompt,items,disc){return LAB({id:id,kind:'explore',title:title,prompt:prompt,items:items,disc:disc})}
 function MAT(id,title,prompt,pairs,disc){return LAB({id:id,kind:'match',title:title,prompt:prompt,pairs:pairs,disc:disc})}
 function S(a,b){return {t:a,b:b}}
@@ -1247,7 +1252,7 @@ setScreens('start',[
  SC('How to play',
   P('Welcome, fighter! You learn by <b>doing</b>. Every round gives you a challenge. Solve it and you discover the rule yourself.'),
   P('Right answers give XP. Beat the boss at the end of a level to unlock the next one. Ready? Tap <b>Next</b>.')),
- SC('Find the parts',TAP('l-t1','Sentence detective','Every sentence has a <b>doer</b>, an <b>action</b> and a <b>receiver</b>. Find them.',['Ada','kicked','the ball'],[
+ SC('Find the parts',{t:'anim',id:'d-sdo'},TAP('l-t1','Sentence detective','Every sentence has a <b>doer</b>, an <b>action</b> and a <b>receiver</b>. Find them.',['Ada','kicked','the ball'],[
    TK('Who did it? Tap the <b>DOER</b>.',[0],'s','subject','Ada did the kicking. The doer is called the <b>subject</b>.','Who kicked the ball?'),
    TK('Tap the <b>ACTION</b> word.',[1],'v','verb','Kicked is the action. An action word is a <b>verb</b>.','Which word is something Ada did?'),
    TK('Tap the thing that <b>RECEIVED</b> the action.',[2],'o','object','The ball got kicked. The receiver is the <b>object</b>.','What was kicked?')],
@@ -1257,20 +1262,20 @@ setScreens('start',[
    TK('Tap the <b>verb</b>.',[1],'v','verb','Sells is the action.','Which word is the action?'),
    TK('Tap the <b>object</b> (the receiver).',[2],'o','object','Yams are what gets sold.','Sells what?')],
   'Ask <b>who or what + verb?</b> to find the subject. Ask <b>verb + what?</b> to find the object.')),
- SC('Sort the words',SRT('l-s1','Word sorter','Put each word in the right box.',['Noun','Pronoun','Verb','Adverb'],[
+ SC('Sort the words',{t:'anim',id:'d-wc'},SRT('l-s1','Word sorter','Put each word in the right box.',['Noun','Pronoun','Verb','Adverb'],[
    S('Lagos',0),S('she',1),S('quickly',3),S('jumped',2),S('teacher',0),S('they',1),S('yesterday',3),S('sing',2)],
-  'A <b>noun</b> names. A <b>pronoun</b> stands in for a noun. A <b>verb</b> acts. An <b>adverb</b> tells how, when or where.','Ask: does it name something, act, replace a noun, or tell how/when?')),
- SC('Phrase or clause?',SRT('l-s2','Phrase or clause?','A <b>clause</b> has its own subject AND verb. A <b>phrase</b> does not. Sort these. Find the rule yourself!',['Phrase','Clause'],[
+  'A <b>noun</b> names. A <b>pronoun</b> stands in for a noun. A <b>verb</b> acts. An <b>adverb</b> tells how, when or where.','Ask: does it name something, act, replace a noun, or tell how/when?',['names a person, place or thing','stands in for a noun (he, she, they)','shows an action','tells how, when or where'])),
+ SC('Phrase or clause?',{t:'anim',id:'d-pc'},SRT('l-s2','Phrase or clause?','A <b>clause</b> has its own subject AND verb. A <b>phrase</b> does not. Sort these. Find the rule yourself!',['Phrase','Clause'],[
    S('in the classroom',0),S('because the bell rang',1),S('the tall boy',0),S('after he left',1),S('under the table',0),S('who lives next door',1)],
-  'A clause has its own <b>subject and verb</b> (the bell rang, he left, who lives). A phrase does not.','Look for a subject AND a verb inside the group of words.')),
- SC('Tense machine',EXP('l-e1','Tense machine','Press each button. Watch the verb change. What is tense?',[
+  'A clause has its own <b>subject and verb</b> (the bell rang, he left, who lives). A phrase does not.','Look for a subject AND a verb inside the group of words.',['has no subject + verb of its own','has its own subject AND verb'])),
+ SC('Tense machine',{t:'anim',id:'d-tense'},EXP('l-e1','Tense machine','Press each button. Watch the verb change. What is tense?',[
    {b:'Past',h:'Ngozi <b>cooked</b> rice. <em>(it already happened)</em>'},{b:'Present',h:'Ngozi <b>cooks</b> rice. <em>(it happens now or again and again)</em>'},{b:'Future',h:'Ngozi <b>will cook</b> rice. <em>(it has not happened yet)</em>'}],
   'The <b>tense</b> of a verb shows <b>when</b> something happens: past, present or future.'))
 ]);
 
 /* ---------- Level 1: Mirror Maze ---------- */
 setScreens('a1',[
- SC('Who did it?',TAP('l-m1','Doer and receiver','In this sentence, who is the winner?',['Ada','beat','Bola'],[
+ SC('Who did it?',{t:'anim',id:'d-swap'},TAP('l-m1','Doer and receiver','In this sentence, who is the winner?',['Ada','beat','Bola'],[
    TK('Tap the <b>DOER</b> (who did the beating?).',[0],'s','doer','Ada did the beating. She is the winner.','Who beat whom?'),
    TK('Tap the <b>RECEIVER</b>.',[2],'o','receiver','Bola got beaten. She lost.','Who was beaten?')],
   'Swap the doer and the receiver and you change the <b>whole story</b>. A recast must keep the same doer.')),
@@ -1298,17 +1303,17 @@ var PEXP=[
  ['Modal (can)','Ngozi can cook rice.','Rice <b class="be">can be</b> <b>cooked</b> by Ngozi.','can be']
 ];
 setScreens('a2',[
- SC('Find the parts',TAP('l-p1','Spot the doer','Warm up. Find the parts of this sentence.',['The teacher','punished','the student'],[
+ SC('Find the parts',{t:'anim',id:'d-dr'},TAP('l-p1','Spot the doer','Warm up. Find the parts of this sentence.',['The teacher','punished','the student'],[
    TK('Tap the <b>doer</b>.',[0],'s','doer','The teacher does the punishing.','Who punished?'),
    TK('Tap the <b>receiver</b>.',[2],'o','receiver','The student gets punished.','Who got punished?')],
   'In an <b>active</b> sentence the doer comes first. In a <b>passive</b> sentence the receiver comes first.')),
  SC('Build the passive',BUILD('l-pb1','Build it: simple past','Active: <b>The cook prepared the meal.</b> Build the passive.',['The meal','was','prepared','by','the cook','is','were','prepares'],'The meal was prepared by the cook',
   'Receiver first. <b>was + prepared</b> keeps the past tense. <b>by</b> brings the doer back.',[{re:/^the meal prepared/,m:'Something is missing between “the meal” and “prepared”.'},{re:/ is /,m:'The active sentence is in the past, so the passive must be in the past.'}],'Start with “The meal”.')),
- SC('Watch it',{t:'anim',id:'pass1'}),
+ SC('Watch the steps',{t:'anim',id:'pass1'}),
  SC('Passive machine',EXP('l-pe1','Passive machine','Same sentence, eight tenses. Press each button and compare the <b>active</b> with the <b>passive</b>. Spot the pattern!',
   PEXP.map(function(p){return {b:p[0],h:'<div class="pm"><div class="a">Active: '+p[1]+'</div><div class="p">Passive: '+p[2]+'</div></div>'}}),
   'The <b>tense never changes</b>. The <b>be</b> part changes with the tense (is, was, is being, has been, will be…). The last verb is always the <b>past participle</b> (cooked).')),
- SC('Continuous passive',BUILD('l-pb2','Build it: continuous','Active: <b>Emeka is washing the car.</b> Build the passive.',['The car','is','being','washed','by','Emeka','was','washing'],'The car is being washed by Emeka',
+ SC('Continuous passive',{t:'anim',id:'pass2'},BUILD('l-pb2','Build it: continuous','Active: <b>Emeka is washing the car.</b> Build the passive.',['The car','is','being','washed','by','Emeka','was','washing'],'The car is being washed by Emeka',
   'A continuous passive needs <b>being</b>: is being + past participle.',[{re:/is washed/,m:'You lost the continuous. The active sentence is happening now. Add “being”.'},{re:/ was /,m:'The active sentence is in the present, so use “is”.'}],'The tense word “being” goes after “is”.')),
  SC('Perfect passive',BUILD('l-pb3','Build it: perfect','Active: <b>Ibrahim has written the letter.</b> Build the passive.',['The letter','has','been','written','by','Ibrahim','have','wrote'],'The letter has been written by Ibrahim',
   'The perfect passive uses <b>has been + past participle</b>.',[{re:/has written/,m:'Where is “been”? The perfect passive is has been + participle.'},{re:/have /,m:'“The letter” is singular, so use “has”.'}],'has + been + written.')),
@@ -1327,9 +1332,9 @@ setScreens('a2',[
  SC('Fix the passive',CYC('l-pc1','Repair 1','The window was ___ by the boy.',['The window was',{o:['broke','broken','breaking'],a:1,why:'After <b>was</b> use the past participle: <b>broken</b>.'},'by the boy.'],'After <b>be</b>, use the past participle, not the past tense.')),
  SC('Fix again',CYC('l-pc2','Repair 2','A passive needs the verb <b>be</b>.',['The letter',{o:['written','was written','is wrote'],a:1,why:'You need <b>be</b> + participle: <b>was written</b>.'},'by Ibrahim.'],'Every passive has <b>be + past participle</b>.')),
  SC('Fix the pronoun',CYC('l-pc3','Repair 3','Active: <b>She hit him.</b> Passive:',['He was hit by',{o:['she','her','he'],a:1,why:'After <b>by</b> use the object form: <b>her</b>.'},'.'],'After <b>by</b> use <b>me, him, her, us, them</b>.')),
- SC('Can it be passive?',SRT('l-ps1','Passive or not?','Which sentences <b>can</b> become passive? Think about the receiver!',['Yes','No'],[
+ SC('Can it be passive?',{t:'anim',id:'pass3'},SRT('l-ps1','Passive or not?','Which sentences <b>can</b> become passive? Think about the receiver!',['Yes','No'],[
    S('Ada opened the door.',0),S('Ada arrived early.',1),S('The baby slept.',1),S('Tola ate the rice.',0),S('The rain fell heavily.',1)],
-  'A passive needs an <b>object</b> (a receiver). Verbs like arrive, sleep and fall have none, so they cannot be passive.','Does anything RECEIVE the action?')),
+  'A passive needs an <b>object</b> (a receiver). Verbs like arrive, sleep and fall have none, so they cannot be passive.','Does anything RECEIVE the action?',['has a receiver (an object)','has no receiver, so no passive'])),
  SC('Quick questions',OQ('a2-parts')),
  SC('Beginner round',OQ('a2-beg')),
  SC('Type the passive',OQ('a2-int')),
@@ -1347,7 +1352,7 @@ var RTENSE=[
  ['may','“I <b>may</b> eat rice.”','He said that he <b>might</b> eat rice.']
 ];
 setScreens('a3',[
- SC('Fix the report',CYC('l-r1','Repair the report 1','Musa said, “I am hungry.” Fix the report. Tap the yellow words.',
+ SC('Fix the report',{t:'anim',id:'rep1'},CYC('l-r1','Repair the report 1','Musa said, “I am hungry.” Fix the report. Tap the yellow words.',
   ['Musa said that',{o:['I','he','you'],a:1,why:'<b>I</b> was Musa, so it becomes <b>he</b>.'},{o:['am','is','was'],a:2,why:'The tense moves one step back: am → <b>was</b>.'},'hungry.'],
   'Pronouns follow the <b>speaker</b> (I → he/she). Tenses move one step <b>back</b> (am → was).')),
  SC('We and they',CYC('l-r2','Repair the report 2','Ngozi said, “We are going to the market.”',
@@ -1356,7 +1361,7 @@ setScreens('a3',[
  SC('Time words',CYC('l-r3','Repair the report 3','Bayo said, “I will travel tomorrow.”',
   ['Bayo said that',{o:['I','he'],a:1,why:'<b>I</b> → <b>he</b>.'},{o:['will','would','can'],a:1,why:'will → <b>would</b>.'},'travel',{o:['tomorrow','the next day','yesterday'],a:1,why:'tomorrow → <b>the next day</b>.'},'.'],
   'Three things change: the <b>pronoun</b>, the <b>tense</b> and the <b>time word</b>.')),
- SC('You and my',CYC('l-r4','Repair the report 4','Chidi said to me, “You can borrow my pen.” Who is “you”? Who owns “my”?',
+ SC('You and my',{t:'anim',id:'d-pron'},CYC('l-r4','Repair the report 4','Chidi said to me, “You can borrow my pen.” Who is “you”? Who owns “my”?',
   ['Chidi told me that',{o:['you','I','he'],a:1,why:'<b>You</b> was me (the listener), so <b>I</b>.'},{o:['can','could','may'],a:1,why:'can → <b>could</b>.'},'borrow',{o:['my','his','your'],a:1,why:'<b>My</b> belonged to Chidi, so <b>his</b>.'},'pen.'],
   '<b>You</b> = the listener. <b>My</b> = the speaker.')),
  SC('Tense machine',EXP('l-re1','Backshift machine','Press each tense. See how it moves one step back.',
@@ -1368,14 +1373,14 @@ setScreens('a3',[
  SC('Tense check',OQ('a3-tense')),
  SC('Which reporting verb?',SRT('l-rs1','Choose the reporting verb','Which verb fits each sentence?',['said','told','asked','ordered'],[
    S('“Where is the market?” (a question)',2),S('“Stand up now!” (a strong command)',3),S('“I am tired.” (no listener named)',0),S('“Close the door,” to Bayo. (a command to a named person)',1),S('“Please lend me your pen.” (a polite request)',2)],
-  '<b>asked</b> for questions and requests, <b>told</b> for statements or commands with a named listener, <b>ordered</b> for strong commands, <b>said</b> for plain statements.','Is it a question, a command, a request, or a plain statement?')),
+  '<b>asked</b> for questions and requests, <b>told</b> for statements or commands with a named listener, <b>ordered</b> for strong commands, <b>said</b> for plain statements.','Is it a question, a command, a request, or a plain statement?',['a plain statement','a command to a named person','a question or a polite request','a strong command'])),
  SC('Verb check',OQ('a3-verbs')),
  SC('Sentence types',OQ('a3-types')),
  SC('Said me?',CYC('l-rc1','Spot the trap','Fix the trap sentence.',['She',{o:['said me','told me','told'],a:1,why:'<b>Said</b> cannot be followed directly by a person. Use <b>told me</b>.'},'that she was ready.'],'<b>said to me</b> or <b>told me</b>, never <s>said me</s>.')),
- SC('Reporting a question',BUILD('l-rb1','Build the report','Mr Adamu asked the boy, “Where <b>do you live</b>?” Build the report.',['Mr Adamu','asked','the boy','where','he','lived','do','you','live','that','if'],'Mr Adamu asked the boy where he lived',
+ SC('Reporting a question',{t:'anim',id:'rep2'},BUILD('l-rb1','Build the report','Mr Adamu asked the boy, “Where <b>do you live</b>?” Build the report.',['Mr Adamu','asked','the boy','where','he','lived','do','you','live','that','if'],'Mr Adamu asked the boy where he lived',
   'A reported question keeps the question word, uses <b>statement order</b>, drops <b>do</b>, and shifts the tense.',[{re:/ do /,m:'A reported question has no “do”.'},{re:/that/,m:'Never use “that” in a reported question.'},{re:/ you /,m:'“you” must change to “he”.'}],'Where + he + lived.')),
  SC('Question order',CYC('l-rc2','Spot the trap 2','He asked where I was going.',['He asked',{o:['where was I going','where I was going','that where I was going'],a:1,why:'Reported questions use <b>statement order</b> and never take “that”.'},'.'],'Reported questions are <b>statements</b>: subject before verb, no question mark.')),
- SC('Reporting a command',BUILD('l-rb2','Build the report 2','“Close the door,” the teacher said to Bayo. Build the report.',['The teacher','told','Bayo','to','close','the door','said','that','closed'],'The teacher told Bayo to close the door',
+ SC('Reporting a command',{t:'anim',id:'rep3'},BUILD('l-rb2','Build the report 2','“Close the door,” the teacher said to Bayo. Build the report.',['The teacher','told','Bayo','to','close','the door','said','that','closed'],'The teacher told Bayo to close the door',
   'Command: <b>told + person + to + verb</b>.',[{re:/said/,m:'A command is reported with “told”.'},{re:/that/,m:'Do not use “that” for a command. Use “to”.'}],'told + Bayo + to + close.')),
  SC('Command fix',CYC('l-rc3','Spot the trap 3','The teacher told Bayo to close the door.',['The teacher told Bayo',{o:['close','to close','that close'],a:1,why:'Command: told + person + <b>to</b> + verb.'},'the door.'],'<b>told + person + to + verb</b>. Negative: <b>not to</b> + verb.')),
  SC('Beginner round',OQ('a3-beg')),
@@ -1388,13 +1393,13 @@ setScreens('b1',[
  SC('Same words, new job',{t:'anim',id:'func1'}),
  SC('Word class or function?',SRT('l-fs0','Two different questions','<b>Word class</b> = what KIND of word. <b>Function</b> = what JOB it does in the sentence. Sort these!',['Word class','Function'],[
    S('noun',0),S('subject',1),S('adverb',0),S('direct object',1),S('adjective',0),S('adverbial',1),S('verb',0),S('subject complement',1)],
-  'A <b>word class</b> belongs to the word (noun, verb…). A <b>function</b> depends on the sentence (subject, object…). In exams, never answer a function question with a word class.','Is it a kind of word, or a job in the sentence?')),
+  'A <b>word class</b> belongs to the word (noun, verb…). A <b>function</b> depends on the sentence (subject, object…). In exams, never answer a function question with a word class.','Is it a kind of word, or a job in the sentence?',['what KIND of word it is','what JOB it does in the sentence'])),
  SC('One word, two jobs',TAP('l-fb0','Same phrase, new job','Tap the <b>direct object</b>. Then the <b>subject</b> in the next one.',['She','saw','the boy'],[
    TK('Tap the <b>direct object</b>.',[2],'o','direct object','The boy receives the seeing.','Saw whom?')],
   '“The boy” was the <b>subject</b> in <i>The boy ran</i> and the <b>direct object</b> in <i>She saw the boy</i>. The job changes with the sentence.')),
  SC('Quick check',OQ('b1-q'))
 ]);
-function FN(id,title,prompt,toks,tasks,disc){return SC(title,TAP(id,title,prompt,toks,tasks,disc))}
+function FN(id,title,prompt,toks,tasks,disc){return SC(title,{t:'anim',id:'d-'+id.slice(2)},TAP(id,title,prompt,toks,tasks,disc))}
 setScreens('b2',[
  FN('l-f1','1. Subject','Find the <b>subject</b>.',['The old man in the shop','sold','me','bread'],[TK('Tap the <b>subject</b>. (Who sold?)',[0],'s','subject','The whole phrase is the subject, not just “man”.','Who or what + sold?')],'The <b>subject</b> is the doer. Ask <b>who or what + verb?</b>'),
  FN('l-f2','2. Direct object','Find the <b>direct object</b>.',['Tola','kicked','the ball'],[TK('Tap the <b>direct object</b>. (Kicked what?)',[2],'o','direct object','The ball receives the action.','Kicked what?')],'The <b>direct object</b> receives the action. Ask <b>verb + what or whom?</b>'),
@@ -1415,7 +1420,7 @@ setScreens('b2',[
 setScreens('b3',[
  SC('Phrase or clause?',SRT('l-c1','Phrase or clause?','Sort again. Remember: a clause has its own subject and verb.',['Phrase','Clause'],[
    S('very tired',0),S('who sells akara',1),S('under the table',0),S('although it was raining',1),S('the new student from Kaduna',0),S('that he passed',1)],
-  'A clause has its <b>own subject and verb</b>. A phrase does not.','Is there a subject AND a verb?')),
+  'A clause has its <b>own subject and verb</b>. A phrase does not.','Is there a subject AND a verb?',['no subject + verb of its own','its own subject AND verb'])),
  SC('Spot the relative clause',TAP('l-c2','Clause detective 1','The man who lives next door is a doctor.',['The man','who lives next door','is','a doctor'],[
    TK('Tap the <b>clause</b> (it has its own verb).',[1],'n','relative clause','“who lives next door” has its own verb: lives.','Which part has a verb of its own?'),
    TK('Tap the words the clause <b>DESCRIBES</b>.',[0],'o','is described','It tells which man.','Which man?')],
@@ -1423,12 +1428,12 @@ setScreens('b3',[
  SC('Spot the adverbial clause',TAP('l-c3','Clause detective 2','The students arrived after the bell rang.',['The students','arrived','after the bell rang'],[
    TK('Tap the <b>clause</b> that tells <b>WHEN</b>.',[2],'n','adverbial clause of time','After the bell rang tells when.','Arrived when?')],
   'An <b>adverbial clause</b> tells when, why or how. It works like an adverb.')),
- SC('Spot the noun clause',TAP('l-c4','Clause detective 3','That he cheated shocked everyone.',['That he cheated','shocked','everyone'],[
+ SC('Spot the noun clause',{t:'anim',id:'d-nc'},TAP('l-c4','Clause detective 3','That he cheated shocked everyone.',['That he cheated','shocked','everyone'],[
    TK('Tap the <b>noun clause</b>. What shocked everyone?',[0],'s','noun clause (subject)','“That he cheated” is what shocked everyone. It acts like a noun.','What shocked everyone?')],
   'A <b>noun clause</b> does the job of a noun: here it is the <b>subject</b>.')),
  SC('Name the structure',SRT('l-c5','Name the clause','What kind of clause is the part in <b>bold</b>?',['Noun clause','Adverbial clause','Relative clause'],[
    S('We stayed in <b>because it was raining</b>.',1),S('The woman <b>who sells akara</b> is my aunt.',2),S('<b>That she was late</b> annoyed us.',0),S('We left <b>after the match ended</b>.',1),S('The man <b>whom I met</b> was kind.',2),S('<b>What he said</b> surprised us.',0)],
-  'A <b>noun clause</b> stands in for a noun. An <b>adverbial clause</b> tells when/why/how. A <b>relative clause</b> describes a noun.','Does it name something, tell when/why, or describe a noun?')),
+  'A <b>noun clause</b> stands in for a noun. An <b>adverbial clause</b> tells when/why/how. A <b>relative clause</b> describes a noun.','Does it name something, tell when/why, or describe a noun?',['does the job of a noun','tells when, why or how','describes a noun'])),
  SC('Clauses at work',{t:'anim',id:'clause1'}),
  SC('Practice',OQ('b3-p'))
 ]);
@@ -1610,11 +1615,80 @@ var TEACHER_SECS=['e4','f2'];
   SECS.forEach(function(s){var n=names[s.id];if(n){s.title=n[0];s.part=n[1]}});
 })();
 
+/* ================= "WATCH ME" DEMOS: one idea, plain words, then you try ================= */
+function DEMO(id,title,toks,steps){
+  var cur=toks.slice(),marks={},out=[];
+  steps.forEach(function(s){
+    if(s.toks)cur=s.toks;
+    if(s.reset)marks={};
+    if(s.m)Object.keys(s.m).forEach(function(k){marks[k]=s.m[k]});
+    out.push({cap:s.cap,tok:cur.map(function(w){var m=marks[w];return {k:'w_'+w,t:w,c:m?m[0]:'x',lab:m?m[1]:''}})});
+  });
+  ANIMS[id]={title:title,xp:3,steps:out};
+}
+DEMO('d-sdo','Watch: subject, verb, object',['Ada','kicked','the ball'],[
+ {cap:'A sentence tells us <b>who did what</b>. Read it: <b>Ada kicked the ball.</b>'},
+ {cap:'The <b>verb</b> is the action word. What did Ada do? She <b>kicked</b>.',m:{'kicked':['v','verb']}},
+ {cap:'The <b>subject</b> is the doer. Who kicked? <b>Ada</b>.',m:{'Ada':['s','subject']}},
+ {cap:'The <b>object</b> is what got the action. What was kicked? <b>The ball</b>.',m:{'the ball':['o','object']}}
+]);
+DEMO('d-wc','Watch: four kinds of word',['Ngozi','ran','quickly','to','her','mother'],[
+ {cap:'Words come in kinds. Look at this sentence.'},
+ {cap:'A <b>noun</b> is a name. <b>Ngozi</b> and <b>mother</b> are nouns.',m:{'Ngozi':['n','noun'],'mother':['n','noun']}},
+ {cap:'A <b>pronoun</b> takes the place of a noun. <b>Her</b> stands for Ngozi.',m:{'her':['s','pronoun']}},
+ {cap:'A <b>verb</b> shows an action. <b>Ran</b> is the action.',m:{'ran':['v','verb']}},
+ {cap:'An <b>adverb</b> tells how, when or where. <b>Quickly</b> tells how she ran.',m:{'quickly':['o','adverb']}}
+]);
+DEMO('d-tense','Watch: tense',['Ngozi','cooked','rice'],[
+ {cap:'<b>Tense</b> tells us <b>when</b> something happens.'},
+ {cap:'<b>cooked</b> is the <b>past</b>. It already happened.',m:{'cooked':['v','past']}},
+ {cap:'<b>cooks</b> is the <b>present</b>. It happens now, or again and again.',toks:['Ngozi','cooks','rice'],m:{'cooks':['v','present']}},
+ {cap:'<b>will cook</b> is the <b>future</b>. It has not happened yet.',toks:['Ngozi','will cook','rice'],m:{'will cook':['v','future']}}
+]);
+DEMO('d-pc','Watch: phrase and clause',['in the classroom'],[
+ {cap:'<b>in the classroom</b>. Is there a subject and a verb? No. So it is a <b>phrase</b>.',m:{'in the classroom':['n','phrase']}},
+ {cap:'<b>because the bell rang</b>. <b>The bell</b> is the subject. <b>Rang</b> is the verb. A group of words with its own subject and verb is a <b>clause</b>.',toks:['because','the bell','rang'],reset:1,m:{'the bell':['s','subject'],'rang':['v','verb'],'because':['n','']}}
+]);
+DEMO('d-swap','Watch: swap the doer and receiver',['Ada','beat','Bola'],[
+ {cap:'<b>Ada beat Bola.</b> Ada is the winner. Ada is the doer.',m:{'Ada':['s','doer'],'Bola':['o','receiver']}},
+ {cap:'Now swap them: <b>Bola beat Ada.</b> Now Bola wins! The story changed. That is a <b>wrong</b> recast.',toks:['Bola','beat','Ada']},
+ {cap:'To keep the story you must say it the <b>passive</b> way: <b>Bola was beaten by Ada.</b> Ada still wins.',toks:['Bola','was beaten','by','Ada'],m:{'was beaten':['v','']}}
+]);
+DEMO('d-dr','Watch: doer and receiver',['The teacher','punished','the student'],[
+ {cap:'<b>Active:</b> the doer comes first. The teacher did the punishing.',m:{'The teacher':['s','doer'],'the student':['o','receiver']}},
+ {cap:'<b>Passive:</b> the receiver comes first. Same story, different order.',toks:['The student','was punished','by','the teacher'],m:{'was punished':['v',''],'The student':['o','receiver'],'the teacher':['s','doer']}}
+]);
+DEMO('d-pron','Watch: who is I, you and my?',['Chidi','said','to','me,','“You','can','borrow','my','pen.”'],[
+ {cap:'Chidi is the <b>speaker</b>. I am the <b>listener</b>.',m:{'Chidi':['s','speaker'],'me,':['o','listener']}},
+ {cap:'<b>You</b> means the listener. In the report it becomes <b>I</b>.',m:{'“You':['n','you = listener']}},
+ {cap:'<b>My</b> belongs to the speaker (Chidi). In the report it becomes <b>his</b>.',m:{'my':['s','my = speaker']}}
+]);
+DEMO('d-nc','Watch: a noun clause',['That he cheated','shocked','everyone'],[
+ {cap:'What shocked everyone? <b>That he cheated</b>.'},
+ {cap:'It has its own subject (he) and verb (cheated), and it does the job of a <b>noun</b>. It is a <b>noun clause</b>. Here it is the subject.',m:{'That he cheated':['s','noun clause'],'shocked':['v','verb']}}
+]);
+/* the twelve functions, two steps each */
+function FDEMO(id,title,toks,ask,key,role,lab,def){DEMO(id,'Watch: '+title,toks,[{cap:ask},{cap:def,m:(function(o){o[key]=[role,lab];return o})({})}])}
+FDEMO('d-f1','subject',['The old man in the shop','sold','me','bread'],'Who sold me bread? Ask <b>who or what + verb?</b>','The old man in the shop','s','subject','<b>The old man in the shop</b> is the <b>subject</b>: the doer. Take the whole group of words, not just one.');
+FDEMO('d-f2','direct object',['Tola','kicked','the ball'],'Kicked what? Ask <b>verb + what or whom?</b>','the ball','o','direct object','<b>The ball</b> is the <b>direct object</b>: it gets the action.');
+DEMO('d-f3','Watch: indirect object',['She','gave','the boy','a book'],[
+ {cap:'This verb has two receivers. What was given? <b>A book</b>.',m:{'a book':['o','direct object']}},
+ {cap:'Who got the book? <b>The boy</b>. He is the <b>indirect object</b>: the person who receives the direct object. He comes before it.',m:{'the boy':['n','indirect object']}}]);
+FDEMO('d-f4','subject complement',['The soup','smells','delicious'],'Smells is a linking verb. What is the soup like?','delicious','n','subject complement','<b>Delicious</b> describes the soup (the subject). It is a <b>subject complement</b>.');
+FDEMO('d-f5','object complement',['They','elected','Musa','captain'],'They elected Musa. Musa became what?','captain','n','object complement','<b>Captain</b> describes Musa (the object). It is an <b>object complement</b>.');
+FDEMO('d-f6','adverbial of time',['We','will','meet','after school'],'Ask <b>when?</b> When will we meet?','after school','n','adverbial of time','<b>After school</b> tells when: an <b>adverbial of time</b>.');
+FDEMO('d-f7','adverbial of place',['The children','play','in the compound'],'Ask <b>where?</b> Where do they play?','in the compound','n','adverbial of place','<b>In the compound</b> tells where: an <b>adverbial of place</b>.');
+FDEMO('d-f8','adverbial of manner',['She','spoke','softly'],'Ask <b>how?</b> How did she speak?','softly','n','adverbial of manner','<b>Softly</b> tells how: an <b>adverbial of manner</b>.');
+FDEMO('d-f9','adverbial of reason',['He','stayed','at home','because he was sick'],'Ask <b>why?</b> Why did he stay at home?','because he was sick','n','adverbial of reason','<b>Because he was sick</b> tells why: an <b>adverbial of reason</b>.');
+FDEMO('d-f10','object of a preposition',['She','sat','beside','the teacher'],'<b>Beside</b> is a preposition. What comes right after it?','the teacher','n','object of the preposition','<b>The teacher</b> comes right after <b>beside</b>. It is the <b>object of the preposition</b>.');
+FDEMO('d-f11','apposition',['Mr Ade,','our principal,','spoke'],'Two names for the same person sit side by side with no verb between them.','our principal,','n','apposition','<b>Our principal</b> renames Mr Ade. It is in <b>apposition</b> to him.');
+FDEMO('d-f12','adjunct',['Segun','ate','his lunch','quickly'],'Remove <b>quickly</b>. Does the sentence still work? Yes: Segun ate his lunch.','quickly','n','adjunct','<b>Quickly</b> is an optional extra. An optional extra is an <b>adjunct</b>.');
+
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
 var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0,lab:{}};
-var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},units:null,pauseUntil:0,seen:{}};
+var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},retry:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
 function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0;ST.lab=o.lab||{}}}catch(e){}}
@@ -2094,14 +2168,19 @@ function gameSet(k){
 }
 /* ================= HANDS-ON LABS: students discover the rules by doing ================= */
 function labShell(el,D,kindName){
-  el.innerHTML='<div class="lh"><span class="lk">'+kindName+'</span><b>'+esc(D.title)+'</b>'+(ST.lab[D.id]?'<span class="ldone">✔ done</span>':'')+'</div><div class="lp">'+D.prompt+'</div><div class="lbody"></div><div class="lfb" aria-live="polite"></div>';
+  el.innerHTML='<div class="lh"><span class="lk">'+kindName+'</span><b>'+esc(D.title)+'</b>'+(ST.lab[D.id]?'<span class="ldone">✔ done</span>':'')+'</div><div class="lp">'+D.prompt+'</div><details class="rem"><summary>Need the rule?</summary><div>'+D.disc+'</div></details><div class="lbody"></div><div class="lfb" aria-live="polite"></div>';
   return {body:$('.lbody',el),fb:$('.lfb',el)};
 }
 function labWin(el,D,mist,fb,extra){
+  if(mist>=4&&!ST.lab[D.id]&&!RT.retry[D.id]){
+    RT.retry[D.id]=1;sfx.no();
+    fb.innerHTML=(extra||'')+'<div class="fb n"><b>That took a lot of tries.</b>You got there, but the rule is not in your head yet. Read it once, then do it again.<div class="disc"><b>THE RULE</b>'+D.disc+'</div><button class="btn" id="lretry">Try again</button></div>';
+    var rb=$('#lretry',el);if(rb)rb.onclick=function(){labInit(el)};return;
+  }
   var first=!ST.lab[D.id];ST.lab[D.id]=1;save();
   sfx.win();burst(first?70:25);
   if(first)addXp(mist?10:20,fb,'#2EE6A6');
-  var h=(extra||'')+'<div class="disc"><b>YOU DISCOVERED</b>'+D.disc+'</div>';
+  var h=(extra||'')+'<div class="disc"><b>REMEMBER THIS</b>'+D.disc+'</div>';
   fb.innerHTML=h;
   var dn=$('.ldone',el);if(!dn){var lh=$('.lh',el);var s=document.createElement('span');s.className='ldone';s.textContent='✔ done';lh.appendChild(s)}
   revUpdate();
@@ -2112,7 +2191,7 @@ var ROLES={s:'subject',v:'verb',o:'object',n:'',k:''};
 
 /* tap: find the parts of a sentence */
 function tapLab(el,D){
-  var sh=labShell(el,D,'DETECTIVE'),ti=0,mist=0,found={};
+  var sh=labShell(el,D,'DETECTIVE'),ti=0,mist=0,found={},wc=0;
   function draw(){
     var t=D.tasks[ti];
     var h='<div class="toks">'+D.toks.map(function(w,i){var f=found[i];return '<button class="tk'+(f?' c-'+f.role:'')+'" data-i="'+i+'"'+(f?' disabled':'')+(f&&f.lab?' data-lab="'+esc(f.lab)+'"':'')+'>'+esc(w)+'</button>'}).join('')+'</div>';
@@ -2121,17 +2200,22 @@ function tapLab(el,D){
   }
   function tap(i){
     var t=D.tasks[ti];if(!t)return;
-    if(t.a.indexOf(i)>=0){found[i]={role:t.role||'n',lab:t.lab||''};ti++;gameFirst();
+    if(t.a.indexOf(i)>=0){found[i]={role:t.role||'n',lab:t.lab||''};ti++;wc=0;gameFirst();
       if(ti>=D.tasks.length){draw();labWin(el,D,mist,sh.fb,'<div class="fb g"><b>Yes!</b>'+t.say+'</div>');return}
       labOk(sh.fb,t.say);draw();
-    }else{mist++;labBad(sh.fb,t.hint||'That is not it. Look again.');var b=$('.tk[data-i="'+i+'"]',sh.body);if(b){b.classList.add('shake');setTimeout(function(){b.classList.remove('shake')},400)}}
+    }else{mist++;wc++;
+      var msg=t.hint||'That is not it. Look again.';
+      if(wc>=2)msg+='<div class="disc"><b>THE RULE</b>'+D.disc+'</div>';
+      labBad(sh.fb,msg);
+      var b=$('.tk[data-i="'+i+'"]',sh.body);if(b){b.classList.add('shake');setTimeout(function(){b.classList.remove('shake')},400)}
+      if(wc>=3){var pk=$('.tk[data-i="'+t.a[0]+'"]',sh.body);if(pk)pk.classList.add('peek')}}
   }
   draw();
 }
 
 /* build: tap tiles to make the sentence */
 function buildLab(el,D){
-  var sh=labShell(el,D,'BUILD'),mist=0,ans=[],order=shuf(D.tiles.map(function(_,i){return i})),won=false;
+  var sh=labShell(el,D,'BUILD'),mist=0,fails=0,ans=[],order=shuf(D.tiles.map(function(_,i){return i})),won=false;
   var tg=D.targets.map(function(s){return norm(s)});
   function words(){return ans.map(function(i){return D.tiles[i]}).join(' ')}
   function draw(){
@@ -2150,9 +2234,12 @@ function buildLab(el,D){
       if(!ans.length){labBad(sh.fb,'Tap some tiles first.');return}
       var n=norm(words());
       if(tg.indexOf(n)>=0){won=true;$$('.bline .ltile',sh.body).forEach(function(b){b.classList.add('good')});labWin(el,D,mist,sh.fb,'<div class="fb g"><b>Built it!</b>'+esc(D.targets[0])+'</div>');return}
-      mist++;var msg=null;(D.traps||[]).forEach(function(t){if(!msg&&t.re.test(n))msg=t.m});
+      mist++;fails++;var msg=null;(D.traps||[]).forEach(function(t){if(!msg&&t.re.test(n))msg=t.m});
       var good=0,tw=tg[0].split(' '),aw=n.split(' ');for(var i=0;i<aw.length;i++)if(aw[i]===tw[i])good++;
-      labBad(sh.fb,(msg||'Some tiles are in the wrong place.')+' ('+good+' of '+tw.length+' words are in the right spot.)');
+      var extraTxt='';
+      if(fails>=2)extraTxt='<div class="disc"><b>THE RULE</b>'+D.disc+'</div>';
+      if(fails>=3)extraTxt+='<div class="fb n"><b>Here is the answer. Now build it yourself.</b>'+esc(D.targets[0])+'</div>';
+      labBad(sh.fb,(msg||'Some tiles are in the wrong place.')+' ('+good+' of '+tw.length+' words are in the right spot.)'+extraTxt);
     };
   }
   draw();
@@ -2160,7 +2247,7 @@ function buildLab(el,D){
 
 /* cycle: tap a word to change it until the sentence is right */
 function cycleLab(el,D){
-  var sh=labShell(el,D,'REPAIR'),mist=0,won=false,state=[];
+  var sh=labShell(el,D,'REPAIR'),mist=0,fails=0,won=false,state=[];
   var slots=[];D.t.forEach(function(x,i){if(typeof x!=='string')slots.push(i)});
   D.t.forEach(function(x,i){if(typeof x!=='string'){var s=0;if(s===x.a)s=1;state[i]=s}});
   function draw(res){
@@ -2174,7 +2261,9 @@ function cycleLab(el,D){
       if(ok===slots.length){won=true;draw(res);
         var why='';slots.forEach(function(i){if(D.t[i].why)why+='<li>'+D.t[i].why+'</li>'});
         labWin(el,D,mist,sh.fb,'<div class="fb g"><b>Fixed!</b>'+(why?'<ul class="why">'+why+'</ul>':'')+'</div>');return}
-      mist++;draw(res);labBad(sh.fb,ok+' of '+slots.length+' changed words are right. The red ones are still wrong. Tap them to change.');
+      mist++;fails++;draw(res);
+      var more='';if(fails>=2){more='<ul class="why">';slots.forEach(function(i){if(res[i]===false&&D.t[i].why)more+='<li>'+D.t[i].why+'</li>'});more+='</ul>'}
+      labBad(sh.fb,ok+' of '+slots.length+' changed words are right. The red ones are still wrong. Tap them to change.'+more);
     };
   }
   draw();
@@ -2182,15 +2271,15 @@ function cycleLab(el,D){
 
 /* sort: put each item in the right bucket */
 function sortLab(el,D){
-  var sh=labShell(el,D,'SORT'),mist=0,done={},n=D.items.length,cnt=0;
+  var sh=labShell(el,D,'SORT'),mist=0,done={},wr={},n=D.items.length,cnt=0;
   function draw(){
     sh.body.innerHTML=D.items.map(function(it,i){
       var d=done[i];
-      return '<div class="srow'+(d?' ok':'')+'" data-i="'+i+'"><div class="st">'+it.t+'</div><div class="sb2">'+D.buckets.map(function(b,k){return '<button class="bk'+(d&&it.b===k?' on':'')+'" data-i="'+i+'" data-k="'+k+'"'+(d?' disabled':'')+'>'+esc(b)+'</button>'}).join('')+'</div>'+(d&&it.why?'<div class="swhy">'+it.why+'</div>':'')+'</div>'}).join('');
+      return '<div class="srow'+(d?' ok':'')+'" data-i="'+i+'"><div class="st">'+it.t+'</div><div class="sb2">'+D.buckets.map(function(b,k){return '<button class="bk'+(d&&it.b===k?' on':'')+((wr[i]>=2&&it.b===k&&!d)?' peek':'')+'" data-i="'+i+'" data-k="'+k+'"'+(d?' disabled':'')+'>'+esc(b)+'</button>'}).join('')+'</div>'+(d&&it.why?'<div class="swhy">'+it.why+'</div>':'')+'</div>'}).join('')+(D.help?'<div class="bhelp">'+D.buckets.map(function(b,k){return '<div><b>'+esc(b)+':</b> '+D.help[k]+'</div>'}).join('')+'</div>':'');
     $$('.bk',sh.body).forEach(function(b){b.onclick=function(){
       var i=+b.getAttribute('data-i'),k=+b.getAttribute('data-k'),it=D.items[i];
       if(it.b===k){done[i]=1;cnt++;sfx.ok();draw();if(cnt>=n){labWin(el,D,mist,sh.fb)}}
-      else{mist++;sfx.no();b.classList.add('shake');labBad(sh.fb,it.hint||D.hint||'Think again. Try the other bucket.');setTimeout(function(){b.classList.remove('shake')},400)}
+      else{mist++;wr[i]=(wr[i]||0)+1;sfx.no();labBad(sh.fb,(it.hint||D.hint||'Think again. Try the other box.')+(D.help?'<br><em>'+esc(D.buckets[it.b])+': '+D.help[it.b]+'</em>':''));if(wr[i]>=2)draw();else{b.classList.add('shake');setTimeout(function(){b.classList.remove('shake')},400)}}
     }});
   }
   draw();
@@ -2217,10 +2306,10 @@ function exploreLab(el,D){
   var sh=labShell(el,D,'EXPERIMENT'),seen={},cnt=0,cur=-1;
   function draw(){
     sh.body.innerHTML='<div class="ex">'+D.items.map(function(it,i){return '<button class="eb'+(seen[i]?' seen':'')+(cur===i?' cur':'')+'" data-i="'+i+'">'+esc(it.b)+'</button>'}).join('')+'</div><div class="eout">'+(cur>=0?D.items[cur].h:'<span class="hintline">Press a button to see what happens.</span>')+'</div><div class="prog">Tried '+cnt+' of '+D.items.length+'</div>';
-    $$('.eb',sh.body).forEach(function(b){b.onclick=function(){var i=+b.getAttribute('data-i');cur=i;if(!seen[i]){seen[i]=1;cnt++}sfx.flip();draw();if(cnt>=D.items.length&&!ST.lab[D.id])labWin(el,D,0,sh.fb);else if(cnt>=D.items.length)sh.fb.innerHTML='<div class="disc"><b>YOU DISCOVERED</b>'+D.disc+'</div>'}});
+    $$('.eb',sh.body).forEach(function(b){b.onclick=function(){var i=+b.getAttribute('data-i');cur=i;if(!seen[i]){seen[i]=1;cnt++}sfx.flip();draw();if(cnt>=D.items.length&&!ST.lab[D.id])labWin(el,D,0,sh.fb);else if(cnt>=D.items.length)sh.fb.innerHTML='<div class="disc"><b>REMEMBER THIS</b>'+D.disc+'</div>'}});
   }
   draw();
-  if(ST.lab[D.id]){sh.fb.innerHTML='<div class="disc"><b>YOU DISCOVERED</b>'+D.disc+'</div>'}
+  if(ST.lab[D.id]){sh.fb.innerHTML='<div class="disc"><b>REMEMBER THIS</b>'+D.disc+'</div>'}
 }
 function labInit(el){
   var D=LABS[el.getAttribute('data-lab')];if(!D)return;
