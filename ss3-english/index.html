@@ -295,6 +295,8 @@ body.lite .unit-in{animation:none}
 @keyframes hop{from{transform:translateY(0)}to{transform:translateY(-5px)}}
 body.lite .track .bp,body.lite .track .bv{animation:none}
 .ov .tx .b{font-size:clamp(28px,9vw,52px)}
+
+.rvbar.st{position:static;background:none}
 </style></head><body>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
 <header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Open contents menu" style="margin:0 10px 0 0">☰</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">♪</button></div><div class="bar"><i id="gbar"></i></div></header>
@@ -1991,11 +1993,11 @@ function revUpdate(){
   nx.disabled=!(finished||(all&&gateOk));
   var s=secObj(RT.cur.sec);
   mid.textContent=all?('Screen '+(RT.cur.scr+1)+' of '+s.screens.length):('Idea '+rev+' of '+n);
-  if(finished||(all&&gateOk)){bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
-  if(!gateOk){bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
+  if(finished||(all&&gateOk)){bar.className='rvbar st';bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
+  if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
   // there is another idea to reveal
   var left=Math.max(0,Math.ceil(((RT.pauseUntil||0)-Date.now())/1000));
-  bar.innerHTML='<button class="btn rvbtn" data-act="rev"'+(left>0?' disabled':'')+'>'+(left>0?'Read it first… '+left:'Show the next idea')+'</button>';
+  bar.className='rvbar';bar.innerHTML='<button class="btn rvbtn" data-act="rev"'+(left>0?' disabled':'')+'>'+(left>0?'Read it first… '+left:'Show the next idea')+'</button>';
   clearInterval(rvTimer);
   if(left>0)rvTimer=setInterval(function(){var l=Math.ceil(((RT.pauseUntil||0)-Date.now())/1000);var bt=document.querySelector('.rvbtn');if(!bt){clearInterval(rvTimer);return}if(l<=0){clearInterval(rvTimer);revUpdate()}else bt.textContent='Read it first… '+l},250);
 }
