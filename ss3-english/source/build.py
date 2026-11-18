@@ -7,7 +7,7 @@ audio=arena[a0:a1]
 b0=arena.index('function bossSVG(color,mood){');b1=arena.index('const heart=on=>')
 bsvg=arena[b0:b1]
 eng=rd('engine.js').replace('/*@@GAME@@*/',rd('game.js').replace('/*@@AUDIO@@*/',audio).replace('/*@@BOSSSVG@@*/',bsvg).replace('/*@@LABS@@*/',rd('labs_engine.js')))
-js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','c6_labs.js','game_content.js']]+[eng])
+js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','c6_labs.js','game_content.js','c7_demos.js']]+[eng])
 css=rd('style.css')+rd('game.css')
 body='''<script>window.onerror=function(m,s,l){try{var d=document.getElementById('errbar');if(!d){d=document.createElement('div');d.id='errbar';d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9999;background:#B00020;color:#fff;padding:8px 12px;font:14px/1.3 Arial,sans-serif';document.body.appendChild(d)}d.textContent='Something broke: '+m+' (line '+l+'). Tell your teacher.'}catch(e){}};</script>
 <div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>

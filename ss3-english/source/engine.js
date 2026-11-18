@@ -2,7 +2,7 @@
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
 var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0,lab:{}};
-var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},units:null,pauseUntil:0,seen:{}};
+var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},max:{},retry:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
 function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0;ST.lab=o.lab||{}}}catch(e){}}
