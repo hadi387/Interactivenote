@@ -10,7 +10,7 @@ eng=rd('engine.js').replace('/*@@GAME@@*/',rd('game.js').replace('/*@@AUDIO@@*/'
 js='\n'.join([rd(f) for f in ['c0_helpers.js','c1_recast.js','c2_reported.js','c3_function.js','c4_exams.js','c5_revision.js','game_content.js']]+[eng])
 css=rd('style.css')+rd('game.css')
 body='''<div id="floor" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
-<header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Open contents menu" style="margin:0 10px 0 0">☰</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">♪</button></div><div class="bar"><i id="gbar"></i></div></header>
+<header class="top"><div class="wrap"><button class="ib" id="menu" aria-label="Back to the level map" style="margin:0 10px 0 0">MAP</button><div class="brand" id="brand" style="cursor:pointer"><b>Grammar Arena · SS3 English</b><div class="hud" id="hud"></div><small id="sub">Contents</small></div><button class="ib" id="mus" aria-label="Music on or off">MUSIC</button><button class="ib" id="cog" aria-label="Settings">⚙</button></div><div class="bar"><i id="gbar"></i></div></header>
 <aside id="drawer" aria-label="Table of contents"></aside><div id="shade"></div>
 <main><div class="wrap" id="app"></div></main>
 <div class="nav" id="navbar" style="display:none"><div class="wrap"><button class="btn gh" id="pv">Back</button><div class="mid" id="navmid"></div><button class="btn" id="nx">Next</button></div></div>'''

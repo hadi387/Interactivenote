@@ -143,7 +143,7 @@ SEC('b2','Part B: Grammatical function','The twelve grammatical functions','Lear
    [`The bus left ${U('at noon')}.`,'at noon','The bus left. is complete without it.'],
    [`She sings ${U('in the choir')}.`,'in the choir','She sings. is complete without it.']
   ]),
-  TIP('Textbooks use the word <b>adjunct</b> in slightly different ways. Some use it only for optional adverbials. Others also use it for a noun that modifies another noun, as in <em>school bus</em>. If a question uses this word, look at your class notes and your teacher’s examples for the meaning that is taught.'),
+  TIP('Different books use the word <b>adjunct</b> in slightly different ways. Some use it only for optional adverbials. Others also use it for a noun that modifies another noun, as in <em>school bus</em>. If a question uses this word, look at what your teacher taught and the examples in class for the meaning that is taught.'),
   QZ('b2-12','Quick check','live',[FNQ('b2f12','Which part of <em>Segun ate his lunch quickly</em> is an optional <b>adjunct</b>?',['Segun','ate','his lunch','quickly'],3,'Take away quickly and the sentence Segun ate his lunch still makes sense. It is an optional extra.')]))
 ]);
 

@@ -127,3 +127,28 @@ SEC('f2','Play together','Teacher board','For the teacher: collect result codes 
   var i=0;rest.forEach(function(s,k){if(s.id==='e1')i=k});
   SECS.length=0;rest.slice(0,i).concat(f).concat(rest.slice(i)).forEach(function(s){SECS.push(s)});
 })();
+
+/* ================= LEVELS: the game is played one level at a time ================= */
+var LEVELS=[
+ {n:'Training ground',secs:['start'],v:'start',sub:'Learn how to play'},
+ {n:'Mirror Maze',secs:['a1'],v:'a1',sub:'Same meaning or different?'},
+ {n:'Passive Phantom',secs:['a2'],v:'a2',boss:'passive',sub:'Active and passive voice'},
+ {n:'Quote Thief',secs:['a3'],v:'a3',boss:'reported',sub:'Direct and reported speech'},
+ {n:'Function Fiend',secs:['b1','b2'],v:'b2',sub:'The twelve grammatical functions'},
+ {n:'Clause Goblin',secs:['b3'],v:'b3',boss:'phrase',sub:'Phrases and clauses'},
+ {n:'Exam Ogre',secs:['b4'],v:'b4',boss:'function',sub:'How to answer in the exam'},
+ {n:'Riddle Sphinx',secs:['c1'],v:'c1',sub:'The Library Project'},
+ {n:'WAEC Warlord',secs:['d1'],v:'d1',test:'d-waec',sub:'20 WAEC-style questions'},
+ {n:'JAMB Jester',secs:['d2'],v:'d2',test:'d-jamb',sub:'20 JAMB-style questions'},
+ {n:'Final Boss',secs:['d3'],v:'d3',mock:1,sub:'15 questions. 20 minutes.'}
+];
+var BONUS=[
+ {id:'e1',n:'Trap Room',after:3,sub:'17 traps that cost marks',v:'e1'},
+ {id:'e2',n:'Cheat Cards',after:6,sub:'Seven quick-look cards',v:'e2'},
+ {id:'f1',n:'Rival Bots',after:3,sub:'Race the class at quiz battle',v:'f1'}
+];
+var TEACHER_SECS=['e4','f2'];
+(function(){
+  var names={start:['Training ground','Level 0'],a1:['Mirror Maze','Level 1'],a2:['Passive Phantom','Level 2'],a3:['Quote Thief','Level 3'],b1:['Function Fiend: warm-up','Level 4'],b2:['Function Fiend','Level 4'],b3:['Clause Goblin','Level 5'],b4:['Exam Ogre','Level 6'],c1:['Riddle Sphinx','Level 7'],d1:['WAEC Warlord','Level 8'],d2:['JAMB Jester','Level 9'],d3:['Final Boss','Level 10'],e1:['Trap Room','Bonus'],e2:['Cheat Cards','Bonus'],e3:['My stats','Stats'],e4:['Teacher answer key','Teacher'],f1:['Rival Bots','Bonus'],f2:['Teacher board','Teacher']};
+  SECS.forEach(function(s){var n=names[s.id];if(n){s.title=n[0];s.part=n[1]}});
+})();

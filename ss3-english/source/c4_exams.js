@@ -5,7 +5,7 @@ var PASSAGE=`<p>When the new term began, the principal of Unity College, Mrs Ade
 <p>The library opened on a sunny morning in November. Hauwa, who had asked the question at the meeting, was chosen to cut the ribbon. She thanked everyone sincerely, and the students applauded loudly. From that day, the reading corner became the most popular place in the school.</p>`;
 SEC('c1','Part C: Comprehension application','Reading passage: The Library Project','Use everything you have learned on one passage.',[
  SC('Read the passage',
-  P('Read the passage slowly, once for the story and once for the grammar. Then answer the 15 questions on the next screens.'),
+  P('Read the passage slowly, once for the story and once for the grammar. Then face the riddles in the next rounds.'),
   {t:'passage',h:PASSAGE,title:'The Library Project'},
   TIP('Underlined words in the questions come directly from the passage. Always read the sentence around the underlined part before you answer.')),
  SC('Questions 1 to 5: sentence recasting',

@@ -1,11 +1,11 @@
 /* ---------------- engine ---------------- */
 (function(){
 var LS='ss3-eng-recasting-v1', TPIN='2468', MOCKMIN=20;
-var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{}};
+var ST={res:{},vis:{},exam:{},last:{sec:'home',scr:0},mockBest:null,xp:0,best:0,boss:{},anim:{},board:[],set:{},fin:{},clr:{},mockDone:0};
 var RT={mock:null,hint:{},pin:false,cur:{sec:'home',scr:0},rev:{},units:null,pauseUntil:0,seen:{}};
 var app=document.getElementById('app');
 
-function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=o.mockBest||null;ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{}}}catch(e){}}
+function load(){try{var s=localStorage.getItem(LS);if(s){var o=JSON.parse(s);ST.res=o.res||{};ST.vis=o.vis||{};ST.exam=o.exam||{};ST.last=o.last||ST.last;ST.mockBest=(o.mockBest===undefined?null:o.mockBest);ST.xp=o.xp||0;ST.best=o.best||0;ST.boss=o.boss||{};ST.anim=o.anim||{};ST.board=o.board||[];ST.set=o.set||{};ST.fin=o.fin||{};ST.clr=o.clr||{};ST.mockDone=o.mockDone||0}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function $(s,r){return (r||document).querySelector(s)}
@@ -41,7 +41,8 @@ function secObj(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return SECS
 function secIdx(id){for(var i=0;i<SECS.length;i++)if(SECS[i].id===id)return i;return -1}
 
 /* ---- block rendering ---- */
-function boxHtml(cls,b){return '<div class="box '+cls+'"><div class="bt">'+esc(b.title)+'</div><div>'+b.h+'</div></div>'}
+var TITLEMAP={'Definition':'Power-up','Example':'Watch this','Exam tip':'Cheat code','Common mistake':'Trap!'};
+function boxHtml(cls,b){return '<div class="box '+cls+'"><div class="bt">'+esc(TITLEMAP[b.title]||b.title)+'</div><div>'+b.h+'</div></div>'}
 function tbHtml(b){
   var h='<div class="tw"><table>';
   if(b.head&&b.head.length&&b.head.join('')!=='')h+='<thead><tr>'+b.head.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead>';
@@ -57,7 +58,7 @@ function passageHtml(b){
   if(b.collapsed)return '<details class="pas"><summary>Show the passage again: '+esc(b.title)+'</summary><div class="passage">'+b.h+'</div></details>';
   return '<div class="passage"><div class="pt">'+esc(b.title)+'</div>'+b.h+'</div>';
 }
-function mkCard(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">Incorrect</span>'+m.w+'</div><div class="r"><span class="k">Correct</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}
+function mkCard(m){return '<div class="mk"><span class="eyebrow">'+m.t+'</span><div class="w"><span class="k">The trap</span>'+m.w+'</div><div class="r"><span class="k">The safe move</span>'+m.r+'</div><p><b>Why it is wrong:</b> '+m.why+'</p><p><b>Exam tip:</b> '+m.tip+'</p></div>'}
 function mkHtml(b){return b.items.map(mkCard).join('')}
 /* ---- live questions ---- */
 function liveCard(q){
@@ -190,7 +191,7 @@ function mockHtml(){
   var m=RT.mock;
   if(!m){
     var best=ST.mockBest?'<p class="muted">Your best score so far: <b>'+ST.mockBest+' / 15</b></p>':'';
-    return '<div class="box def"><div class="bt">Final challenge</div><div>15 questions mixing everything in this note. You have <b>20 minutes</b>. You see your score, a breakdown by topic and an explanation for every answer you missed at the end.</div></div>'+best+
+    return '<div class="box def"><div class="bt">Final challenge</div><div>15 questions mixing everything you have learned. You have <b>20 minutes</b>. You see your score, a breakdown by topic and an explanation for every answer you missed at the end.</div></div>'+best+
       '<div class="row"><button class="btn" data-act="mstart">Start the timed mock</button></div>'+
       '<p class="muted">Tip: answer the easy ones first, then return to the harder ones. You can go back to any question before you finish.</p>';
   }
@@ -228,7 +229,7 @@ function mockTick(){
 function mockFinish(){
   var m=RT.mock;if(!m)return;m.done=true;clearInterval(mockTimer);mockTimer=null;
   var sc=0;MOCK.forEach(function(q,i){var ok=m.a[i]===q.a;if(ok)sc++;ST.res[q.id]={done:1,ok:ok?1:0,tries:0,exam:1}});
-  if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;
+  if(ST.mockBest===null||sc>ST.mockBest)ST.mockBest=sc;ST.mockDone=1;
   save();render(true);
   gameExam(sc,15,true);
 }
@@ -283,7 +284,7 @@ function homeHtml(){return gameHome()}
 /* ---- screen rendering ---- */
 function blockHtml(b){
   switch(b.t){
-   case 'p':return '<p>'+b.h+'</p>';
+   case 'p':return '<div class="say"><span class="sp">'+penSVG('idle')+'</span><div class="sb">'+b.h+'</div></div>';
    case 'h':return '<h3>'+b.h+'</h3>';
    case 'def':return boxHtml('def',b);
    case 'ex':return boxHtml('ex',b);
@@ -307,11 +308,15 @@ function blockHtml(b){
 }
 /* ---- one idea at a time: every screen is split into units that are revealed in turn ---- */
 function quizDone(b){return b.items.every(function(q){var r=ST.res[q.id];return r&&r.done})}
+function rcHtml(b,rows){
+  return rows.map(function(row){return '<div class="rc">'+row.map(function(c,k){var lab=b.head&&b.head[k]?b.head[k]:'';return '<div class="cell"'+(k===0&&row.length>2?' data-first="1"':'')+'>'+(lab?'<span class="cl">'+lab+'</span>':'')+'<div>'+c+'</div></div>'}).join('')+'</div>'}).join('');
+}
 function unitsOf(b){
   switch(b.t){
    case 'stp':return b.items.map(function(x,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<ol class="steps" style="counter-reset:s '+i+'"><li>'+x+'</li></ol>'}});
    case 'wk':return b.items.map(function(it,i){return {html:(i===0&&b.title?'<h3>'+esc(b.title)+'</h3>':'')+wkItem(it)}});
    case 'mk':return b.items.map(function(m){return {html:mkCard(m)}});
+   case 'tb':{var per=b.rows.length>8?2:1,out=[];for(var i=0;i<b.rows.length;i+=per)out.push({html:rcHtml(b,b.rows.slice(i,i+per))});return out}
    case 'qz':return b.mode==='exam'?[{html:quizHtml(b),free:1}]:[{html:quizHtml(b),gate:function(){return quizDone(b)},why:'Answer every question above to continue.'}];
    case 'anim':return [{html:blockHtml(b),gate:function(){return !!ST.anim[b.id]},why:'Press Next step until the animation ends.'}];
    case 'boss':case 'battle':case 'board':case 'mock':case 'revise':case 'key':return [{html:blockHtml(b),free:1}];
@@ -330,7 +335,7 @@ function revUpdate(){
   var finished=!!ST.fin[key];
   nx.disabled=!(finished||(all&&gateOk));
   var s=secObj(RT.cur.sec);
-  mid.textContent=all?('Screen '+(RT.cur.scr+1)+' of '+s.screens.length):('Idea '+rev+' of '+n);
+  mid.textContent=levelLabel(RT.cur.sec);
   if(finished||(all&&gateOk)){bar.className='rvbar st';bar.innerHTML='<div class="rvdone">'+(RT.cur.scr===s.screens.length-1?'End of this topic. Tap Next.':'Screen complete. Tap Next.')+'</div>';clearInterval(rvTimer);return}
   if(!gateOk){bar.className='rvbar st';bar.innerHTML='<div class="rvwait">'+esc(last.why||'Finish the activity above to continue.')+'</div>';clearInterval(rvTimer);return}
   // there is another idea to reveal
@@ -362,46 +367,42 @@ function render(keepScroll){
     RT.units=units;
     if(ST.fin[key])RT.rev[key]=units.length;
     var rev=RT.rev[key];if(rev===undefined||rev<1){rev=RT.rev[key]=1;startPause(0)}
-    h='<div class="eyebrow">'+esc(s.part)+'</div><h2>'+esc(s.title)+'</h2><div class="prog">Screen '+(cur.scr+1)+' of '+s.screens.length+'</div><div class="tbar"><i style="width:'+Math.round(100*(cur.scr+1)/s.screens.length)+'%"></i></div>'+
-      gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct">'+esc(sc.title)+'</h3>':'')+
+    h=levelBar(cur.sec,cur.scr)+gameBanner(cur.sec,cur.scr)+(sc.title&&sc.title!==s.title?'<h3 class="sct"><span>Round '+(cur.scr+1)+'</span> '+esc(sc.title)+'</h3>':'')+
       units.map(function(u,i){return '<div class="unit" data-u="'+i+'"'+(i<rev?'':' hidden')+'>'+u.html+'</div>'}).join('')+'<div id="rvbar" class="rvbar"></div>';
     ST.vis[key]=1;
     nb.style.display='block';
-    pv.textContent=cur.scr===0?'Menu':'Back';
-    var last=cur.scr===s.screens.length-1,si=secIdx(cur.sec);
-    nx.textContent=last?(si<SECS.length-1?'Next topic':'Home'):'Next';
+    pv.textContent=cur.scr===0?'Map':'Back';
+    var last=cur.scr===s.screens.length-1;
+    nx.textContent=last?(isLevelEnd(cur.sec)?'Finish level':'Next'):'Next';
   }
   app.innerHTML=h;
   gameAfter(app);
   ST.last=cur;save();
   if(!keepScroll)window.scrollTo(0,0);
   var bar=$('#gbar');if(bar)bar.style.width=totalProgress()+'%';
-  var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Contents':(secObj(cur.sec).title);
+  var sub=$('#sub');if(sub)sub.textContent=cur.sec==='home'?'Choose your level':levelLabel(cur.sec);
   buildDrawer();hud();
   if(cur.sec!=='home'){penWalk();revUpdate()}
   if(RT.mock&&!RT.mock.done&&!mockTimer)mockTimer=setInterval(mockTick,1000);
 }
-function go(sec,scr){var prevSec=RT.cur.sec;RT.cur={sec:sec,scr:scr||0};closeDrawer();render();if(sec!=='home'&&sec!==prevSec)gameIntro(sec)}
+function go(sec,scr){
+  if(sec!=='home'&&!secAllowed(sec)){sfx.no();penToast('no','Locked! Clear the earlier level first.');return}
+  var prevSec=RT.cur.sec;RT.cur={sec:sec,scr:scr||0};closeDrawer();render();if(sec!=='home'&&sec!==prevSec)gameIntro(sec)
+}
 function next(){
   var cur=RT.cur;if(cur.sec==='home')return;
   var nxb=document.getElementById('nx');if(nxb&&nxb.disabled)return;
   var s=secObj(cur.sec);
-  if(cur.scr<s.screens.length-1)go(cur.sec,cur.scr+1);
-  else{var si=secIdx(cur.sec);if(si<SECS.length-1)go(SECS[si+1].id,0);else go('home',0)}
+  if(cur.scr<s.screens.length-1){go(cur.sec,cur.scr+1);return}
+  var ns=nextSecInLevel(cur.sec);
+  if(ns){go(ns,0);return}
+  levelFinish(cur.sec);
 }
 function prev(){
   var cur=RT.cur;if(cur.sec==='home')return;
-  if(cur.scr>0)go(cur.sec,cur.scr-1);else openDrawer();
+  if(cur.scr>0)go(cur.sec,cur.scr-1);else go('home',0);
 }
-function buildDrawer(){
-  var d=$('#drawer'),h='<div class="row"><b style="flex:1">Contents</b><button class="ib" data-act="closed" aria-label="Close menu">✕</button></div><a data-act="go" data-sec="home" data-scr="0" class="'+(RT.cur.sec==='home'?'on':'')+'">Home</a>',last='';
-  SECS.forEach(function(s){
-    if(s.part!==last){h+='<h4>'+esc(s.part)+'</h4>';last=s.part}
-    var q=secQ(s.id);
-    h+='<a data-act="go" data-sec="'+s.id+'" data-scr="0" class="'+(RT.cur.sec===s.id?'on':'')+'">'+esc(s.title)+'<span>'+(q.length?answeredCount(q)+'/'+q.length:'')+'</span></a>';
-  });
-  d.innerHTML=h+gameDrawer();
-}
+function buildDrawer(){var d=$('#drawer');d.innerHTML='<div class="row"><b style="flex:1">Settings</b><button class="ib" data-act="closed" aria-label="Close">✕</button></div>'+gameDrawer()}
 function openDrawer(){$('#drawer').classList.add('on');$('#shade').classList.add('on')}
 function closeDrawer(){$('#drawer').classList.remove('on');$('#shade').classList.remove('on')}
 
@@ -431,6 +432,9 @@ function onClick(e){
   else if(act==='closed')closeDrawer();
   else if(act==='rev')revealNext();
   else if(act==='set')gameSet(t.getAttribute('data-k'));
+  else if(act==='lvl')openLevel(+t.getAttribute('data-i'));
+  else if(act==='bon')openBonus(t.getAttribute('data-sec'));
+  else if(act==='tpin')gameTeacherPin();
 }
 function onKey(e){
   var t=e.target;
@@ -446,12 +450,12 @@ function onInput(e){
 document.addEventListener('click',onClick);
 document.addEventListener('keydown',onKey);
 document.addEventListener('input',onInput);
-$('#menu').onclick=openDrawer;$('#shade').onclick=closeDrawer;
+$('#menu').onclick=function(){go('home',0)};$('#cog').onclick=openDrawer;$('#shade').onclick=closeDrawer;
 $('#pv').onclick=prev;$('#nx').onclick=next;
 $('#brand').onclick=function(){go('home',0)};
 load();
 gameBoot();
-if(ST.last&&ST.last.sec&&ST.last.sec!=='home'&&secObj(ST.last.sec)){RT.cur={sec:'home',scr:0}}
+RT.cur={sec:'home',scr:0};
 render();
 window.__ENG={SECS:SECS,QIDX:QIDX,checkTyped:checkTyped,go:go,ST:ST,RT:RT,MOCK:MOCK,WAEC:WAEC,JAMB:JAMB,norm:norm,TOTAL:function(){return TOTAL}};
 })();

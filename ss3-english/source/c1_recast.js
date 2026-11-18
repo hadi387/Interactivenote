@@ -1,13 +1,13 @@
 /* ================= START HERE ================= */
 SEC('start','Start here','Words you need first','Ten small words that every grammar lesson uses.',[
- SC('How to use this note',
-  P('This note teaches one small idea at a time. Do not rush. Read a screen, try the activity, then tap <b>Next</b>.'),
-  DEF('A short, clear meaning of a new word. Read these first.'),
-  EX('A sentence that shows the idea at work. Study how it is built.'),
-  TIP('A trick for answering WAEC and JAMB questions.'),
-  MIS('A mistake many students make, and how to avoid it.'),
-  P('<b>Practice questions</b> have a purple border. Think first, then answer. You will get feedback straight away. If you are wrong, you get another chance.'),
-  P('Your scores are saved on this device. The <b>Revision</b> page tells you which topics you must study again.')),
+ SC('How to play',
+  P('Welcome, fighter! Every level has a villain. Learn one idea at a time, answer the questions, then beat the boss to unlock the next level.'),
+  P('Tap <b>Show the next idea</b> to read on. You have to read each idea before the next one appears. No skipping!'),
+  DEF('A power-up. Learn it, then use it in the fight.'),
+  EX('Watch how the idea works in a real sentence.'),
+  TIP('A cheat code for WAEC and JAMB questions.'),
+  MIS('A trap that catches many students. Spot it before it spots you.'),
+  P('Right answers give you XP. Right answers in a row build a streak and bonus XP. Wrong answers cost you hearts in a boss fight. Ready?')),
  SC('Ten words we will use',
   P('Do not worry if some of these feel new. Every one is explained again later with examples.'),
   TB(['Word','What it means','Example'],[
@@ -42,7 +42,7 @@ SEC('a1','Part A: Sentence recasting','What is sentence recasting?','Rewrite a s
    ['Because it rained, the match was cancelled.','The match was cancelled because it rained.','Order of the parts'],
    ['Despite his illness, he came.','Although he was ill, he came.','Phrase → clause']
   ]),
-  P('This note focuses on the two recasts that WAEC and JAMB test most often: <b>active and passive voice</b> and <b>direct and reported speech</b>.')),
+  P('The two recasts that WAEC and JAMB love most are <b>active and passive voice</b> and <b>direct and reported speech</b>. You will beat both.')),
  SC('Same meaning or different meaning?',
   P('<b>Think first.</b> For each pair, decide if the two sentences mean the same thing.'),
   QZ('a1-pairs','Same or different?','live',[

@@ -294,27 +294,90 @@ function boardInit(el){
   draw();
 }
 
-/* ---- home screen: the arena map ---- */
-function bossStarsTotal(){var n=0;Object.keys(ST.boss).forEach(function(k){n+=ST.boss[k]||0});return n}
+/* ---- levels: you must clear one before the next opens ---- */
+function secFin(id){var s=secObj(id);return s.screens.every(function(_,i){return ST.fin[id+':'+i]})}
+function levelCleared(i){
+  var L=LEVELS[i];
+  if(L.test){var es=ST.exam[L.test];return !!(es&&es.sub)}
+  if(L.mock)return !!ST.mockDone;
+  if(!L.secs.every(secFin))return false;
+  if(L.boss&&!(ST.boss[L.boss]>=1))return false;
+  return true;
+}
+function levelUnlocked(i){return i===0||levelCleared(i-1)}
+function levelOfSec(id){for(var i=0;i<LEVELS.length;i++)if(LEVELS[i].secs.indexOf(id)>=0)return i;return -1}
+function bonusOf(id){for(var i=0;i<BONUS.length;i++)if(BONUS[i].id===id)return BONUS[i];return null}
+function secAllowed(id){
+  if(RT.dev)return true;
+  if(id==='e3')return true;
+  if(TEACHER_SECS.indexOf(id)>=0)return !!RT.teacher;
+  var b=bonusOf(id);if(b)return levelCleared(b.after);
+  var i=levelOfSec(id);return i<0?true:levelUnlocked(i);
+}
+function levelLabel(id){var i=levelOfSec(id);if(i>=0)return 'Level '+i+' · '+LEVELS[i].n;var b=bonusOf(id);if(b)return 'Bonus · '+b.n;return secObj(id).title}
+function isLevelEnd(id){var i=levelOfSec(id);return i<0||LEVELS[i].secs[LEVELS[i].secs.length-1]===id}
+function nextSecInLevel(id){var i=levelOfSec(id);if(i<0)return null;var L=LEVELS[i],k=L.secs.indexOf(id);return L.secs[k+1]||null}
+function levelBar(sec,scr){
+  var s=secObj(sec),i=levelOfSec(sec),pips='';
+  s.screens.forEach(function(_,k){pips+='<i class="'+(ST.fin[sec+':'+k]?'ok':k===scr?'cur':'')+'"></i>'});
+  var head=i>=0?'<b class="ln">LEVEL '+i+'</b>':'<b class="ln">BONUS</b>';
+  return '<div class="lvbar">'+head+'<span class="lname">'+esc(s.title)+'</span><span class="lpips">'+pips+'</span></div>';
+}
+function levelResume(i){
+  var L=LEVELS[i],sc=L.secs[L.secs.length-1],scr=secObj(sc).screens.length-1;
+  for(var a=0;a<L.secs.length;a++){var s=secObj(L.secs[a]);for(var k=0;k<s.screens.length;k++){if(!ST.fin[s.id+':'+k]){return [s.id,k]}}}
+  return [sc,scr];
+}
+function openLevel(i){
+  if(!levelUnlocked(i)&&!RT.dev){sfx.no();shakeScreen();penToast('no','Locked! Clear Level '+(i-1)+' first.');return}
+  gameFirst();var t=levelResume(i);go(t[0],t[1]);
+}
+function openBonus(id){
+  var b=bonusOf(id);if(!secAllowed(id)){sfx.no();shakeScreen();penToast('no','Locked! Clear Level '+b.after+' to open the '+b.n+'.');return}
+  gameFirst();go(id,0);
+}
+function levelFinish(sec){
+  var i=levelOfSec(sec);
+  if(i>=0&&levelCleared(i)){
+    if(!ST.clr[i]){ST.clr[i]=1;save();sfx.win();burst(160);
+      var nl=LEVELS[i+1];
+      overlay('win','Level cleared',LEVELS[i].n,nl?('Next: '+nl.n):'You finished the game!',2200);
+      addXp(100,null,'#2EE6A6');
+    }
+  }else if(i>=0&&LEVELS[i].boss&&!(ST.boss[LEVELS[i].boss]>=1)){
+    penToast('no','Beat the boss to clear this level!');
+  }
+  go('home',0);
+}
+function lockSVG(){return '<svg viewBox="0 0 40 48" aria-hidden="true"><path d="M10 20v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#6A7390" stroke-width="5"/><rect x="5" y="20" width="30" height="24" fill="#6A7390"/><circle cx="20" cy="31" r="4" fill="#232636"/></svg>'}
+function lvlProgress(i){var L=LEVELS[i],t=0,d=0;L.secs.forEach(function(id){var s=secObj(id);s.screens.forEach(function(_,k){t++;if(ST.fin[id+':'+k])d++})});return t?Math.round(100*d/t):0}
+function starsOf(L){return L.boss?new Array((ST.boss[L.boss]||0)+1).join('★')+new Array(4-(ST.boss[L.boss]||0)).join('☆'):''}
 function gameHome(){
-  var xp=ST.xp||0,l=lvlOf(xp);
-  var h='<div class="hero"><div class="hp1">'+penSVG('ok')+'</div><div class="hp2"><div class="eyebrow">SS3 · English Language · First Term · Week 1</div><h1>Grammar Arena</h1><p>Sentence recasting and grammatical functions for WAEC and JAMB. Beat the villains, earn XP and climb the ranks.</p></div></div>'+
-   '<div class="stats"><div><b>'+TITLES[l]+'</b><small>Level '+(l+1)+' · '+xp+' XP</small></div><div><b>'+(ST.best||0)+'</b><small>Best streak</small></div><div><b>'+bossStarsTotal()+' / 12</b><small>Boss stars</small></div></div>'+
-   '<div class="row"><button class="btn" data-act="cont">'+(ST.last&&ST.last.sec!=='home'?'Continue the quest':'Start the quest')+'</button><button class="btn gh" data-act="go" data-sec="f1" data-scr="0">Class quiz battle</button><button class="btn gh" data-act="go" data-sec="e3" data-scr="0">My results</button></div>'+
-   '<div class="box tip"><div class="bt">Suggested 40-minute class plan</div><div><b>5 min:</b> Start here and What is recasting?<br><b>12 min:</b> Active and passive voice, screens 1 to 8<br><b>13 min:</b> Direct and reported speech, screens 1 to 9<br><b>10 min:</b> Word class or function? and the first functions<br><small>Everything else is for self-paced study after class.</small></div></div>';
-  var last='';h+='<div class="path">';
-  SECS.forEach(function(s,i){
-    if(s.part!==last){h+='<div class="part">'+esc(s.part)+'</div>';last=s.part}
-    var v=VILL[s.id],q=secQ(s.id),d=answeredCount(q),vis=0;s.screens.forEach(function(sc,k){if(ST.vis[s.id+':'+k])vis++});
-    var pct=q.length?Math.round(100*d/q.length):Math.round(100*vis/s.screens.length);
-    var bs='';Object.keys(BOSSES).forEach(function(b){if(BOSSES[b].sec===s.id)bs='<span class="bst">'+new Array((ST.boss[b]||0)+1).join('★')+new Array(4-(ST.boss[b]||0)).join('☆')+'</span>'});
-    h+='<button class="node" data-act="go" data-sec="'+s.id+'" data-scr="0" style="--vc:'+(v?v.c:'#4DA3FF')+'"><span class="nv">'+(v?bossSVG(v.c,'idle'):penSVG('idle'))+'</span><span class="nt"><b>'+esc(s.title)+'</b><small>'+esc(s.blurb)+'</small><span class="meta">'+s.screens.length+' screen'+(s.screens.length>1?'s':'')+(q.length?' · '+d+' of '+q.length+' questions':'')+bs+'</span><span class="tbar"><i style="width:'+pct+'%"></i></span></span></button>';
+  var xp=ST.xp||0,l=lvlOf(xp),cur=-1;
+  for(var k=0;k<LEVELS.length;k++){if(!levelCleared(k)){cur=k;break}}
+  var h='<div class="logo"><span class="lg1">GRAMMAR</span><span class="lg2">ARENA</span></div>'+
+   '<div class="stats"><div><b>'+TITLES[l]+'</b><small>'+xp+' XP</small></div><div><b>× '+(ST.best||0)+'</b><small>Best streak</small></div><div><b>'+bossStarsTotal()+' / 12</b><small>Boss stars</small></div></div>';
+  h+='<div class="lvmap">';
+  LEVELS.forEach(function(L,i){
+    var un=levelUnlocked(i)||RT.dev,cl=levelCleared(i),st=cl?'done':un?'open':'lock',v=VILL[L.v]||{c:'#4DA3FF'};
+    h+='<button class="lvn '+st+(i===cur?' now':'')+' '+(i%2?'r':'l')+'" data-act="lvl" data-i="'+i+'" style="--vc:'+v.c+'"><span class="lvnum">'+i+'</span><span class="lvav">'+(un?(i===0?penSVG('ok'):bossSVG(v.c,cl?'dead':'idle')):lockSVG())+'</span><span class="lvt"><b>'+(un?esc(L.n):'???')+'</b><small>'+(un?esc(L.sub):'Locked. Clear Level '+(i-1)+' first.')+'</small>'+(un?'<span class="meta">'+(cl?'CLEARED ':'')+starsOf(L)+'</span><span class="tbar"><i style="width:'+(cl?100:lvlProgress(i))+'%"></i></span>':'')+'</span></button>';
   });
-  return h+'</div>';
+  h+='</div><h3 class="sq">Side quests</h3><div class="lvmap sq">';
+  BONUS.forEach(function(b){
+    var un=levelCleared(b.after)||RT.dev,v=VILL[b.v]||{c:'#4DA3FF'};
+    h+='<button class="lvn '+(un?'open':'lock')+' l" data-act="bon" data-sec="'+b.id+'" style="--vc:'+v.c+'"><span class="lvav">'+(un?bossSVG(v.c,'idle'):lockSVG())+'</span><span class="lvt"><b>'+(un?esc(b.n):'???')+'</b><small>'+(un?esc(b.sub):'Clear Level '+b.after+' to open')+'</small></span></button>';
+  });
+  h+='</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn gh sm" data-act="go" data-sec="e3" data-scr="0">My stats</button></div>';
+  return h;
 }
+function bossStarsTotal(){var n=0;Object.keys(ST.boss).forEach(function(k){n+=ST.boss[k]||0});return n}
 function gameDrawer(){
-  return '<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="pause">Reading pause (slows the Show next idea button)<span>'+(ST.set.pause===false?'Off':'On')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a>';
+  var h='<h4>Settings</h4><a data-act="set" data-k="music">Music<span>'+(ST.set.music?'On':'Off')+'</span></a><a data-act="set" data-k="sfx">Sound effects<span>'+(ST.set.sfx?'On':'Off')+'</span></a><a data-act="set" data-k="pause">Reading pause<span>'+(ST.set.pause===false?'Off':'On')+'</span></a><a data-act="set" data-k="lite">Lite mode (less motion)<span>'+(isLite()?'On':'Off')+'</span></a><h4>Teacher</h4>';
+  if(RT.teacher)h+='<a data-act="go" data-sec="f2" data-scr="0">Teacher board</a><a data-act="go" data-sec="e4" data-scr="0">Answer key</a>';
+  else h+='<div class="row"><input class="tx" id="tpinv" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off" style="max-width:120px"><button class="btn sm" data-act="tpin">Open</button></div>'+(RT.tbad?'<div class="fb b"><b>Wrong PIN.</b></div>':'');
+  return h;
 }
+function gameTeacherPin(){var v=($('#tpinv')||{}).value;if(v===TPIN){RT.teacher=true;RT.tbad=0;RT.pin=true}else RT.tbad=1;buildDrawer()}
 function gameSet(k){
   if(k==='music'){ST.set.music=!ST.set.music;if(ST.set.music){actx();musicSet(MU.mode)}else musicStop()}
   else if(k==='sfx')ST.set.sfx=!ST.set.sfx;
